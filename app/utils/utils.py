@@ -17,3 +17,5 @@ def extract_text_from_csv(file):
 
 def extract_text_from_txt(file):
     return file.file.read().decode()
+
+

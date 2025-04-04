@@ -6,7 +6,11 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, UploadFile
 from google import genai
 
-from utils import extract_text_from_csv, extract_text_from_pdf, extract_text_from_txt
+from app.utils.utils import (
+    extract_text_from_csv,
+    extract_text_from_pdf,
+    extract_text_from_txt,
+)
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -18,7 +22,6 @@ app = FastAPI()
 async def hello(
     prompt: str = Form(...), files: Optional[List[UploadFile]] = File(None)
 ):
-
     all_texts = []
 
     text = ""
@@ -48,7 +51,7 @@ async def hello(
         )
     elif combined_text == None:
         llm_response = client.models.generate_content(
-            model="gemini-2.0-flash", contents=f"{prompt}"
+            model="gemini-2.5-pro-exp-03-25", contents=f"{prompt}"
         )
 
     return {"response": llm_response.text, "text": text}
