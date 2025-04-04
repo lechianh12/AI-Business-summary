@@ -9,6 +9,7 @@ from typing import Optional, List, Union
 from fastapi import HTTPException
 from typing import Annotated
 import io
+from utils import extract_text_from_pdf, extract_text_from_csv, extract_text_from_txt
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -30,12 +31,11 @@ async def hello(
     if files is not None:
         for file in files:
             if file.filename.endswith('.pdf'):
-                pdf_reader = PyPDF2.PdfReader(file.file)
-                text = "".join([page.extract_text() or "" for page in pdf_reader.pages])
+                text = extract_text_from_pdf(file)
             elif file.filename.endswith('.csv'):
-                text = "\n".join([",".join(row) for row in csv.reader(file.file.read().decode().splitlines())])
+                text = extract_text_from_csv(file)
             elif file.filename.endswith('.txt'):
-                text = file.read().decode()
+                text = extract_text_from_txt(file)
             else:
                 raise Exception(f"Unsupported file format: {file.filename}. Please upload a PDF, CSV, or TXT file.")
 
