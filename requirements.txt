@@ -1,8 +1,0 @@
-google-genai
-python-dotenv
-Pillow
-PyMuPDF
-fastapi
-uvicorn
-pydantic
-PyPDF2
