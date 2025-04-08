@@ -75,7 +75,7 @@ async def hello(
     elif combined_text is not None and is_image == True:
         print('Now is reading image-----------------------------------------------------------')
         llm_response = client.models.generate_content(
-                    model="GEMINI_MODEL",
+                    model=os.getenv("GEMINI_MODEL"),
                     contents=[prompt,
                             image])
 
