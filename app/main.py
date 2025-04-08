@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, UploadFile
 from google import genai
 
-from app.utils.utils import (
+from app.utils.readfiles import (
     extract_text_from_csv,
     extract_text_from_pdf,
     extract_text_from_txt,
@@ -49,7 +49,7 @@ async def hello(
             model="gemini-2.0-flash",
             contents=f"{prompt}\n\nContext from uploaded file:\n{combined_text}",
         )
-    elif combined_text == None:
+    elif combined_text is None:
         llm_response = client.models.generate_content(
             model="gemini-2.5-pro-exp-03-25", contents=f"{prompt}"
         )
