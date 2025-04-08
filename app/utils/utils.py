@@ -1,6 +1,20 @@
+
 import csv
+import pandas as pd
+import io
+
+
+
 
 import PyPDF2
+import csv
+import pandas as pd
+import io
+import PIL 
+import base64
+from PIL import Image
+import fastapi
+
 
 
 def extract_text_from_pdf(file):
@@ -32,5 +46,14 @@ def extract_text_from_csv(file):
 
 def extract_text_from_txt(file):
     return file.file.read().decode()
+
+
+async def extract_text_from_image(file):
+    contents = await file.read()
+    image = Image.open(io.BytesIO(contents))
+    return image
+
+
+
 
 
