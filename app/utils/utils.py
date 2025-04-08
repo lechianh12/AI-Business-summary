@@ -51,6 +51,7 @@ def extract_text_from_txt(file):
 async def extract_text_from_image(file):
     contents = await file.read()
     image = Image.open(io.BytesIO(contents))
+    
     return image
 
 
