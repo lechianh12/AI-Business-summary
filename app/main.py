@@ -52,16 +52,16 @@ async def hello(
     # Gộp nội dung tất cả các file
     combined_text = "\n\n".join(all_texts)
 
-    if combined_text is not None and is_image == False:
+    if combined_text is not None and is_image is False:
         llm_response = client.models.generate_content(
             model=os.getenv("GEMINI_MODEL"),
             contents=f"{prompt}\n\nContext from uploaded file:\n{combined_text}",
         )
-    elif combined_text == None and is_image == False:
+    elif combined_text is None and is_image is False:
         llm_response = client.models.generate_content(
             model=os.getenv("GEMINI_MODEL"), contents=f"{prompt}"
         )
-    elif combined_text is not None and is_image == True:
+    elif combined_text is not None and is_image is True:
         print(
             "Now is reading image-----------------------------------------------------------"
         )
