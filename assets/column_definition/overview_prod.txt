@@ -3,11 +3,12 @@
 
 # Lưu ý: Các biểu đồ đường (trendline) trên KPI cards và chi tiết trong bảng Top 10 có thể yêu cầu dữ liệu chi tiết hơn (ví dụ: tổng hợp theo ngày hoặc theo từng sản phẩm/nhóm) mà có thể không có đầy đủ trong file dữ liệu tổng hợp dạng một dòng tóm tắt.
 
-# Thông tin chung & Lọc
-•	run_date: Ngày chạy dữ liệu.
-•	timeframe_start: Ngày bắt đầu chu kỳ phân tích (Hiển thị: 01/03/2025).
-•	timeframe_end: Ngày kết thúc chu kỳ phân tích (Hiển thị: 31/03/2025).
-•	branch_id: Mã định danh chi nhánh (Dùng để lọc nếu cần xem theo chi nhánh).
+# Thông tin chung 
+•	run_date: Ngày dữ liệu được xuất/tạo báo cáo.
+•	timeframe_start: Ngày bắt đầu của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_end: Ngày kết thúc của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_type: Xác định loại chu kỳ thời gian của dữ liệu (ví dụ: '7 ngày gần nhất', 'tháng này'). Quan trọng để xác định bối cảnh phân tích (ngắn hạn/ dài hạn).
+•	branch_id: Mã định danh duy nhất cho một chi nhánh cụ thể (Dùng để lọc hoặc hiển thị trong bảng "Chi tiết").
 
 # Các chỉ số tổng quan (KPI Cards - Hàng trên cùng)
 •	num_product_master_id_sell: Số lượng mã hàng (SKU) khác nhau đã bán (Hiển thị: 22 - Số mặt hàng đã bán). (Trendline yêu cầu dữ liệu theo thời gian).
