@@ -5,13 +5,25 @@ import os
 import pandas as pd
 
 
-def split_csv_by_retailer_id():
+def split_csv_by_retailer_id(input_path=None, output_dir=None):
+
+    # Sử dụng giá trị mặc định nếu không được cung cấp
+    if input_path is None:
+        input_path = "assets/merchant_data/*.csv"
+
+    if output_dir is None:
+        output_dir = "assets/retailer_data"
 
     # Create retailer_data directory if it doesn't exist
-    os.makedirs("assets/retailer_data", exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
-    # Get all CSV files in merchant_data directory
-    csv_files = glob.glob("assets/merchant_data/*.csv")
+    # Get CSV files based on input_path
+    if "*" in input_path:
+        # If input_path contains wildcard, use glob
+        csv_files = glob.glob(input_path)
+    else:
+        # If input_path is a specific file
+        csv_files = [input_path]
 
     for file_path in csv_files:
         print(f"Processing: {file_path}")
@@ -44,7 +56,7 @@ def split_csv_by_retailer_id():
             retailer_data = df[df["retailer_id"] == retailer_id]
 
             # Create output filename
-            output_filename = f"assets/retailer_data/retailer_{retailer_id}.csv"
+            output_filename = f"{output_dir}/retailer_{retailer_id}.csv"
 
             # Save to CSV with UTF-8 BOM encoding
             retailer_data.to_csv(output_filename, index=False, encoding="utf-8-sig")

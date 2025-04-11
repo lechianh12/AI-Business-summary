@@ -7,7 +7,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, UploadFile
 from google import genai
-from utils import extract_text_from_csv
+from scripts.readfiles import extract_text_from_csv
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
