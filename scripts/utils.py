@@ -5,6 +5,7 @@ import os
 import pandas as pd
 
 
+# Chia file tổng hợp thành nhiều file theo retailer_id
 def split_csv_by_retailer_id(input_path=None, output_dir=None):
 
     # Sử dụng giá trị mặc định nếu không được cung cấp
@@ -149,6 +150,7 @@ def preprocess_csv_data(df):
         raise Exception(f"Lỗi khi xử lý dữ liệu CSV: {str(e)}")
 
 
+# Lưu danh sách tên cột vào file
 def save_column_names(df, output_path="assets/column_data/column_name.txt"):
     try:
         # Đảm bảo thư mục tồn tại
@@ -167,6 +169,7 @@ def save_column_names(df, output_path="assets/column_data/column_name.txt"):
         print(f"Lỗi khi lưu danh sách tên cột: {str(e)}")
 
 
+# Xử lý dữ liệu CSV và lưu danh sách tên cột
 def process_csv_for_model(file_content, encoding="utf-8-sig"):
     try:
         # Đọc nội dung CSV thành DataFrame
@@ -183,19 +186,19 @@ def process_csv_for_model(file_content, encoding="utf-8-sig"):
         raise Exception(f"Error processing CSV: {str(e)}")
 
 
+# Lấy danh sách các cột cần thiết dựa trên loại màn hình
 def get_columns_for_screen(screen_type):
     """
-    Lấy danh sách các cột cần thiết dựa trên loại màn hình.
-
+    Lấy danh sách các cột cần hiển thị dựa trên loại màn hình.
     Args:
-        screen_type (str): Loại màn hình ('product_overview' hoặc 'customer_overview').
-
+        screen_type (str): Loại màn hình.
     Returns:
-        list: Danh sách tên cột cần lấy.
+        list: Danh sách các cột cần hiển thị.
     """
     columns = []
-
     file_path = None
+
+    # Xác định file để đọc dựa trên loại màn hình
     if screen_type == "product_overview":
         file_path = "assets/column_data/overview_prod.txt"
     elif screen_type == "customer_overview":
@@ -225,14 +228,13 @@ def get_columns_for_screen(screen_type):
     return columns
 
 
+# Lọc DataFrame theo các cột được chỉ định
 def process_csv_for_screen(processed_data, column_list):
     """
     Lọc DataFrame để chỉ giữ các cột được chỉ định.
-
     Args:
-        processed_data (dict): Dữ liệu đã được xử lý từ hàm preprocess_csv_data.
+        processed_data (dict).
         column_list (list): Danh sách các cột cần giữ lại.
-
     Returns:
         dict: Dữ liệu mới với chỉ các cột đã chọn.
     """
@@ -266,3 +268,27 @@ def process_csv_for_screen(processed_data, column_list):
     else:
         # Trả về dữ liệu gốc nếu không có cột nào hợp lệ
         return processed_data
+
+
+def read_column_data(column_file_path):
+    """Đọc file chứa thông tin về các cột và trả về nội dung của file."""
+    try:
+        with open(column_file_path, "r", encoding="utf-8") as file:
+            content = file.read()
+        return content
+    except Exception as e:
+        print(f"Lỗi khi đọc file {column_file_path}: {str(e)}")
+        return ""
+
+
+def extract_column_definitions(column_content):
+    """Trích xuất định nghĩa cột từ nội dung file, bỏ qua phần comment."""
+    lines = column_content.split("\n")
+    column_definitions = []
+
+    for line in lines:
+        # Bỏ qua các dòng comment bắt đầu bằng # hoặc dòng trống
+        if line.strip() and not line.strip().startswith("#"):
+            column_definitions.append(line)
+
+    return "\n".join(column_definitions)

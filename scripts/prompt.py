@@ -1,28 +1,6 @@
 import os
 
-
-def read_column_data(file_path):
-    """Đọc file chứa thông tin về các cột và trả về nội dung của file."""
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            content = file.read()
-        return content
-    except Exception as e:
-        print(f"Lỗi khi đọc file {file_path}: {str(e)}")
-        return ""
-
-
-def extract_column_definitions(content):
-    """Trích xuất định nghĩa cột từ nội dung file, bỏ qua phần comment."""
-    lines = content.split("\n")
-    column_definitions = []
-
-    for line in lines:
-        # Bỏ qua các dòng comment bắt đầu bằng # hoặc dòng trống
-        if line.strip() and not line.strip().startswith("#"):
-            column_definitions.append(line)
-
-    return "\n".join(column_definitions)
+from scripts.utils import extract_column_definitions, read_column_data
 
 
 def generate_retail_system_prompt(screen_type=None):
@@ -32,7 +10,7 @@ def generate_retail_system_prompt(screen_type=None):
 
 QUY TRÌNH PHÂN TÍCH VÀ ĐỊNH DẠNG ĐẦU RA BẮT BUỘC:
 1.	Chú thích cột dữ liệu: 
-        [Code here]
+        [column_definitions]
 2.	Phân tích Ngữ cảnh và Dữ liệu Đầu vào:
 o	Xác định Cột Dữ liệu: Tự động xác định các cột dữ liệu và sử dụng "1. Chú thích cột dữ liệu" để hiểu ý nghĩa các cột trong file .csv.
 o	Thời gian: Xác định khoảng thời gian của dữ liệu (Tuần/Tháng/Quý). Hãy bắt đầu phân tích bằng việc nêu rõ trọng tâm dựa trên thời gian này (ví dụ: "Phân tích tập trung vào biến động ngắn hạn (dữ liệu Tuần)..." hoặc "Phân tích tập trung vào xu hướng và quản trị (dữ liệu Tháng/Quý)...").
@@ -85,7 +63,7 @@ Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phâ
         # Trích xuất định nghĩa cột (không bao gồm comment)
         column_definitions = extract_column_definitions(column_content)
 
-        # Thay thế phần [Code here] trong prompt
-        base_prompt = base_prompt.replace("[Code here]", column_definitions)
+        # Thay thế phần [column_definitions] trong prompt
+        base_prompt = base_prompt.replace("[column_definitions]", column_definitions)
 
     return base_prompt

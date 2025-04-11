@@ -6,6 +6,7 @@ from fastapi.responses import PlainTextResponse
 
 from scripts.config import API_KEY, MODEL_NAME
 from scripts.prompt import generate_retail_system_prompt
+from scripts.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 from scripts.utils import (
     get_columns_for_screen,
     preprocess_csv_data,
@@ -19,36 +20,12 @@ router = APIRouter()
 # Cấu hình Google Generative AI
 genai.configure(api_key=API_KEY)
 
-# Định nghĩa các lựa chọn
-RETAILER_OPTIONS = {
-    "285727": "retailer_285727.csv",
-    "541173": "retailer_541173.csv",
-    "500577674": "retailer_500577674.csv",
-}
-
-TIME_PERIOD_OPTIONS = {
-    "month_current": "Tháng này",
-    "days_7": "7 ngày gần nhất",
-    "days_30": "30 ngày gần nhất",
-}
-
-SCREEN_OPTIONS = {
-    "product_overview": "Tổng quan hàng hóa",
-    "customer_overview": "Tổng quan khách hàng",
-}
-
 
 @router.get("/response", response_class=PlainTextResponse)
 async def response(
-    retailer_id: str = Query(
-        ..., enum=list(RETAILER_OPTIONS.keys())
-    ),
-    time_period: str = Query(
-        ..., enum=list(TIME_PERIOD_OPTIONS.keys())
-    ),
-    screen: str = Query(
-        ..., enum=list(SCREEN_OPTIONS.keys())
-    ),
+    retailer_id: str = Query(..., enum=list(RETAILER_OPTIONS.keys())),
+    time_period: str = Query(..., enum=list(TIME_PERIOD_OPTIONS.values())),
+    screen: str = Query(..., enum=list(SCREEN_OPTIONS.values())),
 ):
     try:
         # Xác định file CSV tương ứng với retailer_id
@@ -88,12 +65,13 @@ async def response(
                 status_code=400, detail=f"Lỗi khi xử lý file CSV: {str(e)}"
             )
 
-        # Tạo user_input dựa trên lựa chọn thời gian
-        time_period_text = TIME_PERIOD_OPTIONS[time_period]
+        # Tìm text tương ứng với time_period từ dict đã đảo ngược
+        time_period_text = next(
+            key for key, value in TIME_PERIOD_OPTIONS.items() if value == time_period
+        )
         user_input = f"Hãy phân tích cho tôi tình hình kinh doanh trong {time_period_text} của cửa hàng"
 
         # Kết hợp system prompt và nội dung vào một chuỗi
-        screen_text = SCREEN_OPTIONS[screen]
         system_prompt = generate_retail_system_prompt(screen)
         full_prompt = (
             f"{system_prompt}\n\nDữ liệu CSV:\n{csv_text}\n\nUser Input: {user_input}"
