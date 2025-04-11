@@ -1,28 +1,46 @@
+
+from fastapi import FastAPI, File, UploadFile, Form, Depends
+import PyPDF2
+from enum import Enum
+
 import os
-import time
-from typing import List, Optional
+
+from typing import Annotated, List, Optional
+
 
 import uvicorn
-from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, UploadFile
+import csv
 from google import genai
-from utils import (
-    extract_text_from_csv,
-    extract_text_from_image,
-    extract_text_from_pdf,
-    extract_text_from_txt,
-)
+from dotenv import load_dotenv
+import os
+from typing import Optional, List, Union
+from fastapi import HTTPException
+from typing import Annotated
+import io
+from utils import extract_text_from_pdf, extract_text_from_csv, extract_text_from_txt, extract_text_from_image
+import time
+
+
+
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 app = FastAPI()
 
+class Time(str, Enum):
+    option1 = "7"
+    option2 = "30"
+    option3 = "tháng"
 
-@app.post("/hello")
+
+@app.post("/Sản_phẩm")
 async def hello(
-    prompt: str = Form(...), files: Optional[List[UploadFile]] = File(None)
+    time: Time = Form(...),
+    prompt: str = Form(...),
+    files: Optional[List[UploadFile]] = File(None)
 ):
+
 
     start_time = time.time()
 
@@ -32,46 +50,183 @@ async def hello(
     is_image = False
     if files is not None:
         for file in files:
-            if file.filename.endswith(".pdf"):
+            if file.filename.endswith('.pdf'):
                 text = extract_text_from_pdf(file)
-            elif file.filename.endswith(".csv"):
+            elif file.filename.endswith('.csv'):
                 text = extract_text_from_csv(file)
-            elif file.filename.endswith(".txt"):
+            elif file.filename.endswith('.txt'):
                 text = extract_text_from_txt(file)
-            elif file.filename.endswith(("png", "jpg", "jpeg", "bmp")):
+            elif file.filename.endswith(('png', 'jpg', 'jpeg', 'bmp')):
                 image = await extract_text_from_image(file)
                 is_image = True
-
+                
             else:
-                raise Exception(
-                    f"Unsupported file format: {file.filename}. Please upload a PDF, CSV, or TXT file."
-                )
+                raise Exception(f"Unsupported file format: {file.filename}. Please upload a PDF, CSV, or TXT file.")
 
             all_texts.append(f"=== {file.filename} ===\n{text}")
+
+
+
 
     # Gộp nội dung tất cả các file
     combined_text = "\n\n".join(all_texts)
 
-    if combined_text is not None and is_image is False:
-        llm_response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL"),
-            contents=f"{prompt}\n\nContext from uploaded file:\n{combined_text}",
-        )
-    elif combined_text is None and is_image is False:
-        llm_response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL"), contents=f"{prompt}"
-        )
-    elif combined_text is not None and is_image is True:
-        print(
-            "Now is reading image-----------------------------------------------------------"
-        )
-        llm_response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL"), contents=[prompt, image]
-        )
 
-    end_time = time.time()
+
+    if combined_text is not None and is_image == False:           
+        llm_response = client.models.generate_content(model=os.getenv("GEMINI_MODEL"), 
+                                                    contents=f"{prompt}\n\nContext from uploaded file:\n{combined_text}")
+    elif combined_text == None and is_image == False:
+        llm_response = client.models.generate_content(model=os.getenv("GEMINI_MODEL"), 
+                                                    contents=f"{prompt}")
+    elif combined_text is not None and is_image == True:
+        print('Now is reading image-----------------------------------------------------------')
+        llm_response = client.models.generate_content(
+                    model=os.getenv("GEMINI_MODEL"),
+                    contents=[prompt,
+                            image])
+
+
+
+
+    end_time = time.time()  
     print(f"Time taken: {end_time - start_time} seconds")
-    return {"response": llm_response.text, "text": text}
+    return {
+        "response": llm_response.text,
+        "text": text
+    }
+
+
+@app.post("/khách_hàng")
+async def hello(
+    time: Time = Form(...),
+    prompt: str = Form(...),
+    files: Optional[List[UploadFile]] = File(None)
+):
+
+
+    start_time = time.time()
+
+    all_texts = []
+
+    text = ""
+    is_image = False
+    if files is not None:
+        for file in files:
+            if file.filename.endswith('.pdf'):
+                text = extract_text_from_pdf(file)
+            elif file.filename.endswith('.csv'):
+                text = extract_text_from_csv(file)
+            elif file.filename.endswith('.txt'):
+                text = extract_text_from_txt(file)
+            elif file.filename.endswith(('png', 'jpg', 'jpeg', 'bmp')):
+                image = await extract_text_from_image(file)
+                is_image = True
+                
+            else:
+                raise Exception(f"Unsupported file format: {file.filename}. Please upload a PDF, CSV, or TXT file.")
+
+            all_texts.append(f"=== {file.filename} ===\n{text}")
+
+
+
+
+    # Gộp nội dung tất cả các file
+    combined_text = "\n\n".join(all_texts)
+
+
+
+    if combined_text is not None and is_image == False:           
+        llm_response = client.models.generate_content(model=os.getenv("GEMINI_MODEL"), 
+                                                    contents=f"{prompt}\n\nContext from uploaded file:\n{combined_text}")
+    elif combined_text == None and is_image == False:
+        llm_response = client.models.generate_content(model=os.getenv("GEMINI_MODEL"), 
+                                                    contents=f"{prompt}")
+    elif combined_text is not None and is_image == True:
+        print('Now is reading image-----------------------------------------------------------')
+        llm_response = client.models.generate_content(
+                    model=os.getenv("GEMINI_MODEL"),
+                    contents=[prompt,
+                            image])
+
+
+
+
+    end_time = time.time()  
+    print(f"Time taken: {end_time - start_time} seconds")
+    return {
+        "response": llm_response.text,
+        "text": text
+    }
+
+
+@app.post("/Kinh_doanh")
+async def hello(
+    time: Time = Form(...),
+    prompt: str = Form(...),
+    files: Optional[List[UploadFile]] = File(None)
+):
+
+
+    start_time = time.time()
+
+    all_texts = []
+
+    text = ""
+    is_image = False
+    if files is not None:
+        for file in files:
+            if file.filename.endswith('.pdf'):
+                text = extract_text_from_pdf(file)
+            elif file.filename.endswith('.csv'):
+                text = extract_text_from_csv(file)
+            elif file.filename.endswith('.txt'):
+                text = extract_text_from_txt(file)
+            elif file.filename.endswith(('png', 'jpg', 'jpeg', 'bmp')):
+                image = await extract_text_from_image(file)
+                is_image = True
+                
+            else:
+                raise Exception(f"Unsupported file format: {file.filename}. Please upload a PDF, CSV, or TXT file.")
+
+            all_texts.append(f"=== {file.filename} ===\n{text}")
+
+
+
+
+    # Gộp nội dung tất cả các file
+    combined_text = "\n\n".join(all_texts)
+
+
+
+    if combined_text is not None and is_image == False:           
+        llm_response = client.models.generate_content(model=os.getenv("GEMINI_MODEL"), 
+                                                    contents=f"{prompt}\n\nContext from uploaded file:\n{combined_text}")
+    elif combined_text == None and is_image == False:
+        llm_response = client.models.generate_content(model=os.getenv("GEMINI_MODEL"), 
+                                                    contents=f"{prompt}")
+    elif combined_text is not None and is_image == True:
+        print('Now is reading image-----------------------------------------------------------')
+        llm_response = client.models.generate_content(
+                    model=os.getenv("GEMINI_MODEL"),
+                    contents=[prompt,
+                            image])
+
+
+
+
+    end_time = time.time()  
+    print(f"Time taken: {end_time - start_time} seconds")
+    return {
+        "response": llm_response.text,
+        "text": text
+    }
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
