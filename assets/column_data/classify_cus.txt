@@ -1,0 +1,54 @@
+# Màn hình 2: Phân loại khách hàng
+
+
+
+# Thông tin chung 
+•	run_date: Ngày dữ liệu được xuất/tạo báo cáo.
+•	timeframe_start: Ngày bắt đầu của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_end: Ngày kết thúc của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_type: Xác định loại chu kỳ thời gian của dữ liệu (ví dụ: '7 ngày gần nhất', 'tháng này'). Quan trọng để xác định bối cảnh phân tích (ngắn hạn/ dài hạn).
+•	branch_id: Mã định danh duy nhất cho một chi nhánh cụ thể (Dùng để lọc hoặc hiển thị trong bảng "Chi tiết").
+
+
+# Nhóm khách hàng 
+# Số lượng khách hàng theo từng phân khúc RFM:
+•	loyal: Số lượng khách hàng thuộc phân khúc "Trung thành".
+•	promising: Số lượng khách hàng thuộc phân khúc "Thân thiết".
+•	explore: Số lượng khách hàng thuộc phân khúc "Tiềm năng".
+•	risk: Số lượng khách hàng thuộc phân khúc "Cần quan tâm".
+•	sleep: Số lượng khách hàng thuộc phân khúc "Sắp rời bỏ".
+#   Tỷ lệ phần trăm của từng phân khúc:
+•	loyal_proportion: Tỷ trọng (%) khách hàng "Trung thành".
+•	promising_proportion: Tỷ trọng (%) khách hàng "Thân thiết".
+•	explore_proportion: Tỷ trọng (%) khách hàng "Tiềm năng".
+•	risk_proportion: Tỷ trọng (%) khách hàng "Cần quan tâm".
+•	sleep_proportion: Tỷ trọng (%) khách hàng "Sắp rời bỏ".
+
+
+# Doanh thu (Biểu đồ cột theo phân khúc)
+•	revenue_loyal: Tổng doanh thu thuần đến từ nhóm khách hàng "Trung thành".
+•	revenue_promising: Tổng doanh thu thuần đến từ nhóm khách hàng "Thân thiết".
+•	revenue_explore: Tổng doanh thu thuần đến từ nhóm khách hàng "Tiềm năng".
+•	revenue_risk: Tổng doanh thu thuần đến từ nhóm khách hàng "Cần quan tâm".
+•	revenue_sleep: Tổng doanh thu thuần đến từ nhóm khách hàng "Sắp rời bỏ".
+
+
+# Trả hàng (Biểu đồ cột theo phân khúc)
+•	return_value_loyal: Tổng giá trị hàng bị trả lại bởi nhóm khách hàng "Trung thành".
+•	return_value_promising: Tổng giá trị hàng bị trả lại bởi nhóm khách hàng "Thân thiết".
+•	return_value_explore: Tổng giá trị hàng bị trả lại bởi nhóm khách hàng "Tiềm năng".
+•	return_value_risk: Tổng giá trị hàng bị trả lại bởi nhóm khách hàng "Cần quan tâm".
+•	return_value_sleep: Tổng giá trị hàng bị trả lại bởi nhóm khách hàng "Sắp rời bỏ".
+
+
+# Lợi nhuận gộp (Biểu đồ cột theo phân khúc)
+•	profit_loyal: Tổng lợi nhuận gộp đến từ nhóm khách hàng "Trung thành".
+•	profit_promising: Tổng lợi nhuận gộp đến từ nhóm khách hàng "Thân thiết".
+•	profit_explore: Tổng lợi nhuận gộp đến từ nhóm khách hàng "Tiềm năng".
+•	profit_risk: Tổng lợi nhuận gộp đến từ nhóm khách hàng "Cần quan tâm".
+•	profit_sleep: Tổng lợi nhuận gộp đến từ nhóm khách hàng "Sắp rời bỏ".
+
+
+# Kênh bán 
+# Biểu đồ hiển thị SỐ LƯỢNG khách theo từng KÊNH BÁN. -> phân tích kênh bán theo từng PHÂN KHÚC RFM.
+#   File mô tả không có cột thể hiện sự kết hợp này (ví dụ: số lượng khách Loyal mua qua kênh Online...). 

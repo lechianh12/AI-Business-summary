@@ -1,0 +1,54 @@
+#Màn hình 1: Tổng quan khách hàng
+
+# Thông tin chung 
+•	run_date: Ngày dữ liệu được xuất/tạo báo cáo.
+•	timeframe_start: Ngày bắt đầu của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_end: Ngày kết thúc của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_type: Xác định loại chu kỳ thời gian của dữ liệu (ví dụ: '7 ngày gần nhất', 'tháng này'). Quan trọng để xác định bối cảnh phân tích (ngắn hạn/ dài hạn).
+•	branch_id: Mã định danh duy nhất cho một chi nhánh cụ thể (Dùng để lọc hoặc hiển thị trong bảng "Chi tiết").
+
+
+# Tổng lượng khách (Biểu đồ tròn & Tỷ lệ %)
+•	new_customer: Số lượng khách hàng MỚI (có mã định danh và mua lần đầu trong kỳ).
+•	old_customer: Số lượng khách hàng CŨ (có mã định danh và đã từng mua trước kỳ này).
+•	unknown_customer: Số lượng khách hàng LẺ (không có mã định danh hoặc giao dịch không gắn với khách hàng cụ thể).
+#   -> Tính toán: Tổng khách hàng định danh = new_customer + old_customer + unknown_customer. Tính % cho từng loại trong biểu đồ.
+
+# Tổng doanh thu (Biểu đồ tròn & Tỷ lệ %)
+•	revenue_new_customer: Tổng doanh thu thuần đến từ nhóm khách hàng MỚI.
+•	revenue_old_customer: Tổng doanh thu thuần đến từ nhóm khách hàng CŨ.
+•	revenue_unknown_customer: Tổng doanh thu thuần đến từ nhóm khách hàng LẺ.
+#   -> Tính toán: Tổng doanh thu = revenue_new_customer + revenue_old_customer + revenue_unknown_customer. Tính % cho từng loại trong biểu đồ.
+
+# Lượng khách (Biểu đồ cột theo thời gian)
+# Lưu ý: Biểu đồ này yêu cầu dữ liệu SỐ LƯỢNG khách (Mới, Cũ, Lẻ) theo từng NGÀY trong kỳ. Cần dữ liệu giao dịch chi tiết hàng ngày.
+#   Các cột `new_customer`, `old_customer`, `unknown_customer` là TỔNG cho cả kỳ, không đủ để phân tích biểu đồ này. 
+
+# Doanh thu (Biểu đồ cột theo thời gian)
+# Tương tự như Lượng khách với các cột `revenue_new_customer`, `revenue_old_customer`, `revenue_unknown_customer`
+
+# Kênh bán (Biểu đồ cột)
+# Biểu đồ này yêu cầu dữ liệu SỐ LƯỢNG khách (Mới, Cũ, Lẻ) phân tách theo từng KÊNH BÁN (Trực tiếp, Online, Facebook...). -> File mô tả không có
+
+
+# Lượng khách theo (Biểu đồ động)
+#   - "Số đơn hàng": Cần dữ liệu số lượng đơn hàng của từng khách hàng để nhóm khách lại (ví dụ: bao nhiêu khách có X đơn, bao nhiêu khách có Y đơn).
+#   - "Mức chi tiêu TB": Cần tính AOV cho từng khách và nhóm khách theo khoảng AOV. Cột `evg_order_value` là AOV tổng, không đủ.
+#   - "Doanh thu": Cần tổng doanh thu của từng khách và nhóm khách theo khoảng doanh thu.
+
+
+
+# Xu hướng gắn bó / Tỷ lệ khách quay trở lại (Biểu đồ Gantt - Cohort)
+•	repurchase_rate: Cung cấp tỷ lệ tổng quan (nếu có).
+#   Biểu đồ yêu cầu dữ liệu giao dịch lịch sử của từng khách hàng (`customer_id` và ngày giao dịch) để xác định tháng mua đầu tiên và các tháng quay lại mua hàng. Cột `repurchase_rate` không đủ.
+
+
+# Chân dung khách hàng 
+#   Lưu ý: Toàn bộ phần này yêu cầu dữ liệu nhân khẩu học của khách hàng, không có trong danh sách cột gốc.
+#   - Độ tuổi: Cần cột chứa thông tin `tuổi` hoặc `nhóm tuổi` của khách hàng.
+#   - Giới tính: Cần cột chứa thông tin `giới tính` của khách hàng.
+
+
+# Tỉnh thành 
+#   Cần cột chứa thông tin `tỉnh thành` hoặc `địa chỉ` của khách hàng.
+#   -> Dữ liệu này cần được liên kết với khách hàng định danh (không áp dụng cho khách lẻ).

@@ -1,0 +1,171 @@
+import glob
+import json
+import os
+
+import pandas as pd
+
+
+def split_csv_by_retailer_id():
+
+    # Create retailer_data directory if it doesn't exist
+    os.makedirs("assets/retailer_data", exist_ok=True)
+
+    # Get all CSV files in merchant_data directory
+    csv_files = glob.glob("assets/merchant_data/*.csv")
+
+    for file_path in csv_files:
+        print(f"Processing: {file_path}")
+
+        # Read CSV file with specified encoding
+        try:
+            # Try with utf-8 first
+            df = pd.read_csv(file_path, encoding="utf-8")
+        except UnicodeDecodeError:
+            # If that fails, try with other common encodings
+            try:
+                df = pd.read_csv(file_path, encoding="latin1")
+            except Exception as e:
+                print(
+                    f"Error: Unable to read {file_path} with common encodings. {str(e)}. Skipping."
+                )
+                continue
+
+        # Check if retailer_id column exists
+        if "retailer_id" not in df.columns:
+            print(f"Warning: 'retailer_id' column not found in {file_path}. Skipping.")
+            continue
+
+        # Get unique retailer_ids
+        retailer_ids = df["retailer_id"].unique()
+
+        # For each unique retailer_id, create a new CSV file
+        for retailer_id in retailer_ids:
+            # Filter data for the current retailer_id
+            retailer_data = df[df["retailer_id"] == retailer_id]
+
+            # Create output filename
+            output_filename = f"assets/retailer_data/retailer_{retailer_id}.csv"
+
+            # Save to CSV with UTF-8 BOM encoding
+            retailer_data.to_csv(output_filename, index=False, encoding="utf-8-sig")
+            print(f"Created: {output_filename} with {len(retailer_data)} rows")
+
+    print("CSV splitting completed.")
+
+
+# Đọc file csv và encoding UTF-8 BOM
+def read_csv_content(file_content, encoding="utf-8-sig"):
+    try:
+        # Convert content to DataFrame
+        if isinstance(file_content, bytes):
+            df = pd.read_csv(pd.io.common.BytesIO(file_content), encoding=encoding)
+        else:
+            df = pd.read_csv(pd.io.common.StringIO(file_content), encoding=encoding)
+
+        return df
+    except Exception as e:
+        raise Exception(f"Lỗi khi đọc nội dung CSV: {str(e)}")
+
+
+def preprocess_csv_data(df):
+    """
+    Args:df
+    Returns: dict
+    """
+    # Basic data cleaning
+    try:
+        # Handle missing values for numerical columns
+        numeric_columns = df.select_dtypes(include=["number"]).columns
+        for col in numeric_columns:
+            df[col] = df[col].fillna(0)
+
+        # Handle missing values for non-numerical columns
+        non_numeric_columns = df.select_dtypes(exclude=["number"]).columns
+        for col in non_numeric_columns:
+            df[col] = df[col].fillna("")
+
+        # Process columns with list-like strings (convert string representations to actual lists)
+        for col in df.columns:
+            if df[col].dtype == "object":
+                # Check if column has list-like strings
+                sample = df[col].dropna().iloc[0] if not df[col].dropna().empty else ""
+                if (
+                    isinstance(sample, str)
+                    and sample.startswith("[")
+                    and sample.endswith("]")
+                ):
+                    try:
+                        df[col] = df[col].apply(
+                            lambda x: (
+                                json.loads(x) if isinstance(x, str) and x.strip() else x
+                            )
+                        )
+                    except Exception:  # If conversion fails, keep as is
+                        pass
+
+        # Create a clean CSV string representation
+        csv_text = df.to_csv(index=False)
+
+        # Add basic statistics for quick reference
+        stats = {
+            "row_count": len(df),
+            "column_count": len(df.columns),
+            "columns": list(df.columns),
+            "numeric_columns": list(numeric_columns),
+            "sample_rows": df.head(3).to_dict(orient="records"),
+        }
+
+        # If there's a date/time column, add time range info
+        date_columns = [
+            col for col in df.columns if "date" in col.lower() or "time" in col.lower()
+        ]
+        if date_columns:
+            for date_col in date_columns:
+                try:
+                    df[date_col] = pd.to_datetime(df[date_col])
+                    stats[f"{date_col}_range"] = {
+                        "min": df[date_col].min().strftime("%Y-%m-%d"),
+                        "max": df[date_col].max().strftime("%Y-%m-%d"),
+                    }
+                except Exception:
+                    pass
+
+        # Return processed data
+        return {"dataframe": df, "csv_text": csv_text, "stats": stats}
+
+    except Exception as e:
+        raise Exception(f"Lỗi khi xử lý dữ liệu CSV: {str(e)}")
+
+
+def save_column_names(df, output_path="assets/column_data/column_name.txt"):
+    try:
+        # Đảm bảo thư mục tồn tại
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+        # Tạo nội dung với gạch đầu dòng cho mỗi tên cột
+        column_names = [f"- {col}" for col in df.columns]
+        content = "\n".join(column_names)
+
+        # Ghi vào file
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        print(f"Đã lưu danh sách {len(df.columns)} tên cột vào {output_path}")
+    except Exception as e:
+        print(f"Lỗi khi lưu danh sách tên cột: {str(e)}")
+
+
+def process_csv_for_model(file_content, encoding="utf-8-sig"):
+    try:
+        # Đọc nội dung CSV thành DataFrame
+        df = read_csv_content(file_content, encoding)
+
+        # Xử lý dữ liệu
+        result = preprocess_csv_data(df)
+
+        # Lưu danh sách tên cột vào file
+        save_column_names(result["dataframe"])
+
+        return result
+    except Exception as e:
+        raise Exception(f"Error processing CSV: {str(e)}")

@@ -2,10 +2,6 @@ import csv
 import io
 
 import pandas as pd
-import PyPDF2
-from PIL import Image
-
-
 
 
 def extract_text_from_csv(file):
@@ -31,5 +27,3 @@ def extract_text_from_csv(file):
     text = df.to_csv(index=False)
 
     return text
-
-

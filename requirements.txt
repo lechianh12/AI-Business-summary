@@ -4,5 +4,9 @@ Pillow
 PyMuPDF
 fastapi
 uvicorn
-pydantic
+pyjwt
+python-multipart
+passlib[bcrypt]
 pandas
+streamlit
+requests
