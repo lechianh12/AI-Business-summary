@@ -1,0 +1,79 @@
+# Màn hình Tổng quan kinh doanh
+
+
+# Lưu ý:
+# - Các chỉ số "So với kỳ trước" yêu cầu dữ liệu tương ứng từ kỳ trước đó để so sánh.
+# - Biểu đồ đường "Chỉ số kinh doanh" yêu cầu dữ liệu tổng hợp theo từng ngày trong kỳ.
+# - Các bảng "Phân tích theo" yêu cầu dữ liệu được tổng hợp chi tiết theo từng Nhóm hàng, Hàng hóa, Nhóm khách hàng, Kênh bán, Nhân viên và có thể cần dữ liệu chi tiết hơn hoặc các cột bổ sung không có trong danh sách gốc.
+
+# Thông tin chung & Lọc
+•	run_date: Ngày chạy dữ liệu.
+•	timeframe_start: Ngày bắt đầu chu kỳ phân tích (Hiển thị: 01/03/2025).
+•	timeframe_end: Ngày kết thúc chu kỳ phân tích (Hiển thị: 31/03/2025).
+•	branch_id: Mã định danh chi nhánh (Dùng để lọc hoặc hiển thị trong bảng "Chi nhánh").
+
+# Các chỉ số tổng quan (KPI Cards - Hàng trên và hàng hai)
+•	num_invoice_sell: Tổng số hóa đơn bán trong kỳ (Hiển thị: 13).
+•	num_invoice_sell_per_day: Số hóa đơn bán trung bình/ngày (Hiển thị: 0.42).
+•	total_revenue: Tổng doanh thu trong kỳ (Hiển thị: ₫11.15 triệu).
+•	revenue_per_day: Doanh thu trung bình/ngày (Hiển thị: ₫359,741.94).
+•	total_return_revenue: Tổng giá trị trả hàng trong kỳ (Hiển thị: ₫331.98 nghìn).
+•	total_return_revenue_per_day: Giá trị trả hàng trung bình/ngày (Hiển thị: ₫10,709.10).
+•	net_revenue: Doanh thu thuần trong kỳ (Hiển thị: ₫10.82 triệu).
+•	net_revenue_per_day: Doanh thu thuần trung bình/ngày (Hiển thị: ₫349,032.84).
+•	total_cost: Tổng giá vốn hàng bán trong kỳ (Hiển thị: ₫5.31 triệu).
+•	total_cost_per_day: Tổng giá vốn trung bình/ngày (Hiển thị: ₫171,352.40).
+•	gross_profit: Lợi nhuận gộp trong kỳ (Hiển thị: ₫5.51 triệu).
+•	gross_profit_per_day: Lợi nhuận gộp trung bình/ngày (Hiển thị: ₫177,680.44).
+#   Lưu ý: Các chỉ số "So với kỳ trước" (%) yêu cầu dữ liệu của kỳ trước để tính toán.
+
+# Chỉ số kinh doanh (Biểu đồ đường)
+#   Lưu ý: Biểu đồ này yêu cầu dữ liệu tổng hợp theo TỪNG NGÀY cho các chỉ số:
+#   - Doanh thu (Cần `total_revenue` theo ngày)
+#   - Trả hàng (Cần `total_return_revenue` theo ngày)
+#   - Tổng giá vốn (Cần `total_cost` theo ngày)
+#   - Lợi nhuận gộp (Cần `gross_profit` theo ngày)
+#   Các cột `*_per_day` là trung bình cho cả kỳ, không phải dữ liệu hàng ngày.
+
+# Chi nhánh (Bảng)
+#   Lưu ý: Bảng này yêu cầu dữ liệu được tổng hợp theo từng `branch_id`.
+•	branch_id: Tên/Mã chi nhánh.
+•	total_revenue: Doanh thu của chi nhánh đó.
+•	total_return_revenue: Trả hàng của chi nhánh đó.
+•	net_revenue: Doanh thu thuần của chi nhánh đó.
+•	total_cost: Tổng giá vốn của chi nhánh đó.
+•	gross_profit: Lợi nhuận gộp của chi nhánh đó.
+
+# Phân tích theo (Các bảng Top 10 động)
+#   Lưu ý: Phần này rất phức tạp và yêu cầu dữ liệu được tổng hợp sâu hơn theo nhiều chiều.
+#   Các cột chung cần thiết cho các tab (tùy thuộc vào tab được chọn):
+•	total_revenue: Tổng doanh thu (cho tab Doanh thu).
+•	total_return_revenue: Tổng giá trị trả hàng (cho tab Trả hàng).
+•	net_revenue: Doanh thu thuần (cho tab Doanh thu thuần).
+•	gross_profit: Lợi nhuận gộp (cho tab Lợi nhuận gộp).
+•	num_invoice_sell: Số hóa đơn bán (cho tab Số hóa đơn và để tính TB/đơn).
+
+#   1. Top 10 Nhóm hàng:
+•	top_group_rev / top_group_profit / ... : Danh sách tên các nhóm hàng top/last.
+#      -> Yêu cầu dữ liệu chi tiết hơn: Giá trị metric (Doanh thu, Trả hàng,...) và Số hóa đơn (`num_invoice_sell`) TÍNH RIÊNG cho TỪNG NHÓM HÀNG trong danh sách + dữ liệu kỳ trước.
+
+#   2. Top 10 Hàng hóa:
+•	top_product_rev / top_product_profit / ... : Danh sách tên các sản phẩm top/last.
+#      -> Yêu cầu dữ liệu chi tiết hơn: Giá trị metric và Số hóa đơn TÍNH RIÊNG cho TỪNG SẢN PHẨM trong danh sách + dữ liệu kỳ trước.
+
+#   3. Top 10 Nhóm khách hàng:
+•	revenue_loyal / profit_promising / ... : Giá trị metric theo từng phân khúc khách hàng (Trung thành, Thân thiết...). Cần xác định cách xếp hạng (ví dụ: theo Doanh thu).
+•	loyal / promising / explore / risk / sleep: Số lượng khách trong từng phân khúc (dùng để xác định nhóm).
+#      -> Yêu cầu dữ liệu chi tiết hơn: Giá trị metric và Số hóa đơn TÍNH RIÊNG cho TỪNG NHÓM KHÁCH HÀNG (ví dụ: Khách thân thiết, Chưa xác định...) + dữ liệu kỳ trước.
+
+#   4. Top 10 Kênh bán:
+•	top_channel: Chỉ cho biết kênh TOP 1.
+•	net_revenue_top_channel: Doanh thu của kênh TOP 1.
+#      -> Yêu cầu dữ liệu chi tiết hơn: Danh sách xếp hạng TẤT CẢ các kênh bán và Giá trị metric + Số hóa đơn TÍNH RIÊNG cho TỪNG KÊNH BÁN + dữ liệu kỳ trước. Dữ liệu này có vẻ không đầy đủ trong `column_meaning_2.txt`.
+
+#   5. Top 10 Nhân viên:
+#      -> Yêu cầu dữ liệu hoàn toàn mới: Cần có chiều dữ liệu theo 'Nhân viên' (ví dụ: `employee_id`, `employee_name`) và các metric được tổng hợp theo từng nhân viên + dữ liệu kỳ trước. Dữ liệu này KHÔNG CÓ trong `column_meaning_2.txt`.
+
+#   Tính toán bổ sung trong các bảng Top 10:
+#   - "Doanh thu TB/đơn" (hoặc metric tương ứng): Cần Giá trị Metric / Số hóa đơn (`num_invoice_sell`) cho từng dòng trong bảng (nhóm hàng, sản phẩm, nhóm KH,...).
+#   - "So với kỳ trước": Cần dữ liệu của kỳ trước cho từng dòng trong bảng để tính %.

@@ -25,7 +25,7 @@ o	Dữ liệu Ngành: Chủ động tìm kiếm dữ liệu trung bình ngành F
 </Insights>
 <Rủi ro & bất thường>
 1.	[Mô tả rủi ro/bất thường 1 - Nêu bật tác động tiêu cực thực tế, dựa trên tương quan dữ liệu & so sánh (nếu có)]
-Hành động đề xuất: [Ưu tiên giải pháp CỤ THỂ, HÀNH ĐỘNG NGAY. Nếu không thể, hãy đề xuất bước đi đầu tiên, cụ thể nhất mà người dùng có thể thực hiện để phân tích hoặc giải quyết vấn đề. Giữ đề xuất này trong 1-2 dòng.
+Giải pháp đề xuất: [Ưu tiên giải pháp CỤ THỂ, HÀNH ĐỘNG NGAY. Nếu không thể, hãy đề xuất bước đi đầu tiên, cụ thể nhất mà người dùng có thể thực hiện để phân tích hoặc giải quyết vấn đề. Giữ đề xuất này trong 1-2 dòng.
 * Ví dụ hành động tốt: " Giảm 10% giá bán cho [Sản phẩm bán chậm nhất] trong tuần tới", "Trưng bày [Sản phẩm bán chậm] ra vị trí dễ thấy hơn", "Ngừng nhập hoặc giảm số lượng nhập [Sản phẩm bán chậm, lợi nhuận thấp]", "Xác minh ngay số liệu tồn kho thực tế của [Sản phẩm bán chậm]", "Tạo combo [Sản phẩm bán chạy] + [Sản phẩm bán chậm] với giá ưu đãi", "Kiểm tra hạn sử dụng của [Sản phẩm bán chậm]".
 * Lưu ý: Đối với lỗi dữ liệu rõ ràng (ví dụ: tồn kho không khớp, doanh thu bất thường), hành động "kiểm tra/xác minh ngay với sổ sách/hệ thống" là chấp nhận được.
 * Hạn chế dùng: các từ/cụm từ quá chung chung như "cần xem xét", "nên phân tích", "tìm hiểu thêm", "theo dõi sát sao", "đánh giá lại quy trình", "phân tích chi tiết".]
@@ -52,9 +52,11 @@ Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phâ
     # Xác định file chứa thông tin cột dựa trên loại màn hình
     column_file_path = None
     if screen_type == "product_overview":
-        column_file_path = "assets/column_data/overview_prod.txt"
+        column_file_path = "assets/column_definition/overview_prod.txt"
     elif screen_type == "customer_overview":
-        column_file_path = "assets/column_data/overview_cus.txt"
+        column_file_path = "assets/column_definition/overview_cus.txt"
+    elif screen_type == "business_overview":
+        column_file_path = "assets/column_definition/overview_bussiness.txt"
 
     if column_file_path and os.path.exists(column_file_path):
         # Đọc thông tin cột

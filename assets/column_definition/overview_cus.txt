@@ -1,4 +1,4 @@
-#Màn hình 1: Tổng quan khách hàng
+#Màn hình Tổng quan khách hàng
 
 # Thông tin chung 
 •	run_date: Ngày dữ liệu được xuất/tạo báo cáo.

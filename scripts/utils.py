@@ -10,7 +10,7 @@ def split_csv_by_retailer_id(input_path=None, output_dir=None):
 
     # Sử dụng giá trị mặc định nếu không được cung cấp
     if input_path is None:
-        input_path = "assets/merchant_data/*.csv"
+        input_path = "assets/Agg_data/*.csv"
 
     if output_dir is None:
         output_dir = "assets/retailer_data"
@@ -151,7 +151,7 @@ def preprocess_csv_data(df):
 
 
 # Lưu danh sách tên cột vào file
-def save_column_names(df, output_path="assets/column_data/column_name.txt"):
+def save_column_names(df, output_path="assets/column_definitions/column_name.txt"):
     try:
         # Đảm bảo thư mục tồn tại
         os.makedirs(os.path.dirname(output_path), exist_ok=True)

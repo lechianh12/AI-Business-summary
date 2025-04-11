@@ -1,4 +1,6 @@
-# Các cột cần thiết để phân tích Màn hình Tổng quan hàng hóa
+# Màn hình Tổng quan hàng hóa
+
+
 # Lưu ý: Các biểu đồ đường (trendline) trên KPI cards và chi tiết trong bảng Top 10 có thể yêu cầu dữ liệu chi tiết hơn (ví dụ: tổng hợp theo ngày hoặc theo từng sản phẩm/nhóm) mà có thể không có đầy đủ trong file dữ liệu tổng hợp dạng một dòng tóm tắt.
 
 # Thông tin chung & Lọc
