@@ -6,11 +6,12 @@
 # - Biểu đồ đường "Chỉ số kinh doanh" yêu cầu dữ liệu tổng hợp theo từng ngày trong kỳ.
 # - Các bảng "Phân tích theo" yêu cầu dữ liệu được tổng hợp chi tiết theo từng Nhóm hàng, Hàng hóa, Nhóm khách hàng, Kênh bán, Nhân viên và có thể cần dữ liệu chi tiết hơn hoặc các cột bổ sung không có trong danh sách gốc.
 
-# Thông tin chung & Lọc
-•	run_date: Ngày chạy dữ liệu.
-•	timeframe_start: Ngày bắt đầu chu kỳ phân tích (Hiển thị: 01/03/2025).
-•	timeframe_end: Ngày kết thúc chu kỳ phân tích (Hiển thị: 31/03/2025).
-•	branch_id: Mã định danh chi nhánh (Dùng để lọc hoặc hiển thị trong bảng "Chi nhánh").
+# Thông tin chung 
+•	run_date: Ngày dữ liệu được xuất/tạo báo cáo.
+•	timeframe_start: Ngày bắt đầu của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_end: Ngày kết thúc của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
+•	timeframe_type: Xác định loại chu kỳ thời gian của dữ liệu (ví dụ: '7 ngày gần nhất', 'tháng này'). Quan trọng để xác định bối cảnh phân tích (ngắn hạn/ dài hạn).
+•	branch_id: Mã định danh duy nhất cho một chi nhánh cụ thể (Dùng để lọc hoặc hiển thị trong bảng "Chi tiết").
 
 # Các chỉ số tổng quan (KPI Cards - Hàng trên và hàng hai)
 •	num_invoice_sell: Tổng số hóa đơn bán trong kỳ (Hiển thị: 13).

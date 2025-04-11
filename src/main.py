@@ -23,7 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Đăng ký router
+
 app.include_router(router, prefix="/api")
 
 if __name__ == "__main__":
