@@ -10,3 +10,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL_NAME = "gemini-2.0-flash-thinking-exp-01-21"
 # gemini-2.0-flash-thinking-exp-01-21
 # gemini-2.0-flash
+
+# Thư mục dữ liệu
+RETAILER_DATA_DIR = "assets/retailer_data"
+COLUMN_DATA_DIR = "assets/column_data"

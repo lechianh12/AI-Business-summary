@@ -1,0 +1,50 @@
+# Các cột cần thiết để phân tích Màn hình Tổng quan hàng hóa
+# Lưu ý: Các biểu đồ đường (trendline) trên KPI cards và chi tiết trong bảng Top 10 có thể yêu cầu dữ liệu chi tiết hơn (ví dụ: tổng hợp theo ngày hoặc theo từng sản phẩm/nhóm) mà có thể không có đầy đủ trong file dữ liệu tổng hợp dạng một dòng tóm tắt.
+
+# Thông tin chung & Lọc
+•	run_date: Ngày chạy dữ liệu.
+•	timeframe_start: Ngày bắt đầu chu kỳ phân tích (Hiển thị: 01/03/2025).
+•	timeframe_end: Ngày kết thúc chu kỳ phân tích (Hiển thị: 31/03/2025).
+•	branch_id: Mã định danh chi nhánh (Dùng để lọc nếu cần xem theo chi nhánh).
+
+# Các chỉ số tổng quan (KPI Cards - Hàng trên cùng)
+•	num_product_master_id_sell: Số lượng mã hàng (SKU) khác nhau đã bán (Hiển thị: 22 - Số mặt hàng đã bán). (Trendline yêu cầu dữ liệu theo thời gian).
+•	total_quantity: Tổng số lượng sản phẩm thực tế đã bán (Hiển thị: 145 - Số lượng thực bán). (Trendline yêu cầu dữ liệu theo thời gian).
+•	avg_net_revenue: Doanh thu thuần trung bình trên mỗi sản phẩm bán ra (Hiển thị: ₫74.62 nghìn - Doanh thu thuần TB/SP). (Trendline yêu cầu dữ liệu theo thời gian).
+•	avg_profit: Lợi nhuận gộp trung bình trên mỗi sản phẩm bán ra (Hiển thị: ₫37.99 nghìn - Lợi nhuận gộp TB/SP). (Trendline yêu cầu dữ liệu theo thời gian).
+
+# Top 10 Nhóm hàng
+#   -> Danh sách nhóm hàng (Tên):
+•	top_group_quantity: Danh sách Top 10 nhóm hàng bán chạy nhất theo SỐ LƯỢNG.
+•	top_group_rev: Danh sách Top 10 nhóm hàng đóng góp DOANH THU THUẦN cao nhất.
+•	top_group_profit: Danh sách Top 10 nhóm hàng mang lại LỢI NHUẬN GỘP cao nhất.
+•	last_group_quantity: Danh sách Top 10 nhóm hàng bán chậm nhất theo SỐ LƯỢNG.
+•	last_group_rev: Danh sách Top 10 nhóm hàng có DOANH THU THUẦN thấp nhất.
+•	last_group_profit: Danh sách Top 10 nhóm hàng có LỢI NHUẬN GỘP thấp nhất.
+#   -> Chi tiết cho từng nhóm hàng trong bảng (Yêu cầu dữ liệu tổng hợp theo từng nhóm hàng):
+#      - Tên nhóm hàng (Từ các cột top/last_group_... ở trên)
+#      - Số lượng bán (Cần dữ liệu số lượng bán theo từng nhóm)
+#      - Số lượng trả (Cần dữ liệu số lượng trả theo từng nhóm)
+#      - Doanh thu thuần (Cần dữ liệu net_revenue theo từng nhóm)
+#      - Lợi nhuận gộp (Cần dữ liệu gross_profit theo từng nhóm)
+
+# Top 10 Hàng hóa
+#   -> Danh sách hàng hóa (Tên):
+•	top_product_quantity: Danh sách Top 10 sản phẩm bán chạy nhất theo SỐ LƯỢNG.
+•	top_product_rev: Danh sách Top 10 sản phẩm đóng góp DOANH THU THUẦN cao nhất.
+•	top_product_profit: Danh sách Top 10 sản phẩm mang lại LỢI NHUẬN GỘP cao nhất.
+•	last_product_quantity: Danh sách Top 10 sản phẩm bán chậm nhất theo SỐ LƯỢNG.
+•	last_product_rev: Danh sách Top 10 sản phẩm có DOANH THU THUẦN thấp nhất.
+•	last_product_profit: Danh sách Top 10 sản phẩm có LỢI NHUẬN GỘP thấp nhất.
+#   -> Chi tiết cho từng sản phẩm trong bảng (Yêu cầu dữ liệu tổng hợp theo từng sản phẩm):
+#      - Tên hàng hóa (Từ các cột top/last_product_... ở trên)
+#      - Số lượng bán (Cần dữ liệu số lượng bán theo từng sản phẩm)
+#      - Số lượng trả (Cần dữ liệu số lượng trả theo từng sản phẩm)
+#      - Doanh thu thuần (Cần dữ liệu net_revenue theo từng sản phẩm)
+#      - Lợi nhuận gộp (Cần dữ liệu gross_profit theo từng sản phẩm)
+
+# Các cột hỗ trợ tính toán (Có thể cần cho việc lấy chi tiết bảng Top 10 nếu dữ liệu được cấu trúc chi tiết hơn)
+•	net_revenue: Tổng doanh thu thuần toàn cửa hàng (Dùng để tham chiếu).
+•	gross_profit: Tổng lợi nhuận gộp toàn cửa hàng (Dùng để tham chiếu).
+•	num_product_master_id_return: Số lượng mã hàng bị hoàn trả (Liên quan đến cột "Số lượng trả").
+•	total_return_revenue: Tổng giá trị hàng trả (Liên quan đến cột "Số lượng trả" và tính toán).

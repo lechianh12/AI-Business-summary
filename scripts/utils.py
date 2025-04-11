@@ -181,3 +181,88 @@ def process_csv_for_model(file_content, encoding="utf-8-sig"):
         return result
     except Exception as e:
         raise Exception(f"Error processing CSV: {str(e)}")
+
+
+def get_columns_for_screen(screen_type):
+    """
+    Lấy danh sách các cột cần thiết dựa trên loại màn hình.
+
+    Args:
+        screen_type (str): Loại màn hình ('product_overview' hoặc 'customer_overview').
+
+    Returns:
+        list: Danh sách tên cột cần lấy.
+    """
+    columns = []
+
+    file_path = None
+    if screen_type == "product_overview":
+        file_path = "assets/column_data/overview_prod.txt"
+    elif screen_type == "customer_overview":
+        file_path = "assets/column_data/overview_cus.txt"
+
+    if file_path and os.path.exists(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                lines = file.readlines()
+
+            for line in lines:
+                line = line.strip()
+                # Bỏ qua dòng trống hoặc dòng comment
+                if not line or line.startswith("#"):
+                    continue
+
+                # Tách lấy tên cột (phần trước dấu :)
+                if "•" in line:
+                    parts = line.split(":", 1)
+                    col_part = parts[0].strip()
+                    # Loại bỏ ký tự bullet (•) và khoảng trắng
+                    col_name = col_part.replace("•", "").strip()
+                    columns.append(col_name)
+        except Exception as e:
+            print(f"Lỗi khi đọc file {file_path}: {str(e)}")
+
+    return columns
+
+
+def process_csv_for_screen(processed_data, column_list):
+    """
+    Lọc DataFrame để chỉ giữ các cột được chỉ định.
+
+    Args:
+        processed_data (dict): Dữ liệu đã được xử lý từ hàm preprocess_csv_data.
+        column_list (list): Danh sách các cột cần giữ lại.
+
+    Returns:
+        dict: Dữ liệu mới với chỉ các cột đã chọn.
+    """
+    df = processed_data["dataframe"]
+
+    # Lọc các cột tồn tại trong DataFrame
+    valid_columns = [col for col in column_list if col in df.columns]
+
+    if valid_columns:
+        filtered_df = df[valid_columns]
+
+        # Tạo CSV text mới
+        filtered_csv_text = filtered_df.to_csv(index=False)
+
+        # Cập nhật thống kê
+        filtered_stats = {
+            "row_count": len(filtered_df),
+            "column_count": len(filtered_df.columns),
+            "columns": list(filtered_df.columns),
+            "numeric_columns": list(
+                filtered_df.select_dtypes(include=["number"]).columns
+            ),
+            "sample_rows": filtered_df.head(3).to_dict(orient="records"),
+        }
+
+        return {
+            "dataframe": filtered_df,
+            "csv_text": filtered_csv_text,
+            "stats": filtered_stats,
+        }
+    else:
+        # Trả về dữ liệu gốc nếu không có cột nào hợp lệ
+        return processed_data
