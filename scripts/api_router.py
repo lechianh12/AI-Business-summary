@@ -8,6 +8,7 @@ from scripts.config import API_KEY, MODEL_NAME
 from scripts.prompt import generate_retail_system_prompt
 from scripts.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 from scripts.utils import (
+    filter_by_timeframe,
     get_columns_for_screen,
     preprocess_csv_data,
     process_csv_for_screen,
@@ -24,8 +25,8 @@ genai.configure(api_key=API_KEY)
 @router.get("/response", response_class=PlainTextResponse)
 async def response(
     retailer_id: str = Query(..., enum=list(RETAILER_OPTIONS.keys())),
-    time_period: str = Query(..., enum=list(TIME_PERIOD_OPTIONS.keys())),
     screen: str = Query(..., enum=list(SCREEN_OPTIONS.keys())),
+    time_period: str = Query(..., enum=list(TIME_PERIOD_OPTIONS.keys())),
 ):
     try:
         # Xác định file CSV tương ứng với retailer_id
@@ -51,11 +52,21 @@ async def response(
         try:
             df = read_csv_content(file_content)
 
-            # Tiền xử lý dữ liệu
-            processed_data = preprocess_csv_data(df)
-
-            # Lấy giá trị screen_value từ key đã chọn
+            # Lấy giá trị time_period và screen_value từ key đã chọn
+            time_period_value = TIME_PERIOD_OPTIONS[time_period]
             screen_value = SCREEN_OPTIONS[screen]
+
+            # Lọc dữ liệu dựa trên timeframe_type
+            try:
+                filtered_by_time_df = filter_by_timeframe(df, time_period_value)
+
+                # Tiền xử lý dữ liệu đã được lọc theo thời gian
+                processed_data = preprocess_csv_data(filtered_by_time_df)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Lỗi khi lọc dữ liệu theo thời gian: {str(e)}",
+                )
 
             # Xử lý dữ liệu dựa trên lựa chọn màn hình
             columns_data = get_columns_for_screen(screen_value)
@@ -69,7 +80,7 @@ async def response(
             )
 
         # Sử dụng trực tiếp time_period text từ người dùng chọn
-        user_input = f"Hãy phân tích cho tôi tình hình kinh doanh trong {time_period} của cửa hàng"
+        user_input = f"Hãy phân tích cho tôi tình hình kinh doanh trong {time_period} của cửa hàng, chú ý các chỉ số tăng giảm so với kỳ trước nếu có."
 
         # Kết hợp system prompt và nội dung vào một chuỗi
         system_prompt = generate_retail_system_prompt(screen_value)

@@ -292,3 +292,37 @@ def extract_column_definitions(column_content):
             column_definitions.append(line)
 
     return "\n".join(column_definitions)
+
+
+def filter_by_timeframe(df, time_period):
+    """
+    Lọc dữ liệu dựa vào timeframe_type theo time_period được chọn.
+
+    Args:
+        df (pandas.DataFrame): DataFrame gốc
+        time_period (str): Loại thời gian (month_current, days_7, days_30)
+
+    Returns:
+        pandas.DataFrame: DataFrame đã lọc chỉ chứa dữ liệu liên quan đến time_period
+    """
+    if "timeframe_type" not in df.columns:
+        raise Exception("DataFrame không có cột timeframe_type để lọc theo thời gian")
+
+    # Xác định từ khóa tìm kiếm dựa trên time_period
+    filter_keyword = ""
+    if time_period == "month_current":
+        filter_keyword = "tháng"
+    elif time_period == "days_7":
+        filter_keyword = "7 ngày"
+    elif time_period == "days_30":
+        filter_keyword = "30 ngày"
+    else:
+        raise Exception(f"Loại thời gian không được hỗ trợ: {time_period}")
+
+    # Lọc dữ liệu chỉ giữ các hàng có timeframe_type chứa từ khóa phù hợp
+    filtered_df = df[df["timeframe_type"].str.contains(filter_keyword, case=False)]
+
+    if filtered_df.empty:
+        raise Exception(f"Không tìm thấy dữ liệu phù hợp với từ khóa: {filter_keyword}")
+
+    return filtered_df
