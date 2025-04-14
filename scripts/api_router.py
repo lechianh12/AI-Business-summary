@@ -1,4 +1,5 @@
 import os
+import time
 
 import google.generativeai as genai
 from fastapi import APIRouter, HTTPException, Query
@@ -8,6 +9,7 @@ from scripts.config import API_KEY, MODEL_NAME
 from scripts.prompt import generate_retail_system_prompt
 from scripts.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 from scripts.utils import (
+    print_response_time,
     filter_by_timeframe,
     get_columns_for_screen,
     preprocess_csv_data,
@@ -22,12 +24,18 @@ router = APIRouter()
 genai.configure(api_key=API_KEY)
 
 
+
+
+
 @router.get("/response", response_class=PlainTextResponse)
 async def response(
     retailer_id: str = Query(..., enum=list(RETAILER_OPTIONS.keys())),
     screen: str = Query(..., enum=list(SCREEN_OPTIONS.keys())),
     time_period: str = Query(..., enum=list(TIME_PERIOD_OPTIONS.keys())),
 ):
+    # Lưu thời gian bắt đầu xử lý request
+    start_time_total = time.time()
+
     try:
         # Xác định file CSV tương ứng với retailer_id
         if retailer_id not in RETAILER_OPTIONS:
@@ -50,6 +58,8 @@ async def response(
 
         # Đọc file CSV thành DataFrame
         try:
+
+
             df = read_csv_content(file_content)
 
             # Lấy giá trị time_period và screen_value từ key đã chọn
@@ -74,6 +84,7 @@ async def response(
 
             # Lấy text CSV đã được xử lý
             csv_text = filtered_data["csv_text"]
+
         except Exception as e:
             raise HTTPException(
                 status_code=400, detail=f"Lỗi khi xử lý file CSV: {str(e)}"
@@ -89,10 +100,22 @@ async def response(
         )
         with open("tests/test_output.txt", "w", encoding="utf-8-sig") as f:
             f.write(full_prompt)
+
+        # Bắt đầu đo thời gian phản hồi của model
+        start_time_model = time.time()
+
         model = genai.GenerativeModel(MODEL_NAME)
         response = model.generate_content(
             contents=full_prompt,
         )
+
+        # Kết thúc đo thời gian phản hồi của model
+        end_time_model = time.time()
+        print_response_time("Model phản hồi", start_time_model, end_time_model)
+
+        # Kết thúc đo thời gian tổng cộng
+        end_time_total = time.time()
+        print_response_time("Response time:", start_time_total, end_time_total)
 
         # Trả về phản hồi của mô hình dạng text
         return response.text

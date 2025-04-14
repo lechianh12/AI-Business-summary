@@ -83,19 +83,22 @@ def read_csv_content(file_content, encoding="utf-8-sig"):
 def preprocess_csv_data(df):
     """
     Args:df
-    Returns: dict
+    Returns: dict chứa df
     """
+    # Tạo bản sao để tránh cảnh báo SettingWithCopyWarning
+    df = df.copy()
+
     # Basic data cleaning
     try:
         # Handle missing values for numerical columns
         numeric_columns = df.select_dtypes(include=["number"]).columns
         for col in numeric_columns:
-            df[col] = df[col].fillna(0)
+            df.loc[:, col] = df[col].fillna(0)
 
         # Handle missing values for non-numerical columns
         non_numeric_columns = df.select_dtypes(exclude=["number"]).columns
         for col in non_numeric_columns:
-            df[col] = df[col].fillna("")
+            df.loc[:, col] = df[col].fillna("")
 
         # Process columns with list-like strings (convert string representations to actual lists)
         for col in df.columns:
@@ -108,7 +111,7 @@ def preprocess_csv_data(df):
                     and sample.endswith("]")
                 ):
                     try:
-                        df[col] = df[col].apply(
+                        df.loc[:, col] = df[col].apply(
                             lambda x: (
                                 json.loads(x) if isinstance(x, str) and x.strip() else x
                             )
@@ -132,14 +135,19 @@ def preprocess_csv_data(df):
         date_columns = [
             col for col in df.columns if "date" in col.lower() or "time" in col.lower()
         ]
+        # fix lỗi SettingWithCopyWarning
         if date_columns:
             for date_col in date_columns:
                 try:
-                    df[date_col] = pd.to_datetime(df[date_col])
-                    stats[f"{date_col}_range"] = {
-                        "min": df[date_col].min().strftime("%Y-%m-%d"),
-                        "max": df[date_col].max().strftime("%Y-%m-%d"),
-                    }
+                    # Chỉ định định dạng cụ thể nếu biết
+                    df.loc[:, date_col] = pd.to_datetime(df[date_col], errors="coerce")
+
+                    # Kiểm tra xem chuyển đổi có thành công không trước khi lấy min, max
+                    if not df[date_col].isna().all():
+                        stats[f"{date_col}_range"] = {
+                            "min": df[date_col].min().strftime("%Y-%m-%d"),
+                            "max": df[date_col].max().strftime("%Y-%m-%d"),
+                        }
                 except Exception:
                     pass
 
@@ -244,7 +252,8 @@ def process_csv_for_screen(processed_data, column_list):
     valid_columns = [col for col in column_list if col in df.columns]
 
     if valid_columns:
-        filtered_df = df[valid_columns]
+        # Sử dụng loc để tạo một bản sao mới của DataFrame với các cột đã chọn
+        filtered_df = df.loc[:, valid_columns].copy()
 
         # Tạo CSV text mới
         filtered_csv_text = filtered_df.to_csv(index=False)
@@ -296,14 +305,12 @@ def extract_column_definitions(column_content):
 
 def filter_by_timeframe(df, time_period):
     """
-    Lọc dữ liệu dựa vào timeframe_type theo time_period được chọn.
-
+    Lọc dữ liệu dựa vào timeframe_type
     Args:
-        df (pandas.DataFrame): DataFrame gốc
-        time_period (str): Loại thời gian (month_current, days_7, days_30)
-
+        df : raw
+        time_period (str)
     Returns:
-        pandas.DataFrame: DataFrame đã lọc chỉ chứa dữ liệu liên quan đến time_period
+        DataFrame đã lọc chỉ chứa dữ liệu liên quan đến time_period
     """
     if "timeframe_type" not in df.columns:
         raise Exception("DataFrame không có cột timeframe_type để lọc theo thời gian")
@@ -319,10 +326,26 @@ def filter_by_timeframe(df, time_period):
     else:
         raise Exception(f"Loại thời gian không được hỗ trợ: {time_period}")
 
-    # Lọc dữ liệu chỉ giữ các hàng có timeframe_type chứa từ khóa phù hợp
-    filtered_df = df[df["timeframe_type"].str.contains(filter_keyword, case=False)]
+    # Lọc dữ liệu chỉ giữ các hàng có timeframe_type chứa từ khóa phù hợp, và tạo bản sao
+    # fix lỗi SettingWithCopyWarning
+    filtered_df = df[
+        df["timeframe_type"].str.contains(filter_keyword, case=False)
+    ].copy()
 
     if filtered_df.empty:
         raise Exception(f"Không tìm thấy dữ liệu phù hợp với từ khóa: {filter_keyword}")
 
     return filtered_df
+
+
+def print_response_time(func_name, start_time, end_time):
+    """
+    In ra thời gian phản hồi của một hàm.
+
+    Args:
+        func_name (str): Tên hàm/quá trình được đo
+        start_time (float): Thời gian bắt đầu
+        end_time (float): Thời gian kết thúc
+    """
+    elapsed_time = end_time - start_time
+    print(f"{func_name} thực hiện trong: {elapsed_time:.2f} giây")
