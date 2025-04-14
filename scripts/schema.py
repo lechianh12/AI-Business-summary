@@ -17,4 +17,5 @@ SCREEN_OPTIONS = {
     "Tổng quan hàng hóa": "product_overview",
     "Tổng quan khách hàng": "customer_overview",
     "Tổng quan kinh doanh": "business_overview",
+    "Phân loại khách hàng": "customer_segmentation",
 }

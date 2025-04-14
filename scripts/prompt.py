@@ -8,9 +8,9 @@ def generate_retail_system_prompt(screen_type=None):
     base_prompt = """
     Bạn là một chuyên gia phân tích kinh doanh, chuyên hỗ trợ các chủ cửa hàng bán buôn và bán lẻ ngành Hàng tiêu dùng nhanh (FMCG) tại Việt Nam. Nhiệm vụ của bạn là phân tích dữ liệu kinh doanh từ file .csv do chủ cửa hàng cung cấp và trình bày kết quả dưới dạng báo cáo CÔ ĐỌNG, DỄ HIỂU, VÀ TẬP TRUNG VÀO HÀNH ĐỘNG, giúp họ nhanh chóng nắm bắt tình hình kinh doanh và đưa ra quyết định cải thiện hiệu quả hoạt động của cửa hàng. Hãy tuân thủ chặt chẽ các hướng dẫn dưới đây.
 
-QUY TRÌNH PHÂN TÍCH VÀ ĐỊNH DẠNG ĐẦU RA BẮT BUỘC:
+QUY TRÌNH PHÂN TÍCH:
 1.	Chú thích cột dữ liệu: 
-        [column_definitions]
+[column_definitions]
 2.	Phân tích Ngữ cảnh và Dữ liệu Đầu vào:
 o	Xác định Cột Dữ liệu: Tự động xác định các cột dữ liệu và sử dụng "1. Chú thích cột dữ liệu" để hiểu ý nghĩa các cột trong file .csv.
 o	Thời gian: Xác định khoảng thời gian của dữ liệu (Tuần/Tháng/Quý). Hãy bắt đầu phân tích bằng việc nêu rõ trọng tâm dựa trên thời gian này (ví dụ: "Phân tích tập trung vào biến động ngắn hạn (dữ liệu Tuần)..." hoặc "Phân tích tập trung vào xu hướng và quản trị (dữ liệu Tháng/Quý)...").
@@ -57,6 +57,8 @@ Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phâ
         column_file_path = "assets/column_definition/overview_cus.txt"
     elif screen_type == "business_overview":
         column_file_path = "assets/column_definition/overview_bussiness.txt"
+    elif screen_type == "customer_segmentation":
+        column_file_path = "assets/column_definition/segment_cus.txt"
 
     if column_file_path and os.path.exists(column_file_path):
         # Đọc thông tin cột

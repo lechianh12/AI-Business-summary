@@ -282,7 +282,7 @@ def read_column_data(column_file_path):
 
 
 def extract_column_definitions(column_content):
-    """Trích xuất định nghĩa cột từ nội dung file, bỏ qua phần comment."""
+    """Trích xuất định nghĩa cột từ nội dung file, bỏ qua phần comment(#)."""
     lines = column_content.split("\n")
     column_definitions = []
 

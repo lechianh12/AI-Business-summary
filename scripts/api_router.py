@@ -76,7 +76,8 @@ async def response(
         full_prompt = (
             f"{system_prompt}\n\nDữ liệu CSV:\n{csv_text}\n\nUser Input: {user_input}"
         )
-
+        with open("tests/test_output.txt", "w", encoding="utf-8-sig") as f:
+            f.write(full_prompt)
         model = genai.GenerativeModel(MODEL_NAME)
         response = model.generate_content(
             contents=full_prompt,
