@@ -25,8 +25,6 @@ genai.configure(api_key=API_KEY)
 
 
 
-
-
 @router.get("/response", response_class=PlainTextResponse)
 async def response(
     retailer_id: str = Query(..., enum=list(RETAILER_OPTIONS.keys())),
