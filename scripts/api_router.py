@@ -15,6 +15,7 @@ from scripts.utils import (
     preprocess_csv_data,
     process_csv_for_screen,
     read_csv_content,
+    validate_data,
 )
 
 # Tạo router API
@@ -59,6 +60,13 @@ async def response(
 
 
             df = read_csv_content(file_content)
+
+            bool_check = validate_data(df)
+            if not bool_check:
+                raise HTTPException(
+                    status_code=400, detail=f"Dữ liệu tính sai"
+                )
+            print("Dữ liệu tính đúng")
 
             # Lấy giá trị time_period và screen_value từ key đã chọn
             time_period_value = TIME_PERIOD_OPTIONS[time_period]

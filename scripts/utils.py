@@ -349,3 +349,62 @@ def print_response_time(func_name, start_time, end_time):
     """
     elapsed_time = end_time - start_time
     print(f"{func_name} thực hiện trong: {elapsed_time:.2f} giây")
+
+def validate_data(df):
+    # Tạo bản sao để tránh cảnh báo SettingWithCopyWarning
+    df = df.copy()
+
+    bool_check = False
+    bool_1 = True
+    bool_2 = True
+    bool_3 = True
+
+    save_i = 0
+    save_i_2 = 0
+    save_i_3 = 0
+    # Phep tru
+    col = ['total_revenue', 'net_revenue' ]
+    col_minus = ['total_return_revenue', 'total_cost']
+    results = ['net_revenue', "gross_profit"]
+
+    # Phep nhan
+    col_2 = ['net_revenue', 'gross_profit', 'total_revenue', 'loyal', 'promising', 'explore', 'risk', 'sleep']
+    col_divide = ['total_quantity', 'total_quantity', 'num_invoice_return', 'total_custmer', 'total_custmer', 'total_custmer','total_custmer', 'total_custmer']
+    results_2 = ['avg_net_revenue', "avg_profit", 'evg_order_value','loyal_proportion', 'promising_proportion', 'explore_proportion', 'risk_proportion', 'sleep_proportion']
+
+    #Phep cong
+    col3 = ['old_customer']
+    col_plus = ['revenue_new_customer']
+    col_plus_2 = ['unknown_customer']
+    results_3 = ['total_custmer']
+
+    for i in range(len(col)):
+        if df[col[i]] - df[col_minus[i]] != df[results[i]]:
+            bool_1 = False
+            save_i = i
+
+    # Thêm dung sai cho phép chia để xử lý làm tròn số
+    tolerance = 0.2  # Có thể điều chỉnh dung sai này
+    for i in range(len(col_2)):
+        calculated = df[col_2[i]] / df[col_divide[i]]
+        difference = abs(calculated - df[results_2[i]])
+        if difference.max() > tolerance:  # Kiểm tra sai số lớn nhất
+            bool_2 = False
+            save_i_2 = i
+
+    for i in range(len(col3)):
+        if df[col3[i]] + df[col_plus[i]] + df[col_plus_2[i]] != df[results_3[i]]:
+            bool_3 = False
+            save_i_3 = i
+
+    if not bool_1:
+        print("Dữ liệu tính sai ở cột: " + df[col[save_i]] + " và " + df[col_minus[save_i]] + " và " + df[results[save_i]])
+    if not bool_2:
+        print("Dữ liệu tính sai ở cột: " + df[col_2[save_i_2]] + " và " + df[col_divide[save_i_2]] + " và " + df[results_2[save_i_2]])
+    if not bool_3:
+        print("Dữ liệu tính sai ở cột: " + df[col3[save_i_3]] + " và " + df[col_plus[save_i_3]] + " và " + df[col_plus_2[save_i_3]] + " và " + df[results_3[save_i_3]])
+
+    if bool_1 and bool_2 and bool_3:
+        bool_check = True
+
+    return bool_check
