@@ -9,12 +9,13 @@ from scripts.config import API_KEY, MODEL_NAME
 from scripts.prompt import generate_retail_system_prompt
 from scripts.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 from scripts.utils import (
-    print_response_time,
     filter_by_timeframe,
     get_columns_for_screen,
     preprocess_csv_data,
+    print_response_time,
     process_csv_for_screen,
     read_csv_content,
+    set_null_values_for_previous_periods,
     validate_data,
 )
 
@@ -23,7 +24,6 @@ router = APIRouter()
 
 # Cấu hình Google Generative AI
 genai.configure(api_key=API_KEY)
-
 
 
 @router.get("/response", response_class=PlainTextResponse)
@@ -58,14 +58,11 @@ async def response(
         # Đọc file CSV thành DataFrame
         try:
 
-
             df = read_csv_content(file_content)
 
             bool_check = validate_data(df)
             if not bool_check:
-                raise HTTPException(
-                    status_code=400, detail=f"Dữ liệu tính sai"
-                )
+                raise HTTPException(status_code=400, detail="Dữ liệu tính sai")
             print("Dữ liệu tính đúng")
 
             # Lấy giá trị time_period và screen_value từ key đã chọn
@@ -75,6 +72,11 @@ async def response(
             # Lọc dữ liệu dựa trên timeframe_type
             try:
                 filtered_by_time_df = filter_by_timeframe(df, time_period_value)
+
+                # Set giá trị null cho các cột chỉ định của dữ liệu kỳ trước
+                filtered_by_time_df = set_null_values_for_previous_periods(
+                    filtered_by_time_df
+                )
 
                 # Tiền xử lý dữ liệu đã được lọc theo thời gian
                 processed_data = preprocess_csv_data(filtered_by_time_df)

@@ -3,7 +3,7 @@ import json
 import os
 
 import pandas as pd
-
+from config import COLUMNS_TO_SET_NULL
 
 # Chia file tổng hợp thành nhiều file theo retailer_id
 def split_csv_by_retailer_id(input_path=None, output_dir=None):
@@ -350,6 +350,7 @@ def print_response_time(func_name, start_time, end_time):
     elapsed_time = end_time - start_time
     print(f"{func_name} thực hiện trong: {elapsed_time:.2f} giây")
 
+
 def validate_data(df):
     # Tạo bản sao để tránh cảnh báo SettingWithCopyWarning
     df = df.copy()
@@ -363,20 +364,47 @@ def validate_data(df):
     save_i_2 = 0
     save_i_3 = 0
     # Phep tru
-    col = ['total_revenue', 'net_revenue' ]
-    col_minus = ['total_return_revenue', 'total_cost']
-    results = ['net_revenue', "gross_profit"]
+    col = ["total_revenue", "net_revenue"]
+    col_minus = ["total_return_revenue", "total_cost"]
+    results = ["net_revenue", "gross_profit"]
 
     # Phep nhan
-    col_2 = ['net_revenue', 'gross_profit', 'total_revenue', 'loyal', 'promising', 'explore', 'risk', 'sleep']
-    col_divide = ['total_quantity', 'total_quantity', 'num_invoice_return', 'total_custmer', 'total_custmer', 'total_custmer','total_custmer', 'total_custmer']
-    results_2 = ['avg_net_revenue', "avg_profit", 'evg_order_value','loyal_proportion', 'promising_proportion', 'explore_proportion', 'risk_proportion', 'sleep_proportion']
+    col_2 = [
+        "net_revenue",
+        "gross_profit",
+        "total_revenue",
+        "loyal",
+        "promising",
+        "explore",
+        "risk",
+        "sleep",
+    ]
+    col_divide = [
+        "total_quantity",
+        "total_quantity",
+        "num_invoice_return",
+        "total_custmer",
+        "total_custmer",
+        "total_custmer",
+        "total_custmer",
+        "total_custmer",
+    ]
+    results_2 = [
+        "avg_net_revenue",
+        "avg_profit",
+        "evg_order_value",
+        "loyal_proportion",
+        "promising_proportion",
+        "explore_proportion",
+        "risk_proportion",
+        "sleep_proportion",
+    ]
 
-    #Phep cong
-    col3 = ['old_customer']
-    col_plus = ['revenue_new_customer']
-    col_plus_2 = ['unknown_customer']
-    results_3 = ['total_custmer']
+    # Phep cong
+    col3 = ["old_customer"]
+    col_plus = ["revenue_new_customer"]
+    col_plus_2 = ["unknown_customer"]
+    results_3 = ["total_custmer"]
 
     for i in range(len(col)):
         if df[col[i]] - df[col_minus[i]] != df[results[i]]:
@@ -398,13 +426,89 @@ def validate_data(df):
             save_i_3 = i
 
     if not bool_1:
-        print("Dữ liệu tính sai ở cột: " + df[col[save_i]] + " và " + df[col_minus[save_i]] + " và " + df[results[save_i]])
+        print(
+            "Dữ liệu tính sai ở cột: "
+            + df[col[save_i]]
+            + " và "
+            + df[col_minus[save_i]]
+            + " và "
+            + df[results[save_i]]
+        )
     if not bool_2:
-        print("Dữ liệu tính sai ở cột: " + df[col_2[save_i_2]] + " và " + df[col_divide[save_i_2]] + " và " + df[results_2[save_i_2]])
+        print(
+            "Dữ liệu tính sai ở cột: "
+            + df[col_2[save_i_2]]
+            + " và "
+            + df[col_divide[save_i_2]]
+            + " và "
+            + df[results_2[save_i_2]]
+        )
     if not bool_3:
-        print("Dữ liệu tính sai ở cột: " + df[col3[save_i_3]] + " và " + df[col_plus[save_i_3]] + " và " + df[col_plus_2[save_i_3]] + " và " + df[results_3[save_i_3]])
+        print(
+            "Dữ liệu tính sai ở cột: "
+            + df[col3[save_i_3]]
+            + " và "
+            + df[col_plus[save_i_3]]
+            + " và "
+            + df[col_plus_2[save_i_3]]
+            + " và "
+            + df[results_3[save_i_3]]
+        )
 
     if bool_1 and bool_2 and bool_3:
         bool_check = True
 
     return bool_check
+
+
+def set_null_values_for_previous_periods(df):
+    """
+    Set giá trị null cho các cột được chỉ định lọc theo timeframe_type
+    Args:
+        DataFrame đã lọc timeframe_type
+    Returns:
+        DataFrame đã được xử lý, với giá trị null cho các cột được chỉ định trong dữ liệu kì trước
+    """
+    # Tạo bản sao để tránh SettingWithCopyWarning
+    df = df.copy()
+
+    # Danh sách các cột cần set giá trị là null cho dữ liệu kì trước
+    columns_to_set_null = COLUMNS_TO_SET_NULL
+
+    # Lọc ra các hàng thuộc dữ liệu kì trước dựa trên timeframe_type
+    previous_period_mask = df["timeframe_type"].str.contains(
+        "trước đó", case=False
+    ) | df["timeframe_type"].str.contains("tháng trước", case=False)
+
+    # Kiểm tra các cột tồn tại trong DataFrame
+    valid_columns = [col for col in columns_to_set_null if col in df.columns]
+
+    if valid_columns:
+        # Set giá trị null cho các cột được chỉ định trong dữ liệu kì trước
+        for col in valid_columns:
+            df.loc[previous_period_mask, col] = None
+    else:
+        # Nếu không tìm thấy các cột đã chỉ định, thử tìm theo cách khác
+        # Ví dụ: tìm các cột có chứa từ khóa cụ thể
+        potential_columns = []
+        for col in df.columns:
+            # Kiểm tra xem cột có chứa bất kỳ từ khóa nào
+            if any(
+                keyword.lower() in col.lower()
+                for keyword in [
+                    "product_rev",
+                    "product_quantity",
+                    "product_profit",
+                    "group_quantity",
+                    "group_rev",
+                    "group_profit",
+                ]
+            ):
+                potential_columns.append(col)
+
+        # Set giá trị null cho các cột được tìm thấy trong dữ liệu kì trước
+        for col in potential_columns:
+            df.loc[previous_period_mask, col] = None
+
+    return df
+
