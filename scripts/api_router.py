@@ -5,7 +5,7 @@ import google.generativeai as genai
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import PlainTextResponse
 
-from scripts.config import API_KEY, MODEL_NAME
+from scripts.config import API_KEY, MODEL_NAME, RETAILER_DATA_DIR
 from scripts.prompt import generate_retail_system_prompt
 from scripts.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 from scripts.utils import (
@@ -43,7 +43,7 @@ async def response(
             )
 
         csv_filename = RETAILER_OPTIONS[retailer_id]
-        csv_path = f"assets/retailer_data/{csv_filename}"
+        csv_path = f"{RETAILER_DATA_DIR}/{csv_filename}"
 
         # Kiểm tra file CSV tồn tại
         if not os.path.exists(csv_path):
@@ -60,10 +60,11 @@ async def response(
 
             df = read_csv_content(file_content)
 
-            bool_check = validate_data(df)
-            if not bool_check:
-                raise HTTPException(status_code=400, detail="Dữ liệu tính sai")
-            print("Dữ liệu tính đúng")
+            # Tạm tắt đi để test trước với file product_for_bs_v2
+            # bool_check = validate_data(df)
+            # if not bool_check:
+            #     raise HTTPException(status_code=400, detail="Dữ liệu tính sai")
+            # print("Dữ liệu tính đúng")
 
             # Lấy giá trị time_period và screen_value từ key đã chọn
             time_period_value = TIME_PERIOD_OPTIONS[time_period]

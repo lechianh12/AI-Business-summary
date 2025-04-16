@@ -1,6 +1,6 @@
 import os
 
-from scripts.utils import extract_column_definitions, read_column_data
+from scripts.utils import read_column_data
 
 
 def generate_retail_system_prompt(screen_type=None):
@@ -9,12 +9,14 @@ def generate_retail_system_prompt(screen_type=None):
 Bạn là một chuyên gia phân tích kinh doanh, chuyên hỗ trợ các chủ cửa hàng bán buôn và bán lẻ ngành Hàng tiêu dùng nhanh (FMCG) tại Việt Nam. Nhiệm vụ của bạn là phân tích dữ liệu kinh doanh từ file .csv do chủ cửa hàng cung cấp và trình bày kết quả dưới dạng báo cáo CÔ ĐỌNG, DỄ HIỂU, VÀ TẬP TRUNG VÀO HÀNH ĐỘNG, giúp họ nhanh chóng nắm bắt tình hình kinh doanh và đưa ra quyết định cải thiện hiệu quả hoạt động của cửa hàng. Hãy tuân thủ chặt chẽ các hướng dẫn dưới đây.
 
 QUY TRÌNH PHÂN TÍCH:
-1.	Chú thích cột dữ liệu: 
+1.	Chú thích cột dữ liệu: Phần dưới đây mô tả ý nghĩa các cột dữ liệu có thể có trong file CSV, bao gồm cả ngữ cảnh về cách dữ liệu được tạo ra (ví dụ: top bán chạy, dữ liệu array). Hãy sử dụng thông tin này để hiểu dữ liệu.
+    ```text
     [column_definitions]
+    ```
 
 2.	Phân tích Ngữ cảnh và Dữ liệu Đầu vào:
-    o	Xác định Cột Dữ liệu: Tự động xác định các cột dữ liệu và sử dụng "1. Chú thích cột dữ liệu" để hiểu ý nghĩa các cột trong file .csv.
-    o	Thời gian: Xác định khoảng thời gian của dữ liệu (Tuần/Tháng/Quý). Hãy bắt đầu phân tích bằng việc nêu rõ trọng tâm dựa trên thời gian này (ví dụ: "Phân tích tập trung vào biến động ngắn hạn (dữ liệu Tuần)..." hoặc "Phân tích tập trung vào xu hướng và quản trị (dữ liệu Tháng/Quý)...").
+    o	Xác định Cột Dữ liệu: Tự động xác định các cột dữ liệu có trong file CSV và sử dụng "1. Chú thích cột dữ liệu" để hiểu ý nghĩa và cấu trúc của chúng.
+    o	Thời gian: Xác định khoảng thời gian của dữ liệu (Tuần/Tháng/Quý). Hãy bắt đầu phân tích bằng việc nêu rõ trọng tâm dựa trên thời gian này: "Phân tích tập trung vào biến động ngắn hạn nếu dữ liệu là Tuần" hoặc "Phân tích tập trung vào xu hướng và quản trị nếu dữ liệu là Tháng/Quý".
     o	Mức độ Quan trọng: Khi xác định điểm nổi bật hoặc rủi ro, PHẢI xem xét đồng thời cả tỷ lệ phần trăm (%) thay đổi VÀ giá trị tuyệt đối. Chỉ nhấn mạnh những thay đổi thực sự đáng kể ở cả hai mặt và có tác động rõ ràng đến kinh doanh.
     o	Xử lý Dữ liệu Thiếu/Bằng 0: Nếu các hạng mục chi phí quan trọng (như Chi phí hoạt động, Giá vốn...) hiển thị là 0 hoặc rõ ràng là thiếu dữ liệu do người dùng không cung cấp, hãy đưa mục này vào phần <Rủi ro & bất thường>. Mô tả rõ đây là rủi ro do thiếu thông tin, ảnh hưởng đến khả năng đánh giá toàn diện hiệu quả kinh doanh. Hành động đề xuất nên tập trung vào việc yêu cầu bổ sung dữ liệu cụ thể đó.
     o	Dữ liệu Ngành: Chủ động tìm kiếm dữ liệu trung bình ngành FMCG tại Việt Nam (ưu tiên 2024/2025, nguồn đáng tin cậy, rõ phân khúc nếu có thể) để làm giàu thêm phân tích so sánh. Nếu không tìm thấy, bỏ qua phần so sánh này mà không cần ghi chú.
@@ -36,7 +38,7 @@ QUY TRÌNH PHÂN TÍCH:
     2.	[Mô tả rủi ro/bất thường 2 - Nêu bật tác động tiêu cực thực tế, 1-2 dòng]
         Hành động đề xuất: [Như trên]
         Lí do: [Như trên]
-        ... 
+        ...
 </Rủi ro & bất thường>
 
 4.	Yêu cầu về Nội dung và Ngôn ngữ:
@@ -49,31 +51,44 @@ o   Xu hướng: Nếu có dữ liệu cho nhiều kỳ, hãy làm nổi bật x
 
 Mục tiêu cuối cùng: Cung cấp một báo cáo phân tích sắc bén, chỉ ra điểm mạnh cốt lõi và rủi ro nghiêm trọng nhất, kèm theo các hành động tức thời hoặc bước đi tiếp theo rõ ràng, cụ thể. Giúp người dùng ra quyết định nhanh chóng và hiệu quả. Hãy tuân thủ định dạng, độ dài và các hướng dẫn về nội dung.
 Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phân tích.
+
     """
 
     # Nếu không có loại màn hình cụ thể, trả về prompt cơ bản
     if screen_type is None:
-        return base_prompt
+        return base_prompt.replace(
+            "[column_definitions]", "[Lỗi: Không có loại màn hình được chỉ định]"
+        )
 
     # Xác định file chứa thông tin cột dựa trên loại màn hình
     column_file_path = None
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    column_dir = os.path.join(base_dir, "assets", "column_definition")
+
     if screen_type == "product_overview":
-        column_file_path = "assets/column_definition/overview_prod.txt"
+        column_file_path = os.path.join(column_dir, "overview_prod.txt")
     elif screen_type == "customer_overview":
-        column_file_path = "assets/column_definition/overview_cus.txt"
+        column_file_path = os.path.join(column_dir, "overview_cus.txt")
     elif screen_type == "business_overview":
-        column_file_path = "assets/column_definition/overview_bussiness.txt"
+        column_file_path = os.path.join(column_dir, "overview_bussiness.txt")
     elif screen_type == "customer_segmentation":
-        column_file_path = "assets/column_definition/segment_cus.txt"
+        column_file_path = os.path.join(column_dir, "segment_cus.txt")
+    else:
+        return base_prompt.replace(
+            "[column_definitions]",
+            f"[Lỗi: Loại màn hình '{screen_type}' không được hỗ trợ]",
+        )
 
     if column_file_path and os.path.exists(column_file_path):
-        # Đọc thông tin cột
+        # Đọc TOÀN BỘ nội dung file .txt
         column_content = read_column_data(column_file_path)
 
-        # Trích xuất định nghĩa cột (không bao gồm comment)
-        column_definitions = extract_column_definitions(column_content)
+        # Thay thế phần [column_definitions] bằng TOÀN BỘ nội dung file
+        final_prompt = base_prompt.replace("[column_definitions]", column_content)
+    else:
+        error_message = (
+            f"[Lỗi: Không tìm thấy file định nghĩa cột tại '{column_file_path}']"
+        )
+        final_prompt = base_prompt.replace("[column_definitions]", error_message)
 
-        # Thay thế phần [column_definitions] trong prompt
-        base_prompt = base_prompt.replace("[column_definitions]", column_definitions)
-
-    return base_prompt
+    return final_prompt

@@ -13,7 +13,7 @@ MODEL_NAME = "gemini-2.0-flash-thinking-exp-01-21"
 # gemini-2.5-pro-exp-03-25
 
 # Thư mục dữ liệu
-RETAILER_DATA_DIR = "assets/retailer_data"
+RETAILER_DATA_DIR = "assets/retailer_data/product_for_bs_v2"
 COLUMN_DATA_DIR = "assets/column_definition"
 
 

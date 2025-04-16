@@ -1,53 +1,44 @@
 # Màn hình Tổng quan hàng hóa
 
 
-# Lưu ý: Các biểu đồ đường (trendline) trên KPI cards và chi tiết trong bảng Top 10 có thể yêu cầu dữ liệu chi tiết hơn (ví dụ: tổng hợp theo ngày hoặc theo từng sản phẩm/nhóm) mà có thể không có đầy đủ trong file dữ liệu tổng hợp dạng một dòng tóm tắt.
-
-# Thông tin chung 
+# Thông tin chung
 •	run_date: Ngày dữ liệu được xuất/tạo báo cáo.
-•	timeframe_start: Ngày bắt đầu của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
-•	timeframe_end: Ngày kết thúc của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang).
-•	timeframe_type: Xác định loại chu kỳ thời gian của dữ liệu (ví dụ: '7 ngày gần nhất', 'tháng này'). Quan trọng để xác định bối cảnh phân tích (ngắn hạn/ dài hạn).
-•	branch_id: Mã định danh duy nhất cho một chi nhánh cụ thể (Dùng để lọc hoặc hiển thị trong bảng "Chi tiết").
+•	timeframe_start: Ngày bắt đầu của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang, dùng để lọc).
+•	timeframe_end: Ngày kết thúc của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang, dùng để lọc).
+•	timeframe_type: Loại chu kỳ thời gian của dữ liệu (ví dụ: '7 ngày gần nhất'). Dùng để lọc đúng dòng dữ liệu và xác định kỳ so sánh ('tháng trước', '30 ngày trước đó', v.v.).
 
-# Các chỉ số tổng quan (KPI Cards - Hàng trên cùng)
-•	num_product_master_id_sell: Số lượng mã hàng (SKU) khác nhau đã bán (Hiển thị: 22 - Số mặt hàng đã bán). (Trendline yêu cầu dữ liệu theo thời gian).
-•	total_quantity: Tổng số lượng sản phẩm thực tế đã bán (Hiển thị: 145 - Số lượng thực bán). (Trendline yêu cầu dữ liệu theo thời gian).
-•	avg_net_revenue: Doanh thu thuần trung bình trên mỗi sản phẩm bán ra (Hiển thị: ₫74.62 nghìn - Doanh thu thuần TB/SP). (Trendline yêu cầu dữ liệu theo thời gian).
-•	avg_profit: Lợi nhuận gộp trung bình trên mỗi sản phẩm bán ra (Hiển thị: ₫37.99 nghìn - Lợi nhuận gộp TB/SP). (Trendline yêu cầu dữ liệu theo thời gian).
 
-# Top 10 Nhóm hàng
-#   -> Danh sách nhóm hàng (Tên):
-•	top_group_quantity: Danh sách Top 10 nhóm hàng bán chạy nhất theo SỐ LƯỢNG.
-•	top_group_rev: Danh sách Top 10 nhóm hàng đóng góp DOANH THU THUẦN cao nhất.
-•	top_group_profit: Danh sách Top 10 nhóm hàng mang lại LỢI NHUẬN GỘP cao nhất.
-•	last_group_quantity: Danh sách Top 10 nhóm hàng bán chậm nhất theo SỐ LƯỢNG.
-•	last_group_rev: Danh sách Top 10 nhóm hàng có DOANH THU THUẦN thấp nhất.
-•	last_group_profit: Danh sách Top 10 nhóm hàng có LỢI NHUẬN GỘP thấp nhất.
-#   -> Chi tiết cho từng nhóm hàng trong bảng (Yêu cầu dữ liệu tổng hợp theo từng nhóm hàng):
-#      - Tên nhóm hàng (Từ các cột top/last_group_... ở trên)
-#      - Số lượng bán (Cần dữ liệu số lượng bán theo từng nhóm)
-#      - Số lượng trả (Cần dữ liệu số lượng trả theo từng nhóm)
-#      - Doanh thu thuần (Cần dữ liệu net_revenue theo từng nhóm)
-#      - Lợi nhuận gộp (Cần dữ liệu gross_profit theo từng nhóm)
+# Các ô chỉ số chính
+•	num_types: Số mặt hàng (SKU) khác nhau đã bán (Hiển thị "Số mặt hàng đã bán").
+•	total_quantity: Tổng số lượng đơn vị sản phẩm đã bán (Hiển thị "Số lượng thực bán").
+•	avg_net_revenue: Doanh thu thuần trung bình trên mỗi sản phẩm bán ra (Hiển thị "Doanh thu thuần TB/SP").
+•	avg_profit: Lợi nhuận gộp trung bình trên mỗi sản phẩm bán ra (Hiển thị "Lợi nhuận gộp TB/SP").
 
-# Top 10 Hàng hóa
-#   -> Danh sách hàng hóa (Tên):
-•	top_product_quantity: Danh sách Top 10 sản phẩm bán chạy nhất theo SỐ LƯỢNG.
-•	top_product_rev: Danh sách Top 10 sản phẩm đóng góp DOANH THU THUẦN cao nhất.
-•	top_product_profit: Danh sách Top 10 sản phẩm mang lại LỢI NHUẬN GỘP cao nhất.
-•	last_product_quantity: Danh sách Top 10 sản phẩm bán chậm nhất theo SỐ LƯỢNG.
-•	last_product_rev: Danh sách Top 10 sản phẩm có DOANH THU THUẦN thấp nhất.
-•	last_product_profit: Danh sách Top 10 sản phẩm có LỢI NHUẬN GỘP thấp nhất.
-#   -> Chi tiết cho từng sản phẩm trong bảng (Yêu cầu dữ liệu tổng hợp theo từng sản phẩm):
-#      - Tên hàng hóa (Từ các cột top/last_product_... ở trên)
-#      - Số lượng bán (Cần dữ liệu số lượng bán theo từng sản phẩm)
-#      - Số lượng trả (Cần dữ liệu số lượng trả theo từng sản phẩm)
-#      - Doanh thu thuần (Cần dữ liệu net_revenue theo từng sản phẩm)
-#      - Lợi nhuận gộp (Cần dữ liệu gross_profit theo từng sản phẩm)
 
-# Các cột hỗ trợ tính toán (Có thể cần cho việc lấy chi tiết bảng Top 10 nếu dữ liệu được cấu trúc chi tiết hơn)
-•	net_revenue: Tổng doanh thu thuần toàn cửa hàng (Dùng để tham chiếu).
-•	gross_profit: Tổng lợi nhuận gộp toàn cửa hàng (Dùng để tham chiếu).
-•	num_product_master_id_return: Số lượng mã hàng bị hoàn trả (Liên quan đến cột "Số lượng trả").
-•	total_return_revenue: Tổng giá trị hàng trả (Liên quan đến cột "Số lượng trả" và tính toán).
+# Bảng Top 10% Nhóm hàng & Hàng hóa (Bán chạy & Bán chậm)
+# Lưu ý: Các cột array [...] cần được phân tích cú pháp (parse). Cấu trúc [Tên], [Số lượng bán], [Số lượng trả], [Doanh thu thuần], [Lợi nhuận gộp].
+
+
+## Khi chọn Tab "Bán chạy"
+### Sắp xếp "Theo số lượng bán":
+•	Nhóm hàng: top_group_quantity (Tên), group_sale_by_quantity (SL bán), group_return_by_quantity (SL trả), group_rev_by_quantity (Doanh thu), group_profit_by_quantity (Lợi nhuận).
+•	Hàng hóa: top_product_quantity (Tên), top_sale_by_quantity (SL bán), top_return_by_quantity (SL trả), top_rev_by_quantity (Doanh thu), top_profit_by_quantity (Lợi nhuận).
+### Sắp xếp "Theo doanh thu thuần":
+•	Nhóm hàng: top_group_rev (Tên), group_sale_by_rev (SL bán), group_return_by_rev (SL trả), group_rev_by_rev (Doanh thu), group_profit_by_rev (Lợi nhuận).
+•	Hàng hóa: top_product_rev (Tên), top_sale_by_rev (SL bán), top_return_by_rev (SL trả), top_rev_by_rev (Doanh thu), top_profit_by_rev (Lợi nhuận).
+### Sắp xếp "Theo lợi nhuận gộp":
+•	Nhóm hàng: top_group_profit (Tên), group_sale_by_profit (SL bán), group_return_by_profit (SL trả), group_rev_by_profit (Doanh thu), group_profit_by_profit (Lợi nhuận).
+•	Hàng hóa: top_product_profit (Tên), top_sale_by_profit (SL bán), top_return_by_profit (SL trả), top_rev_by_profit (Doanh thu), top_profit_by_profit (Lợi nhuận).
+
+
+## Khi chọn Tab "Bán chậm" (Sử dụng các cột last_... thay vì top_...)
+### Sắp xếp "Theo số lượng bán":
+•	Nhóm hàng: last_group_quantity (Tên), last_group_sale_quantity (SL bán), last_group_return_quantity (SL trả), last_group_rev_quantity (Doanh thu), last_group_profit_quantity (Lợi nhuận).
+•	Hàng hóa: last_product_quantity (Tên), last_sale_by_quantity (SL bán), last_return_by_quantity (SL trả), last_rev_by_quantity (Doanh thu), last_profit_by_quantity (Lợi nhuận).
+### Sắp xếp "Theo doanh thu thuần":
+•	Nhóm hàng: last_group_rev (Tên), last_group_sale_rev (SL bán), last_group_return_rev (SL trả), last_group_rev_rev (Doanh thu), last_group_profit_rev (Lợi nhuận).
+•	Hàng hóa: last_product_rev (Tên), last_sale_by_rev (SL bán), last_return_by_rev (SL trả), last_rev_by_rev (Doanh thu), last_profit_by_rev (Lợi nhuận).
+### Sắp xếp "Theo lợi nhuận gộp":
+•	Nhóm hàng: last_group_profit (Tên), last_group_sale_profit (SL bán), last_group_return_profit (SL trả), last_group_rev_profit (Doanh thu), last_group_profit_profit (Lợi nhuận).
+•	Hàng hóa: last_product_profit (Tên), last_sale_by_profit (SL bán), last_return_by_profit (SL trả), last_rev_by_profit (Doanh thu), last_profit_by_profit (Lợi nhuận).
+
