@@ -53,14 +53,26 @@ if st.button("🚀 Get Summary"):
             risks_end = output_text.find("</Rủi ro & bất thường>")
 
             # Tạo expander cho phần Insights
-            if insights_start != -1 and insights_end != -1:
-                insights_text = output_text[insights_start:insights_end]
+
+            if risks_start != -1 and risks_end != -1 and insights_start != -1 and insights_end != -1:
+                if insights_start != -1 and insights_end != -1:
+                    insights_text = output_text[insights_start:insights_end]
+                    with st.expander("🔍 Insights"):
+                        st.markdown(insights_text)
+
+                # Tạo expander cho phần Rủi ro & bất thường
+                if risks_start != -1 and risks_end != -1:
+                    risks_text = output_text[risks_start:risks_end-1]
+                    with st.expander("⚠️ Rủi ro & Bất thường"):          
+                        st.markdown(risks_text)
+
+
+            if risks_end == -1 and insights_end == -1 and risks_start != -1 and insights_start != -1:
+                insights_text = output_text[insights_start:risks_start]
                 with st.expander("🔍 Insights"):
                     st.markdown(insights_text)
 
-            # Tạo expander cho phần Rủi ro & bất thường
-            if risks_start != -1 and risks_end != -1:
-                risks_text = output_text[risks_start:risks_end]
+                risks_text = output_text[risks_start:]
                 with st.expander("⚠️ Rủi ro & Bất thường"):
                     st.markdown(risks_text)
 
