@@ -1,9 +1,8 @@
 import os
 import time
 import google.generativeai as genai
-
 from fastapi import APIRouter, HTTPException, Query
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 
 # Import nội bộ
 from scriptss.config import API_KEY, MODEL_NAME, RETAILER_DATA_DIR
@@ -26,6 +25,12 @@ router = APIRouter()
 
 # Cấu hình Google Generative AI
 genai.configure(api_key=API_KEY)
+
+def stream_response_text(text: str):
+    """ Generator để stream từng 10 ký tự của phản hồi """
+    for i in range(0, len(text), 20):  # Chia ra các phần có 10 ký tự mỗi lần
+        yield text[i:i + 20]
+        time.sleep(0.1)  # Đảm bảo có độ trễ giữa các phần để mô phỏng việc phản hồi dần dần
 
 @router.get("/response", response_class=PlainTextResponse)
 async def response(
@@ -120,7 +125,8 @@ async def response(
         end_time_total = time.time()
         print_response_time("Thời gian phản hồi tổng", start_time_total, end_time_total)
 
-        return response.text
+        # Trả về dữ liệu theo từng 10 ký tự một lần
+        return StreamingResponse(stream_response_text(response.text), media_type="text/plain")
 
     except Exception as e:
         print(f"[DEBUG] Lỗi tổng thể: {e}")
