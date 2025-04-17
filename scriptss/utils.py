@@ -4,7 +4,7 @@ import os
 
 import pandas as pd
 
-from scripts.config import COLUMNS_TO_SET_NULL
+from scriptss.config import COLUMNS_TO_SET_NULL
 
 
 # Chia file tổng hợp thành nhiều file theo retailer_id và lưu vào thư mục con với tên file gốc
@@ -525,3 +525,69 @@ def set_null_values_for_previous_periods(df):
             df.loc[previous_period_mask, col] = None
 
     return df
+
+def drop_null_top10_row(df):
+    pivot = df.pivot(index='retailer_id', columns='timeframe_type', values='top_product_quantity')
+
+    # ---- Xử lý 7 ngày ----
+    # 1. Cả last và prev null => drop cả hai
+    products_drop_both_7 = pivot[
+        pivot['7 ngày gần nhất'].isna() & pivot['7 ngày trước đó'].isna()
+    ].index
+
+    # 2. last có value, prev null => drop prev_7_days
+    products_drop_prev7 = pivot[
+        pivot['7 ngày gần nhất'].notna() & pivot['7 ngày trước đó'].isna()
+    ].index
+
+    # 3. last null, prev có value => drop cả hai
+    products_drop_both_7_2 = pivot[
+        pivot['7 ngày gần nhất'].isna() & pivot['7 ngày trước đó'].notna()
+    ].index
+
+    # ---- Xử lý 30 ngày ----
+    products_drop_both_30 = pivot[
+        pivot['30 ngày gần nhất'].isna() & pivot['30 ngày trước đó'].isna()
+    ].index
+
+    products_drop_prev30 = pivot[
+        pivot['30 ngày gần nhất'].notna() & pivot['30 ngày trước đó'].isna()
+    ].index
+
+    products_drop_both_30_2 = pivot[
+        pivot['30 ngày gần nhất'].isna() & pivot['30 ngày trước đó'].notna()
+    ].index
+
+    # ---- Xử lý tháng này ----
+    products_drop_both_month = pivot[
+        pivot['tháng này'].isna() & pivot['tháng trước'].isna()
+    ].index
+
+    products_drop_prev_month = pivot[
+        pivot['tháng này'].notna() & pivot['tháng trước'].isna()
+    ].index
+
+    products_drop_both_month_2 = pivot[
+        pivot['tháng này'].isna() & pivot['tháng trước'].notna()
+    ].index
+
+    # ---- Tạo mask drop ----
+    mask_drop = (
+        ((df['retailer_id'].isin(products_drop_both_7)) & (df['timeframe_type'].isin(['7 ngày gần nhất', '7 ngày trước đó']))) |
+        ((df['retailer_id'].isin(products_drop_prev7)) & (df['timeframe_type'] == 'prev_7_days')) |
+        ((df['retailer_id'].isin(products_drop_both_7_2)) & (df['timeframe_type'].isin(['7 ngày gần nhất', '7 ngày trước đó']))) |
+
+        ((df['retailer_id'].isin(products_drop_both_30)) & (df['timeframe_type'].isin(['30 ngày gần nhất', '7 ngày trước đó']))) |
+        ((df['retailer_id'].isin(products_drop_prev30)) & (df['timeframe_type'] == '30 ngày trước đó')) |
+        ((df['retailer_id'].isin(products_drop_both_30_2)) & (df['timeframe_type'].isin(['30 ngày gần nhất', '7 ngày trước đó']))) |
+
+        ((df['retailer_id'].isin(products_drop_both_month)) & (df['timeframe_type'].isin(['tháng này', 'tháng trước']))) |
+        ((df['retailer_id'].isin(products_drop_prev_month)) & (df['timeframe_type'] == 'tháng trước')) |
+        ((df['retailer_id'].isin(products_drop_both_month_2)) & (df['timeframe_type'].isin(['tháng này', 'tháng trước'])))
+    )
+
+    # Kết quả cuối cùng
+    df_cleaned = df[~mask_drop].copy()
+
+    return df_cleaned
+
