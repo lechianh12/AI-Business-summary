@@ -68,7 +68,6 @@ async def response(
             #     raise HTTPException(status_code=400, detail="Dữ liệu tính sai")
 
             print("[DEBUG] Dữ liệu hợp lệ.")
-            df = drop_null_top10_row(df)
 
             time_period_value = TIME_PERIOD_OPTIONS[time_period]
             screen_value = SCREEN_OPTIONS[screen]

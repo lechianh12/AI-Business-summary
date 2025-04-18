@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.append('/home/le-chi-anh/AI-Business-summary/scriptss/')
 
-from scriptss.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
+from schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 
 
 API_URL = "http://127.0.0.1:8000/api/response"
@@ -62,13 +62,13 @@ if st.button("🚀 Get Summary"):
 
                 # Tạo expander cho phần Rủi ro & bất thường
                 if risks_start != -1 and risks_end != -1:
-                    risks_text = output_text[risks_start:risks_end-1]
+                    risks_text = output_text[risks_start:risks_end]
                     with st.expander("⚠️ Rủi ro & Bất thường"):          
                         st.markdown(risks_text)
 
 
             if risks_end == -1 and insights_end == -1 and risks_start != -1 and insights_start != -1:
-                insights_text = output_text[insights_start:risks_start]
+                insights_text = output_text[insights_start:risks_start-21]
                 with st.expander("🔍 Insights"):
                     st.markdown(insights_text)
 
