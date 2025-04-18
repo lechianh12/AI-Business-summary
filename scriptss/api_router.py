@@ -17,7 +17,7 @@ from scriptss.utils import (
     read_csv_content,
     set_null_values_for_previous_periods,
     validate_data,
-    drop_null_top10_row,
+    df_to_clean_json,
 )
 
 # Tạo router
@@ -58,16 +58,18 @@ async def response(
             file_content = f.read()
 
         try:
-            df = read_csv_content(file_content)
-            print("[DEBUG] DataFrame gốc:")
-            print(df.head())
 
+            df = read_csv_content(file_content)
+            
+            
             # Kiểm tra dữ liệu
             # bool_check = validate_data(df)
             # if not bool_check:
             #     raise HTTPException(status_code=400, detail="Dữ liệu tính sai")
 
             print("[DEBUG] Dữ liệu hợp lệ.")
+
+
 
             time_period_value = TIME_PERIOD_OPTIONS[time_period]
             screen_value = SCREEN_OPTIONS[screen]
@@ -79,7 +81,16 @@ async def response(
 
             # Lấy cột theo screen
             columns_data = get_columns_for_screen(screen_value)
-            filtered_data = process_csv_for_screen(processed_data, columns_data)
+            filtered_data, filter_df = process_csv_for_screen(processed_data, columns_data)
+
+
+
+         
+            print("======================================================================================")
+            filter_df, json_data = df_to_clean_json(filter_df)
+            print("[DEBUG] Dữ liệu JSON:")
+            print(json_data)
+            print("======================================================================================")
 
             csv_text = filtered_data["csv_text"]
 
@@ -95,7 +106,8 @@ async def response(
 
         system_prompt = generate_retail_system_prompt(screen_value)
         full_prompt = (
-            f"{system_prompt}\n\nDữ liệu CSV:\n{csv_text}\n\nUser Input: {user_input}"
+            f"{system_prompt}\n\nDữ liệu CSV:\n{csv_text}\n\n\n\nDữ liệu JSON:\n{json_data}\n\n\n\nUser Input: {user_input}"
+            # f"{system_prompt}\n\nDữ liệu CSV:\n{csv_text}\n\n\n\nUser Input: {user_input}"
         )
 
         with open("tests/test_output.txt", "w", encoding="utf-8-sig") as f:
@@ -110,6 +122,11 @@ async def response(
 
             model = genai.GenerativeModel(MODEL_NAME)
             response = model.generate_content(contents=full_prompt)
+            print("======================================================================================")
+            count_response = model.count_tokens(full_prompt)
+            input_token_count = count_response.total_tokens
+            print(f"Số token đầu vào: {input_token_count}")
+            print("======================================================================================")
 
             end_time_model = time.time()
             print_response_time("Model phản hồi", start_time_model, end_time_model)
