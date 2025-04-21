@@ -1,11 +1,12 @@
-import streamlit as st
-import requests
 import sys
-import os
-sys.path.append('/home/le-chi-anh/AI-Business-summary/scriptss/')
+import time
 
-from schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
+import requests
+import streamlit as st
 
+sys.path.append("D:/Work/KV/project/AI-Business-summary")
+
+from scriptss.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 
 API_URL = "http://127.0.0.1:8000/api/response"
 
@@ -18,63 +19,67 @@ with st.sidebar:
         "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg", width=100
     )
     st.markdown("## Select Retailer, Screen, and Time Period")
-    retailer_id = st.selectbox("Select Retailer ID", options=list(RETAILER_OPTIONS.keys()))  
-    screen = st.selectbox("Select Screen", options=list(SCREEN_OPTIONS.keys()))  
-    time_period = st.selectbox("Select Time Period", options=list(TIME_PERIOD_OPTIONS.keys()))  
+    retailer_id = st.selectbox(
+        "Select Retailer ID", options=list(RETAILER_OPTIONS.keys())
+    )
+    screen = st.selectbox("Select Screen", options=list(SCREEN_OPTIONS.keys()))
+    time_period = st.selectbox(
+        "Select Time Period", options=list(TIME_PERIOD_OPTIONS.keys())
+    )
 
 # Main Content
 st.title("💬 AI Business Summary")
 st.markdown("Select the retailer, screen, and time period to get the business summary.")
 
-# Placeholder to update text incrementally
-output_placeholder = st.empty()
-
 # Button to submit the request
 if st.button("🚀 Get Summary"):
-    with st.spinner("🤖 Generating..."):
-        params = {
-            "retailer_id": retailer_id,
-            "screen": SCREEN_OPTIONS,  
-            "time_period": TIME_PERIOD_OPTIONS
-        }
-        response = requests.get(API_URL, params=params, stream=True)
+    # Create a single expander for the entire response
+    with st.expander("📊 Business Summary", expanded=True):
+        # Create a placeholder inside the expander for streaming content
+        response_container = st.container()
 
-        if response.status_code == 200:
-            # Đọc phản hồi từ API từng phần
-            output_text = ""
-            for chunk in response.iter_content(chunk_size=10, decode_unicode=True):
-                output_text += chunk
-                output_placeholder.text(output_text)  # Cập nhật dần dần trong Streamlit
+        with st.spinner("Generating..."):
+            params = {
+                "retailer_id": retailer_id,
+                "screen": screen,
+                "time_period": time_period,
+            }
 
-            # Tách thành 2 phần: Insights và Rủi ro & bất thường
-            insights_start = output_text.find("<Insights>") + len("<Insights>")
-            insights_end = output_text.find("</Insights>")
-            risks_start = output_text.find("<Rủi ro & bất thường>") + len("<Rủi ro & bất thường>")
-            risks_end = output_text.find("</Rủi ro & bất thường>")
-
-            # Tạo expander cho phần Insights
-
-            if risks_start != -1 and risks_end != -1 and insights_start != -1 and insights_end != -1:
-                if insights_start != -1 and insights_end != -1:
-                    insights_text = output_text[insights_start:insights_end]
-                    with st.expander("🔍 Insights"):
-                        st.markdown(insights_text)
-
-                # Tạo expander cho phần Rủi ro & bất thường
-                if risks_start != -1 and risks_end != -1:
-                    risks_text = output_text[risks_start:risks_end]
-                    with st.expander("⚠️ Rủi ro & Bất thường"):          
-                        st.markdown(risks_text)
+            try:
+                # Set a timeout to ensure we don't wait forever
+                with requests.get(
+                    API_URL, params=params, stream=True, timeout=60
+                ) as response:
+                    if response.status_code == 200:
+                        # Initialize variables for tracking
+                        full_response = ""
+                        response_placeholder = response_container.empty()
+                        start_time = time.time()
+                        buffer = ""
+                        chunk_size = 5  # Process chunks in batches
+                        chunk_count = 0
 
 
-            if risks_end == -1 and insights_end == -1 and risks_start != -1 and insights_start != -1:
-                insights_text = output_text[insights_start:risks_start-21]
-                with st.expander("🔍 Insights"):
-                    st.markdown(insights_text)
+                        # Stream the response
+                        for chunk in response.iter_content(
+                            chunk_size=chunk_size, decode_unicode=True
+                        ):
+                            if chunk:
+                                buffer += chunk
+                                chunk_count += 1
 
-                risks_text = output_text[risks_start:]
-                with st.expander("⚠️ Rủi ro & Bất thường"):
-                    st.markdown(risks_text)
+                                # Update UI every few chunks to improve performance
+                                if chunk_count % 5 == 0:
+                                    full_response += buffer
+                                    buffer = ""
+                                    # Update display
+                                    response_placeholder.markdown(full_response)
 
-        else:
-            st.error(f"❌ Error: {response.text}")
+                        # Make sure to add any remaining buffer content
+                        if buffer:
+                            full_response += buffer
+                            response_placeholder.markdown(full_response)
+                    else:
+                        status.error(f"Error: {response.text}")
+            except requests.exceptions.RequestException as e:
+                status.error(f"Connection error: {str(e)}")

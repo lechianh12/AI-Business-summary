@@ -26,11 +26,15 @@ router = APIRouter()
 # Cấu hình Google Generative AI
 genai.configure(api_key=API_KEY)
 
+
 def stream_response_text(text: str):
-    """ Generator để stream từng 10 ký tự của phản hồi """
+    """Generator để stream từng 10 ký tự của phản hồi"""
     for i in range(0, len(text), 20):  # Chia ra các phần có 10 ký tự mỗi lần
-        yield text[i:i + 20]
-        time.sleep(0.1)  # Đảm bảo có độ trễ giữa các phần để mô phỏng việc phản hồi dần dần
+        yield text[i : i + 20]
+        time.sleep(
+            0.1
+        )  # Đảm bảo có độ trễ giữa các phần để mô phỏng việc phản hồi dần dần
+
 
 @router.get("/response", response_class=PlainTextResponse)
 async def response(
@@ -43,14 +47,18 @@ async def response(
     try:
         # Xác định file CSV tương ứng với retailer_id
         if retailer_id not in RETAILER_OPTIONS:
-            raise HTTPException(status_code=400, detail=f"retailer_id không hợp lệ: {retailer_id}")
+            raise HTTPException(
+                status_code=400, detail=f"retailer_id không hợp lệ: {retailer_id}"
+            )
 
         csv_filename = RETAILER_OPTIONS[retailer_id]
         csv_path = f"{RETAILER_DATA_DIR}/{csv_filename}"
 
         # Kiểm tra file CSV tồn tại
         if not os.path.exists(csv_path):
-            raise HTTPException(status_code=400, detail=f"File CSV không tồn tại: {csv_path}")
+            raise HTTPException(
+                status_code=400, detail=f"File CSV không tồn tại: {csv_path}"
+            )
 
         print(f"[DEBUG] Đang đọc file CSV: {csv_path}")
 
@@ -60,8 +68,7 @@ async def response(
         try:
 
             df = read_csv_content(file_content)
-            
-            
+
             # Kiểm tra dữ liệu
             # bool_check = validate_data(df)
             # if not bool_check:
@@ -69,28 +76,31 @@ async def response(
 
             print("[DEBUG] Dữ liệu hợp lệ.")
 
-
-
             time_period_value = TIME_PERIOD_OPTIONS[time_period]
             screen_value = SCREEN_OPTIONS[screen]
 
             # Lọc dữ liệu theo thời gian
             filtered_by_time_df = filter_by_timeframe(df, time_period_value)
-            filtered_by_time_df = set_null_values_for_previous_periods(filtered_by_time_df)
+            filtered_by_time_df = set_null_values_for_previous_periods(
+                filtered_by_time_df
+            )
             processed_data = preprocess_csv_data(filtered_by_time_df)
 
             # Lấy cột theo screen
             columns_data = get_columns_for_screen(screen_value)
-            filtered_data, filter_df = process_csv_for_screen(processed_data, columns_data)
+            filtered_data, filter_df = process_csv_for_screen(
+                processed_data, columns_data
+            )
 
-
-
-         
-            print("======================================================================================")
+            print(
+                "======================================================================================"
+            )
             filter_df, json_data = df_to_clean_json(filter_df)
             print("[DEBUG] Dữ liệu JSON:")
             print(json_data)
-            print("======================================================================================")
+            print(
+                "======================================================================================"
+            )
 
             csv_text = filtered_data["csv_text"]
 
@@ -99,7 +109,9 @@ async def response(
 
         except Exception as e:
             print(f"[DEBUG] Lỗi xử lý CSV: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Lỗi khi xử lý file CSV: {str(e)}")
+            raise HTTPException(
+                status_code=400, detail=f"Lỗi khi xử lý file CSV: {str(e)}"
+            )
 
         # Tạo prompt người dùng
         user_input = f"Hãy phân tích cho tôi tình hình kinh doanh trong {time_period} của cửa hàng, chú ý các chỉ số tăng giảm so với kỳ trước nếu có."
@@ -122,11 +134,15 @@ async def response(
 
             model = genai.GenerativeModel(MODEL_NAME)
             response = model.generate_content(contents=full_prompt)
-            print("======================================================================================")
+            print(
+                "======================================================================================"
+            )
             count_response = model.count_tokens(full_prompt)
             input_token_count = count_response.total_tokens
             print(f"Số token đầu vào: {input_token_count}")
-            print("======================================================================================")
+            print(
+                "======================================================================================"
+            )
 
             end_time_model = time.time()
             print_response_time("Model phản hồi", start_time_model, end_time_model)
@@ -136,13 +152,17 @@ async def response(
 
         except Exception as model_error:
             print(f"[DEBUG] Lỗi từ Gemini API: {str(model_error)}")
-            raise HTTPException(status_code=500, detail=f"Lỗi từ mô hình AI: {str(model_error)}")
+            raise HTTPException(
+                status_code=500, detail=f"Lỗi từ mô hình AI: {str(model_error)}"
+            )
 
         end_time_total = time.time()
         print_response_time("Thời gian phản hồi tổng", start_time_total, end_time_total)
 
         # Trả về dữ liệu theo từng 10 ký tự một lần
-        return StreamingResponse(stream_response_text(response.text), media_type="text/plain")
+        return StreamingResponse(
+            stream_response_text(response.text), media_type="text/plain"
+        )
 
     except Exception as e:
         print(f"[DEBUG] Lỗi tổng thể: {e}")
