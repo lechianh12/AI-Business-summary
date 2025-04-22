@@ -1,67 +1,207 @@
-# Màn hình Tổng quan kinh doanh
 
+# ---- Định danh & Thời gian ----
+# Xác định bối cảnh của dữ liệu.
+- timeframe_type: (String) Phân loại chu kỳ thời gian ('7 ngày gần nhất', 'tháng này', v.v.). Dùng để xác định kỳ phân tích và kỳ so sánh.
+- timeframe_start: (Date) Ngày bắt đầu chu kỳ.
+- timeframe_end: (Date) Ngày kết thúc chu kỳ.
+- branch_id: (Number) ID của chi nhánh.
+- num_day: (Number) Số ngày trong chu kỳ tính.
+- num_day_sell: (Number) Số ngày có phát sinh đơn bán trong chu kỳ.
 
-# Thông tin chung / Bộ lọc
-•	run_date: Ngày dữ liệu được xuất/tạo báo cáo.
-•	timeframe_start: Ngày bắt đầu của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang, dùng để lọc).
-•	timeframe_end: Ngày kết thúc của khoảng thời gian dữ liệu được phân tích (Hiển thị trên đầu trang, dùng để lọc).
-•	timeframe_type: Loại chu kỳ thời gian của dữ liệu (ví dụ: '7 ngày gần nhất'). Dùng để lọc đúng dòng dữ liệu và xác định kỳ so sánh ('tháng trước', '30 ngày trước đó', v.v.).
+# ---- Chỉ số Kinh doanh Tổng thể (KPI Cards & Tổng quan) ----
+- num_invoice_sell: (Number) Tổng số lượng hóa đơn bán.
+- num_invoice_sell_per_day: (Number) Số lượng hóa đơn bán trung bình ngày.
+- num_invoice_return: (Number) Tổng số lượng hóa đơn hoàn trả.
+- num_invoice_return_per_day: (Number) Số lượng hóa đơn hoàn trả trung bình ngày.
+- total_revenue: (Number) Tổng doanh thu (trước khi trừ trả hàng).
+- revenue_per_day: (Number) Doanh thu trung bình ngày.
+- total_return_revenue: (Number) Tổng giá trị hàng bị trả lại.
+- total_return_revenue_per_day: (Number) Giá trị trả hàng trung bình ngày.
+- net_revenue: (Number) Doanh thu thuần (Doanh thu - Trả hàng). **Chỉ số quan trọng.**
+- net_revenue_per_day: (Number) Doanh thu thuần trung bình ngày.
+- total_cost: (Number) Tổng giá vốn hàng bán.
+- total_cost_per_day: (Number) Giá vốn hàng bán trung bình ngày.
+- gross_profit: (Number) Lợi nhuận gộp (Doanh thu thuần - Giá vốn). **Chỉ số quan trọng.**
+- gross_profit_per_day: (Number) Lợi nhuận gộp trung bình ngày.
+- avg_order_value: (Number) Giá trị đơn hàng trung bình (AOV = Tổng Doanh thu / Số hóa đơn bán).
 
-# Các ô chỉ số chính 
-•	num_invoice_sell: Tổng số hóa đơn bán (Hiển thị trong ô "Số hóa đơn").
-•	num_invoice_sell_per_day: Số hóa đơn bán trung bình/ngày (Hiển thị trong ô "Số hóa đơn").
-•	total_revenue: Tổng doanh thu (Hiển thị trong ô "Doanh thu").
-•	revenue_per_day: Doanh thu trung bình/ngày (Hiển thị trong ô "Doanh thu").
-•	total_return_revenue: Tổng giá trị trả hàng (Hiển thị trong ô "Giá trị trả").
-•	total_return_revenue_per_day: Giá trị trả hàng trung bình/ngày (Hiển thị trong ô "Giá trị trả").
-•	net_revenue: Doanh thu thuần (Hiển thị trong ô "Doanh thu thuần").
-•	net_revenue_per_day: Doanh thu thuần trung bình/ngày (Hiển thị trong ô "Doanh thu thuần").
-•	total_cost: Tổng giá vốn hàng bán (Hiển thị trong ô "Tổng giá vốn").
-•	total_cost_per_day: Giá vốn hàng bán trung bình/ngày (Hiển thị trong ô "Tổng giá vốn").
-•	gross_profit: Lợi nhuận gộp (Hiển thị trong ô "Lợi nhuận gộp").
-•	gross_profit_per_day: Lợi nhuận gộp trung bình/ngày (Hiển thị trong ô "Lợi nhuận gộp").
+# ---- Phân tích Kênh bán (Tổng quan & Chi tiết Top 10) ----
+- sale_channels: (Array[String]) Tên các kênh bán hàng hoạt động trong kỳ.
+- top_channel: (String/Number) Kênh bán chạy nhất theo Doanh thu thuần (-1 nếu không xác định/chỉ có 1 kênh).
+- net_revenue_top_channel: (Number) Doanh thu thuần của kênh bán chạy nhất.
+- percentage_net_revenue_top_channel: (Number) Tỷ lệ % doanh thu thuần của kênh bán chạy nhất.
+# Dữ liệu chi tiết Top 10 Kênh bán (Tiền tố bs_)
+- bs_channel_rev_name: (Array[String]) Top 10 tên kênh theo Doanh thu.
+- bs_channel_revenue: (Array[Number]) Doanh thu tương ứng.
+- bs_channel_revenue_per_inv: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- bs_channel_re_name: (Array[String]) Top 10 tên kênh theo Giá trị trả hàng.
+- bs_channel_re_quantity: (Array[Number]) Số lượng trả hàng tương ứng.
+- bs_channel_re_revenue: (Array[Number]) Giá trị trả hàng tương ứng.
+- bs_channel_return_percent: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- bs_channel_net_rev_name: (Array[String]) Top 10 tên kênh theo Doanh thu thuần.
+- bs_channel_net_revenue: (Array[Number]) Doanh thu thuần tương ứng.
+- bs_channel_net_revenue_per_invoice: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- bs_channel_profit_name: (Array[String]) Top 10 tên kênh theo Lợi nhuận gộp.
+- bs_channel_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- bs_channel_profit_per_invoice: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- bs_channel_profit_margin: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- bs_channel_inv_name: (Array[String]) Top 10 tên kênh theo Số hóa đơn bán.
+- bs_channel_nob_inv: (Array[Number]) Số hóa đơn bán tương ứng.
 
+# ---- Chỉ số Hàng hóa Tổng thể ----
+- num_types: (Number) Tổng số loại mặt hàng (SKUs) khác nhau đã bán.
+- actual_sold: (Number) Tổng số lượng đơn vị sản phẩm đã bán.
+- avg_net_rev_per_product: (Number) Doanh thu thuần trung bình trên mỗi đơn vị sản phẩm bán ra.
+- avg_profit_per_product: (Number) Lợi nhuận gộp trung bình trên mỗi đơn vị sản phẩm bán ra.
+- new_product_net_revenue: (Number) Tổng doanh thu thuần từ sản phẩm mới. *Kiểm tra nếu có dữ liệu.*
 
+# ---- Dữ liệu Top/Last 10 Nhóm Hàng (Chi tiết - Tiền tố pd_) ----
+# Dữ liệu dạng Array. Tập trung vào Số lượng, Doanh thu thuần, Lợi nhuận gộp tổng,....
+# !! Quan trọng: Phân tích chéo các chỉ số của CÙNG MỘT nhóm hàng. Có thể tìm thấy Insights/Rủi ro ở cả Top và Last.
+- pd_group_quan_name: (Array[String]) Top 10 tên nhóm hàng theo Số lượng bán.
+- pd_group_quan_by_quan: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_quan: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_quan: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_quan: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_net_rev_name: (Array[String]) Top 10 tên nhóm hàng theo Doanh thu thuần.
+- pd_group_quantity_by_net_rev: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_net_rev: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_revenue_by_net_rev: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_net_rev: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_profit_name: (Array[String]) Top 10 tên nhóm hàng theo Lợi nhuận gộp.
+- pd_group_quantity_by_profit: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_profit: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_profit: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_quan_name_lst: (Array[String]) Last 10 tên nhóm hàng theo Số lượng bán.
+- pd_group_quan_by_quan_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_quan_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_quan_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_quan_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_rev_name_lst: (Array[String]) Last 10 tên nhóm hàng theo Doanh thu thuần.
+- pd_group_quan_by_rev_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_rev_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_rev_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_rev_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_profit_name_lst: (Array[String]) Last 10 tên nhóm hàng theo Lợi nhuận gộp.
+- pd_group_quan_by_profit_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_profit_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_profit_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_profit_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
 
-# Bảng Chi nhánh
-•	branch_id: Mã định danh chi nhánh (Dùng để hiển thị tên chi nhánh).
-•	total_revenue: Doanh thu của chi nhánh.
-•	total_return_revenue: Giá trị trả hàng của chi nhánh.
-•	net_revenue: Doanh thu thuần của chi nhánh.
-•	total_cost: Tổng giá vốn của chi nhánh.
-•	gross_profit: Lợi nhuận gộp của chi nhánh.
-# Lưu ý: Để hiển thị bảng này, cần có dữ liệu cho nhiều branch_id trong cùng timeframe_start và timeframe_end.
+# ---- Dữ liệu Top/Last 10 Sản phẩm (Chi tiết - Tiền tố pd_) ----
+# Dữ liệu dạng Array. Tập trung vào Số lượng, Doanh thu thuần, Lợi nhuận gộp tổng.
+# !! Quan trọng: Phân tích chéo các chỉ số của CÙNG MỘT sản phẩm.
+- pd_product_quan_name: (Array[String]) Top 10 tên sản phẩm theo Số lượng bán.
+- pd_product_quan_by_quan: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_quan: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_quan: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_quan: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_net_rev_name: (Array[String]) Top 10 tên sản phẩm theo Doanh thu thuần.
+- pd_product_quantity_by_net_rev: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_net_rev: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_revenue_by_net_rev: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_net_rev: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_profit_name: (Array[String]) Top 10 tên sản phẩm theo Lợi nhuận gộp.
+- pd_product_quantity_by_profit: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_profit: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_profit: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_quan_name_lst: (Array[String]) Last 10 tên sản phẩm theo Số lượng bán.
+- pd_product_quan_by_quan_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_quan_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_quan_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_quan_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_rev_name_lst: (Array[String]) Last 10 tên sản phẩm theo Doanh thu thuần.
+- pd_product_quan_by_rev_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_rev_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_rev_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_rev_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_profit_name_lst: (Array[String]) Last 10 tên sản phẩm theo Lợi nhuận gộp.
+- pd_product_quan_by_profit_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_profit_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_profit_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_profit_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
 
-# Bảng Top 10 (Phân tích theo Tab)
-# Lưu ý: Các cột array [...] cần được phân tích cú pháp (parse).
-## Tab "Doanh thu thuần"
-•	Nhóm hàng: top_group_rev (Tên), group_rev_by_rev (Doanh thu thuần), group_sale_by_rev (Số lượng bán), group_profit_by_rev (Lợi nhuận gộp).
-•	Hàng hóa: top_product_rev (Tên), top_rev_by_rev (Doanh thu thuần), top_sale_by_rev (Số lượng bán), top_profit_by_rev (Lợi nhuận gộp).
-•	Nhóm khách hàng: revenue_unknown_customer (Doanh thu Khách lẻ), revenue_old_customer (Doanh thu Khách cũ - hoặc revenue_loyal nếu định nghĩa "Khách thân thiết" là Loyal).
-•	Kênh bán: top_channel (Tên kênh top 1), net_revenue_top_channel (Doanh thu thuần kênh top 1).
-•	So với kỳ trước (%): Cần dữ liệu tương ứng từ kỳ trước để so sánh.
+# ---- Dữ liệu Bổ sung Top 10 Nhóm Hàng (Tiền tố bs_) ----
+# Cung cấp thêm góc nhìn (TB/đơn, Tỷ suất LN,...) cho Top 10 Nhóm hàng theo các tiêu chí.
+- bs_category_rev_name_rev: (Array[String]) Top 10 tên nhóm hàng theo Doanh thu.
+- bs_group_revenue: (Array[Number]) Doanh thu tương ứng.
+- bs_group_revenue_per_inv: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- bs_category_re_name: (Array[String]) Top 10 tên nhóm hàng theo Giá trị trả hàng.
+- bs_group_re_quantity: (Array[Number]) Số lượng trả hàng tương ứng.
+- bs_group_re_revenue: (Array[Number]) Giá trị trả hàng tương ứng.
+- bs_group_return_percent: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- bs_group_net_rev_name: (Array[String]) Top 10 tên nhóm hàng theo Doanh thu thuần.
+- bs_group_net_revenue: (Array[Number]) Doanh thu thuần tương ứng.
+- bs_group_net_revenue_per_invoice: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- bs_group_profit_name: (Array[String]) Top 10 tên nhóm hàng theo Lợi nhuận gộp.
+- bs_group_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- bs_group_profit_per_invoice: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- bs_group_profit_margin: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- bs_group_inv_name: (Array[String]) Top 10 tên nhóm hàng theo Số hóa đơn bán.
+- bs_group_nob_inv: (Array[Number]) Số hóa đơn bán tương ứng.
 
-## Tab "Lợi nhuận gộp"
-•	Nhóm hàng: top_group_profit (Tên), group_profit_by_profit (Lợi nhuận gộp), group_sale_by_profit (Số lượng bán), group_rev_by_profit (Doanh thu thuần - để tính tỷ suất).
-•	Hàng hóa: top_product_profit (Tên), top_profit_by_profit (Lợi nhuận gộp), top_sale_by_profit (Số lượng bán), top_rev_by_profit (Doanh thu thuần - để tính tỷ suất).
-•	Nhóm khách hàng: profit_unknown_customer (?), profit_old_customer (?), HOẶC profit_loyal, profit_promising,... (Lợi nhuận gộp). Cần doanh thu tương ứng để tính tỷ suất.
-•	Kênh bán: (Chỉ có doanh thu kênh top 1).
-•	So với kỳ trước (%): Cần dữ liệu tương ứng từ kỳ trước.
+# ---- Dữ liệu Bổ sung Top 10 Sản phẩm (Tiền tố bs_) ----
+# Cung cấp thêm góc nhìn (TB/đơn, Tỷ suất LN,...) cho Top 10 Sản phẩm theo các tiêu chí.
+- bs_product_rev_name: (Array[String]) Top 10 tên sản phẩm theo Doanh thu.
+- bs_product_revenue: (Array[Number]) Doanh thu tương ứng.
+- bs_product_revenue_per_inv: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- bs_product_re_name: (Array[String]) Top 10 tên sản phẩm theo Giá trị trả hàng.
+- bs_product_re_quantity: (Array[Number]) Số lượng trả hàng tương ứng.
+- bs_product_re_revenue: (Array[Number]) Giá trị trả hàng tương ứng.
+- bs_product_return_percent: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- bs_product_net_rev_name: (Array[String]) Top 10 tên sản phẩm theo Doanh thu thuần.
+- bs_product_net_revenue: (Array[Number]) Doanh thu thuần tương ứng.
+- bs_product_net_revenue_per_invoice: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- bs_product_profit_name: (Array[String]) Top 10 tên sản phẩm theo Lợi nhuận gộp.
+- bs_product_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- bs_product_profit_per_invoice: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- bs_product_profit_margin: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- bs_product_inv_name: (Array[String]) Top 10 tên sản phẩm theo Số hóa đơn bán.
+- bs_product_nob_inv: (Array[Number]) Số hóa đơn bán tương ứng.
 
-## Tab "Trả hàng"
-•	Nhóm hàng: top_group_rev/profit/quantity (Tên - tùy đang xem top nào), group_return_by_rev/profit/quantity (Số lượng trả).
-•	Hàng hóa: top_product_rev/profit/quantity (Tên), top_return_by_rev/profit/quantity (Số lượng trả).
-•	Nhóm khách hàng (RFM): return_value_loyal, return_value_promising,... (Giá trị trả). Cần revenue_loyal,... để tính tỷ lệ trả.
-
-## Tab "Số hóa đơn"
-•	(Không có dữ liệu chi tiết)
-
-# ---- Cột/Dữ liệu cần bổ sung ----
-•	Dữ liệu chi tiết hàng ngày: Cần dữ liệu doanh thu, trả hàng, giá vốn, lợi nhuận gộp, số hóa đơn được ghi nhận theo *từng ngày* trong kỳ để vẽ biểu đồ đường "Chỉ số kinh doanh".
-•	Dữ liệu "Doanh thu thuần TB/đơn" hoặc "Lợi nhuận gộp TB/đơn" chi tiết: Cần số lượng đơn hàng liên quan đến *từng* nhóm hàng, hàng hóa, nhóm khách hàng, kênh bán cụ thể để tính các chỉ số này.
-•	Dữ liệu "Số hóa đơn" chi tiết: Cần số lượng hóa đơn được phân loại theo *từng* nhóm hàng, hàng hóa, nhóm khách hàng, kênh bán, nhân viên để hiển thị tab "Số hóa đơn".
-•	Dữ liệu "Giá trị trả" chi tiết: Cần giá trị hàng trả lại được phân loại theo *từng* nhóm hàng, hàng hóa, kênh bán, nhân viên và cho nhóm khách hàng New/Old/Unknown.
-•	Dữ liệu "Số lượng trả" chi tiết: Cần số lượng hàng trả lại được phân loại theo *từng* nhóm khách hàng (New/Old/Unknown, RFM), kênh bán, nhân viên. (Đã có cho Top/Last nhóm hàng/hàng hóa).
-•	Dữ liệu "Lợi nhuận gộp" chi tiết: Cần lợi nhuận gộp được phân loại theo *từng* kênh bán, nhân viên, và nhóm khách hàng New/Old/Unknown.
-•	Dữ liệu Top 10 Kênh bán: Cần thông tin (doanh thu, lợi nhuận, SL trả, GT trả, số hóa đơn) cho nhiều hơn là chỉ kênh top 1.
-•	Dữ liệu Nhân viên: Hoàn toàn không có thông tin để thực hiện phân tích theo nhân viên.
+# ---- Phân tích Khách hàng (Tổng quan & Chi tiết) ----
+- total_customer: (Number) Tổng số khách hàng mua hàng (Cũ + Mới + Lẻ).
+- repurchase_rate: (Number) Tỷ lệ khách hàng cũ mua lại kỳ này (%). *Cần dữ liệu kỳ trước để tính.*
+# Phân loại khách hàng Cũ/Mới/Lẻ
+- group_customer_type: (Array[String]) Mã nhóm khách (0: Cũ, 1: Mới, 2: Lẻ/Vãng lai).
+- num_customer_type: (Array[Number]) Số lượng khách hàng tương ứng theo nhóm.
+- customer_type_ratio: (Array[Number]) Tỷ lệ % khách hàng tương ứng theo nhóm.
+- revenue_customer_type: (Array[Number]) Doanh thu (Gross Revenue) tương ứng theo nhóm.
+- revenue_customer_type_ratio: (Array[Number]) Tỷ lệ % doanh thu tương ứng theo nhóm.
+# Phân loại khách hàng theo Kênh bán
+- num_customer_new_array: (Array[Number]) Số lượng khách mới theo Top 10 kênh bán (theo SL khách).
+- num_customer_old_array: (Array[Number]) Số lượng khách cũ theo Top 10 kênh bán.
+- num_customer_unknown_array: (Array[Number]) Số lượng khách lẻ theo Top 10 kênh bán.
+# Chi tiết Top 10 Nhóm khách hàng (theo Doanh thu, Trả hàng, DTT, LNG, Số hóa đơn)
+- grouping_customer_top10_revenue: (Array[String]) Top 10 tên nhóm khách hàng theo Doanh thu.
+- revenue_group_customer: (Array[Number]) Doanh thu tương ứng.
+- revenue_per_invoice_group_customer: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- grouping_customer_top10_num_return: (Array[String]) Top 10 tên nhóm khách hàng theo Số lượng trả.
+- num_return_group_customer: (Array[Number]) Số lượng trả tương ứng.
+- return_value_group_customer: (Array[Number]) Giá trị trả hàng tương ứng.
+- return_rate_group_customer: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- grouping_customer_top10_net_revenue: (Array[String]) Top 10 tên nhóm khách hàng theo Doanh thu thuần.
+- net_revenue_group_customer: (Array[Number]) Doanh thu thuần tương ứng.
+- net_revenue_per_invoice_group_customer: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- grouping_customer_top10_profit: (Array[String]) Top 10 tên nhóm khách hàng theo Lợi nhuận gộp.
+- profit_group_customer: (Array[Number]) Lợi nhuận gộp tương ứng.
+- profit_per_invoice_group_customer: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- profit_margin_group_customer: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- grouping_customer_top10_num_invoice: (Array[String]) Top 10 tên nhóm khách hàng theo Số hóa đơn bán.
+- num_invoice_group_customer: (Array[Number]) Số hóa đơn bán tương ứng.
+# Phân loại RFM
+- grouping_customer_rfm: (Array[String]) Mã nhóm RFM (1: Trung thành, 2: Thân thiết, 3: Tiềm năng, 4: Cần quan tâm, 5: Sắp rời bỏ).
+- num_customer_rfm: (Array[Number]) Số lượng khách hàng tương ứng theo nhóm RFM.
+- customer_ratio_rfm: (Array[Number]) Tỷ lệ % khách hàng tương ứng theo nhóm RFM.
+- revenue_rfm: (Array[Number]) Doanh thu tương ứng theo nhóm RFM.
+- return_value_rfm: (Array[Number]) Giá trị trả hàng tương ứng theo nhóm RFM.
+- profit_rfm: (Array[Number]) Lợi nhuận gộp tương ứng theo nhóm RFM.
+# Nhân khẩu học
+- customer_gender: (Array[String]) Giới tính khách hàng (0: Nam, 1: Nữ, 2: Khác).
+- num_customer_gender: (Array[Number]) Số lượng khách theo giới tính.
+- customer_ratio_gender: (Array[Number]) Tỷ lệ % khách theo giới tính.
+- group_customer_age: (Array[String]) Nhóm tuổi khách hàng.
+- num_customer_age: (Array[Number]) Số lượng khách theo nhóm tuổi.
+- customer_ratio_age: (Array[Number]) Tỷ lệ % khách theo nhóm tuổi.

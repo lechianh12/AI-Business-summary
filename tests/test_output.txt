@@ -10,115 +10,207 @@ QUY TRÌNH PHÂN TÍCH:
 - timeframe_type: (String) Phân loại chu kỳ thời gian ('7 ngày gần nhất', 'tháng này', v.v.). Dùng để xác định kỳ phân tích và kỳ so sánh.
 - timeframe_start: (Date) Ngày bắt đầu chu kỳ.
 - timeframe_end: (Date) Ngày kết thúc chu kỳ.
+- branch_id: (Number) ID của chi nhánh.
+- num_day: (Number) Số ngày trong chu kỳ tính.
+- num_day_sell: (Number) Số ngày có phát sinh đơn bán trong chu kỳ.
 
-# ---- Chỉ số kinh doanh tổng quan ----
-# Cung cấp cái nhìn tổng thể về hiệu suất.
+# ---- Chỉ số Kinh doanh Tổng thể (KPI Cards & Tổng quan) ----
+- num_invoice_sell: (Number) Tổng số lượng hóa đơn bán.
+- num_invoice_sell_per_day: (Number) Số lượng hóa đơn bán trung bình ngày.
+- num_invoice_return: (Number) Tổng số lượng hóa đơn hoàn trả.
+- num_invoice_return_per_day: (Number) Số lượng hóa đơn hoàn trả trung bình ngày.
+- total_revenue: (Number) Tổng doanh thu (trước khi trừ trả hàng).
+- revenue_per_day: (Number) Doanh thu trung bình ngày.
+- total_return_revenue: (Number) Tổng giá trị hàng bị trả lại.
+- total_return_revenue_per_day: (Number) Giá trị trả hàng trung bình ngày.
+- net_revenue: (Number) Doanh thu thuần (Doanh thu - Trả hàng). **Chỉ số quan trọng.**
+- net_revenue_per_day: (Number) Doanh thu thuần trung bình ngày.
+- total_cost: (Number) Tổng giá vốn hàng bán.
+- total_cost_per_day: (Number) Giá vốn hàng bán trung bình ngày.
+- gross_profit: (Number) Lợi nhuận gộp (Doanh thu thuần - Giá vốn). **Chỉ số quan trọng.**
+- gross_profit_per_day: (Number) Lợi nhuận gộp trung bình ngày.
+- avg_order_value: (Number) Giá trị đơn hàng trung bình (AOV = Tổng Doanh thu / Số hóa đơn bán).
+
+# ---- Phân tích Kênh bán (Tổng quan & Chi tiết Top 10) ----
+- sale_channels: (Array[String]) Tên các kênh bán hàng hoạt động trong kỳ.
+- top_channel: (String/Number) Kênh bán chạy nhất theo Doanh thu thuần (-1 nếu không xác định/chỉ có 1 kênh).
+- net_revenue_top_channel: (Number) Doanh thu thuần của kênh bán chạy nhất.
+- percentage_net_revenue_top_channel: (Number) Tỷ lệ % doanh thu thuần của kênh bán chạy nhất.
+# Dữ liệu chi tiết Top 10 Kênh bán (Tiền tố bs_)
+- bs_channel_rev_name: (Array[String]) Top 10 tên kênh theo Doanh thu.
+- bs_channel_revenue: (Array[Number]) Doanh thu tương ứng.
+- bs_channel_revenue_per_inv: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- bs_channel_re_name: (Array[String]) Top 10 tên kênh theo Giá trị trả hàng.
+- bs_channel_re_quantity: (Array[Number]) Số lượng trả hàng tương ứng.
+- bs_channel_re_revenue: (Array[Number]) Giá trị trả hàng tương ứng.
+- bs_channel_return_percent: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- bs_channel_net_rev_name: (Array[String]) Top 10 tên kênh theo Doanh thu thuần.
+- bs_channel_net_revenue: (Array[Number]) Doanh thu thuần tương ứng.
+- bs_channel_net_revenue_per_invoice: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- bs_channel_profit_name: (Array[String]) Top 10 tên kênh theo Lợi nhuận gộp.
+- bs_channel_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- bs_channel_profit_per_invoice: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- bs_channel_profit_margin: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- bs_channel_inv_name: (Array[String]) Top 10 tên kênh theo Số hóa đơn bán.
+- bs_channel_nob_inv: (Array[Number]) Số hóa đơn bán tương ứng.
+
+# ---- Chỉ số Hàng hóa Tổng thể ----
 - num_types: (Number) Tổng số loại mặt hàng (SKUs) khác nhau đã bán.
-- total_quantity: (Number) Tổng số lượng đơn vị sản phẩm đã bán.
-- avg_net_revenue: (Number) Doanh thu thuần trung bình trên mỗi đơn vị sản phẩm bán ra (Tổng DTT / Tổng SL bán).
-- avg_profit: (Number) Lợi nhuận gộp trung bình trên mỗi đơn vị sản phẩm bán ra (Tổng LNG / Tổng SL bán). **Chỉ số quan trọng.**
-- new_product_revenue: (Number) Tổng doanh thu thuần từ sản phẩm mới. *Kiểm tra nếu có dữ liệu.*
+- actual_sold: (Number) Tổng số lượng đơn vị sản phẩm đã bán.
+- avg_net_rev_per_product: (Number) Doanh thu thuần trung bình trên mỗi đơn vị sản phẩm bán ra.
+- avg_profit_per_product: (Number) Lợi nhuận gộp trung bình trên mỗi đơn vị sản phẩm bán ra.
+- new_product_net_revenue: (Number) Tổng doanh thu thuần từ sản phẩm mới. *Kiểm tra nếu có dữ liệu.*
 
-# ---- Dữ liệu Top 10 Sản phẩm (Bán chạy) ----
-# Các cột sau chứa dữ liệu dạng Array về Top 10 sản phẩm theo các tiêu chí khác nhau.
-# Các array trong cùng nhóm tiêu chí (ví dụ: theo số lượng) có cùng thứ tự.
-# !! Quan trọng: Phân tích chéo các chỉ số (SL bán, SL trả, DTT, LNG) của CÙNG MỘT sản phẩm trong danh sách này để xác định cả điểm mạnh (ví dụ: bán nhiều, lãi cao) và các vấn đề tiềm ẩn (ví dụ: bán nhiều nhưng lãi thấp/âm, trả hàng nhiều).
+# ---- Dữ liệu Top/Last 10 Nhóm Hàng (Chi tiết - Tiền tố pd_) ----
+# Dữ liệu dạng Array. Tập trung vào Số lượng, Doanh thu thuần, Lợi nhuận gộp tổng,....
+# !! Quan trọng: Phân tích chéo các chỉ số của CÙNG MỘT nhóm hàng. Có thể tìm thấy Insights/Rủi ro ở cả Top và Last.
+- pd_group_quan_name: (Array[String]) Top 10 tên nhóm hàng theo Số lượng bán.
+- pd_group_quan_by_quan: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_quan: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_quan: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_quan: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_net_rev_name: (Array[String]) Top 10 tên nhóm hàng theo Doanh thu thuần.
+- pd_group_quantity_by_net_rev: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_net_rev: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_revenue_by_net_rev: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_net_rev: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_profit_name: (Array[String]) Top 10 tên nhóm hàng theo Lợi nhuận gộp.
+- pd_group_quantity_by_profit: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_profit: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_profit: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_quan_name_lst: (Array[String]) Last 10 tên nhóm hàng theo Số lượng bán.
+- pd_group_quan_by_quan_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_quan_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_quan_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_quan_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_rev_name_lst: (Array[String]) Last 10 tên nhóm hàng theo Doanh thu thuần.
+- pd_group_quan_by_rev_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_rev_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_rev_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_rev_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_group_profit_name_lst: (Array[String]) Last 10 tên nhóm hàng theo Lợi nhuận gộp.
+- pd_group_quan_by_profit_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_group_re_quantity_by_profit_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_group_net_rev_by_profit_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_group_profit_by_profit_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
 
-# --- Top 10 theo SỐ LƯỢNG BÁN ---
-- top_product_quantity: (Array[String]) Tên 10 sản phẩm có số lượng bán cao nhất.
-- top_sale_by_quantity: (Array[Number]) Số lượng bán tương ứng.
-- top_return_by_quantity: (Array[Number]) Số lượng bị trả lại tương ứng.
-- top_rev_by_quantity: (Array[Number]) Doanh thu thuần tương ứng.
-- top_profit_by_quantity: (Array[Number]) Lợi nhuận gộp tương ứng.
+# ---- Dữ liệu Top/Last 10 Sản phẩm (Chi tiết - Tiền tố pd_) ----
+# Dữ liệu dạng Array. Tập trung vào Số lượng, Doanh thu thuần, Lợi nhuận gộp tổng.
+# !! Quan trọng: Phân tích chéo các chỉ số của CÙNG MỘT sản phẩm.
+- pd_product_quan_name: (Array[String]) Top 10 tên sản phẩm theo Số lượng bán.
+- pd_product_quan_by_quan: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_quan: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_quan: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_quan: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_net_rev_name: (Array[String]) Top 10 tên sản phẩm theo Doanh thu thuần.
+- pd_product_quantity_by_net_rev: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_net_rev: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_revenue_by_net_rev: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_net_rev: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_profit_name: (Array[String]) Top 10 tên sản phẩm theo Lợi nhuận gộp.
+- pd_product_quantity_by_profit: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_profit: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_profit: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_quan_name_lst: (Array[String]) Last 10 tên sản phẩm theo Số lượng bán.
+- pd_product_quan_by_quan_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_quan_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_quan_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_quan_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_rev_name_lst: (Array[String]) Last 10 tên sản phẩm theo Doanh thu thuần.
+- pd_product_quan_by_rev_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_rev_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_rev_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_rev_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
+- pd_product_profit_name_lst: (Array[String]) Last 10 tên sản phẩm theo Lợi nhuận gộp.
+- pd_product_quan_by_profit_lst: (Array[Number]) Số lượng bán tương ứng.
+- pd_product_re_quantity_by_profit_lst: (Array[Number]) Số lượng trả lại tương ứng.
+- pd_product_net_rev_by_profit_lst: (Array[Number]) Doanh thu thuần tương ứng.
+- pd_product_profit_by_profit_lst: (Array[Number]) Lợi nhuận gộp tương ứng.
 
-# --- Top 10 theo DOANH THU THUẦN ---
-- top_product_rev: (Array[String]) Tên 10 sản phẩm có doanh thu thuần cao nhất.
-- top_sale_by_rev: (Array[Number]) Số lượng bán tương ứng.
-- top_return_by_rev: (Array[Number]) Số lượng trả lại tương ứng.
-- top_rev_by_rev: (Array[Number]) Doanh thu thuần tương ứng.
-- top_profit_by_rev: (Array[Number]) Lợi nhuận gộp tương ứng.
+# ---- Dữ liệu Bổ sung Top 10 Nhóm Hàng (Tiền tố bs_) ----
+# Cung cấp thêm góc nhìn (TB/đơn, Tỷ suất LN,...) cho Top 10 Nhóm hàng theo các tiêu chí.
+- bs_category_rev_name_rev: (Array[String]) Top 10 tên nhóm hàng theo Doanh thu.
+- bs_group_revenue: (Array[Number]) Doanh thu tương ứng.
+- bs_group_revenue_per_inv: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- bs_category_re_name: (Array[String]) Top 10 tên nhóm hàng theo Giá trị trả hàng.
+- bs_group_re_quantity: (Array[Number]) Số lượng trả hàng tương ứng.
+- bs_group_re_revenue: (Array[Number]) Giá trị trả hàng tương ứng.
+- bs_group_return_percent: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- bs_group_net_rev_name: (Array[String]) Top 10 tên nhóm hàng theo Doanh thu thuần.
+- bs_group_net_revenue: (Array[Number]) Doanh thu thuần tương ứng.
+- bs_group_net_revenue_per_invoice: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- bs_group_profit_name: (Array[String]) Top 10 tên nhóm hàng theo Lợi nhuận gộp.
+- bs_group_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- bs_group_profit_per_invoice: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- bs_group_profit_margin: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- bs_group_inv_name: (Array[String]) Top 10 tên nhóm hàng theo Số hóa đơn bán.
+- bs_group_nob_inv: (Array[Number]) Số hóa đơn bán tương ứng.
 
-# --- Top 10 theo LỢI NHUẬN GỘP ---
-- top_product_profit: (Array[String]) Tên 10 sản phẩm có lợi nhuận gộp cao nhất.
-- top_sale_by_profit: (Array[Number]) Số lượng bán tương ứng.
-- top_return_by_profit: (Array[Number]) Số lượng trả lại tương ứng.
-- top_rev_by_profit: (Array[Number]) Doanh thu thuần tương ứng.
-- top_profit_by_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+# ---- Dữ liệu Bổ sung Top 10 Sản phẩm (Tiền tố bs_) ----
+# Cung cấp thêm góc nhìn (TB/đơn, Tỷ suất LN,...) cho Top 10 Sản phẩm theo các tiêu chí.
+- bs_product_rev_name: (Array[String]) Top 10 tên sản phẩm theo Doanh thu.
+- bs_product_revenue: (Array[Number]) Doanh thu tương ứng.
+- bs_product_revenue_per_inv: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- bs_product_re_name: (Array[String]) Top 10 tên sản phẩm theo Giá trị trả hàng.
+- bs_product_re_quantity: (Array[Number]) Số lượng trả hàng tương ứng.
+- bs_product_re_revenue: (Array[Number]) Giá trị trả hàng tương ứng.
+- bs_product_return_percent: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- bs_product_net_rev_name: (Array[String]) Top 10 tên sản phẩm theo Doanh thu thuần.
+- bs_product_net_revenue: (Array[Number]) Doanh thu thuần tương ứng.
+- bs_product_net_revenue_per_invoice: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- bs_product_profit_name: (Array[String]) Top 10 tên sản phẩm theo Lợi nhuận gộp.
+- bs_product_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
+- bs_product_profit_per_invoice: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- bs_product_profit_margin: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- bs_product_inv_name: (Array[String]) Top 10 tên sản phẩm theo Số hóa đơn bán.
+- bs_product_nob_inv: (Array[Number]) Số hóa đơn bán tương ứng.
 
-# ---- Dữ liệu Top 10 Sản phẩm Kém Hiệu Quả (Bán chậm/Last 10) ----
-# Các cột sau chứa dữ liệu dạng Array về Top 10 sản phẩm kém hiệu quả nhất (bán ít nhất, doanh thu/lợi nhuận thấp nhất/âm).
-# !! Quan trọng: Phân tích chéo các chỉ số của CÙNG MỘT sản phẩm để xác định rủi ro chính (ví dụ: gây lỗ, tồn kho) nhưng cũng cần xem xét liệu có điểm tích cực nào không (ví dụ: lợi nhuận đơn vị cao dù bán ít).
-
-# --- Last 10 theo SỐ LƯỢNG BÁN ---
-- last_product_quantity: (Array[String]) Tên 10 sản phẩm có số lượng bán thấp nhất.
-- last_sale_by_quantity: (Array[Number]) Số lượng bán tương ứng.
-- last_return_by_quantity: (Array[Number]) Số lượng trả lại tương ứng.
-- last_rev_by_quantity: (Array[Number]) Doanh thu thuần tương ứng.
-- last_profit_by_quantity: (Array[Number]) Lợi nhuận gộp tương ứng.
-
-# --- Last 10 theo DOANH THU THUẦN ---
-- last_product_rev: (Array[String]) Tên 10 sản phẩm có doanh thu thuần thấp nhất (có thể âm).
-- last_sale_by_rev: (Array[Number]) Số lượng bán tương ứng.
-- last_return_by_rev: (Array[Number]) Số lượng trả lại tương ứng.
-- last_rev_by_rev: (Array[Number]) Doanh thu thuần tương ứng.
-- last_profit_by_rev: (Array[Number]) Lợi nhuận gộp tương ứng.
-
-# --- Last 10 theo LỢI NHUẬN GỘP ---
-- last_product_profit: (Array[String]) Tên 10 sản phẩm có lợi nhuận gộp thấp nhất (có thể âm).
-- last_sale_by_profit: (Array[Number]) Số lượng bán tương ứng.
-- last_return_by_profit: (Array[Number]) Số lượng trả lại tương ứng.
-- last_rev_by_profit: (Array[Number]) Doanh thu thuần tương ứng.
-- last_profit_by_profit: (Array[Number]) Lợi nhuận gộp tương ứng.
-
-# ---- Dữ liệu Top 10 Nhóm Hàng (Bán chạy) ----
-# Tương tự sản phẩm, nhưng ở cấp độ nhóm hàng.
-# !! Quan trọng: Phân tích chéo các chỉ số của CÙNG MỘT nhóm hàng để xác định cả điểm mạnh và vấn đề tiềm ẩn.
-
-# --- Top 10 theo SỐ LƯỢNG BÁN ---
-- top_group_quantity: (Array[String]) Tên 10 nhóm hàng có tổng số lượng bán cao nhất.
-- group_sale_by_quantity: (Array[Number]) Tổng số lượng bán tương ứng.
-- group_return_by_quantity: (Array[Number]) Tổng số lượng trả lại.
-- group_rev_by_quantity: (Array[Number]) Tổng doanh thu thuần.
-- group_profit_by_quantity: (Array[Number]) Tổng lợi nhuận gộp.
-
-# --- Top 10 theo DOANH THU THUẦN ---
-- top_group_rev: (Array[String]) Tên 10 nhóm hàng có tổng doanh thu thuần cao nhất.
-- group_sale_by_rev: (Array[Number]) Tổng số lượng bán.
-- group_return_by_rev: (Array[Number]) Tổng số lượng trả lại.
-- group_rev_by_rev: (Array[Number]) Tổng doanh thu thuần.
-- group_profit_by_rev: (Array[Number]) Tổng lợi nhuận gộp.
-
-# --- Top 10 theo LỢI NHUẬN GỘP ---
-- top_group_profit: (Array[String]) Tên 10 nhóm hàng có tổng lợi nhuận gộp cao nhất.
-- group_sale_by_profit: (Array[Number]) Tổng số lượng bán.
-- group_return_by_profit: (Array[Number]) Tổng số lượng trả lại.
-- group_rev_by_profit: (Array[Number]) Tổng doanh thu thuần.
-- group_profit_by_profit: (Array[Number]) Tổng lợi nhuận gộp.
-
-# ---- Dữ liệu Top 10 Nhóm Hàng Kém Hiệu Quả (Bán chậm/Last 10) ----
-# Tương tự sản phẩm, nhưng ở cấp độ nhóm hàng.
-# !! Quan trọng: Phân tích chéo các chỉ số của CÙNG MỘT nhóm hàng để xác định rủi ro và cơ hội (nếu có).
-
-# --- Last 10 theo SỐ LƯỢNG BÁN ---
-- last_group_quantity: (Array[String]) Tên 10 nhóm hàng có tổng số lượng bán thấp nhất.
-- last_group_sale_quantity: (Array[Number]) Tổng số lượng bán.
-- last_group_return_quantity: (Array[Number]) Tổng số lượng trả lại.
-- last_group_rev_quantity: (Array[Number]) Tổng doanh thu thuần.
-- last_group_profit_quantity: (Array[Number]) Tổng lợi nhuận gộp.
-
-# --- Last 10 theo DOANH THU THUẦN ---
-- last_group_rev: (Array[String]) Tên 10 nhóm hàng có tổng doanh thu thuần thấp nhất.
-- last_group_sale_rev: (Array[Number]) Tổng số lượng bán.
-- last_group_return_rev: (Array[Number]) Tổng số lượng trả lại.
-- last_group_rev_rev: (Array[Number]) Tổng doanh thu thuần.
-- last_group_profit_rev: (Array[Number]) Tổng lợi nhuận gộp.
-
-# --- Last 10 theo LỢI NHUẬN GỘP ---
-- last_group_profit: (Array[String]) Tên 10 nhóm hàng có tổng lợi nhuận gộp thấp nhất.
-- last_group_sale_profit: (Array[Number]) Tổng số lượng bán.
-- last_group_return_profit: (Array[Number]) Tổng số lượng trả lại.
-- last_group_rev_profit: (Array[Number]) Tổng doanh thu thuần.
-- last_group_profit_profit: (Array[Number]) Tổng lợi nhuận gộp.
+# ---- Phân tích Khách hàng (Tổng quan & Chi tiết) ----
+- total_customer: (Number) Tổng số khách hàng mua hàng (Cũ + Mới + Lẻ).
+- repurchase_rate: (Number) Tỷ lệ khách hàng cũ mua lại kỳ này (%). *Cần dữ liệu kỳ trước để tính.*
+# Phân loại khách hàng Cũ/Mới/Lẻ
+- group_customer_type: (Array[String]) Mã nhóm khách (0: Cũ, 1: Mới, 2: Lẻ/Vãng lai).
+- num_customer_type: (Array[Number]) Số lượng khách hàng tương ứng theo nhóm.
+- customer_type_ratio: (Array[Number]) Tỷ lệ % khách hàng tương ứng theo nhóm.
+- revenue_customer_type: (Array[Number]) Doanh thu (Gross Revenue) tương ứng theo nhóm.
+- revenue_customer_type_ratio: (Array[Number]) Tỷ lệ % doanh thu tương ứng theo nhóm.
+# Phân loại khách hàng theo Kênh bán
+- num_customer_new_array: (Array[Number]) Số lượng khách mới theo Top 10 kênh bán (theo SL khách).
+- num_customer_old_array: (Array[Number]) Số lượng khách cũ theo Top 10 kênh bán.
+- num_customer_unknown_array: (Array[Number]) Số lượng khách lẻ theo Top 10 kênh bán.
+# Chi tiết Top 10 Nhóm khách hàng (theo Doanh thu, Trả hàng, DTT, LNG, Số hóa đơn)
+- grouping_customer_top10_revenue: (Array[String]) Top 10 tên nhóm khách hàng theo Doanh thu.
+- revenue_group_customer: (Array[Number]) Doanh thu tương ứng.
+- revenue_per_invoice_group_customer: (Array[Number]) Doanh thu TB/đơn tương ứng.
+- grouping_customer_top10_num_return: (Array[String]) Top 10 tên nhóm khách hàng theo Số lượng trả.
+- num_return_group_customer: (Array[Number]) Số lượng trả tương ứng.
+- return_value_group_customer: (Array[Number]) Giá trị trả hàng tương ứng.
+- return_rate_group_customer: (Array[Number]) Tỷ lệ trả hàng (%) tương ứng.
+- grouping_customer_top10_net_revenue: (Array[String]) Top 10 tên nhóm khách hàng theo Doanh thu thuần.
+- net_revenue_group_customer: (Array[Number]) Doanh thu thuần tương ứng.
+- net_revenue_per_invoice_group_customer: (Array[Number]) Doanh thu thuần TB/đơn tương ứng.
+- grouping_customer_top10_profit: (Array[String]) Top 10 tên nhóm khách hàng theo Lợi nhuận gộp.
+- profit_group_customer: (Array[Number]) Lợi nhuận gộp tương ứng.
+- profit_per_invoice_group_customer: (Array[Number]) Lợi nhuận gộp TB/đơn tương ứng.
+- profit_margin_group_customer: (Array[Number]) Tỷ suất lợi nhuận (%) tương ứng.
+- grouping_customer_top10_num_invoice: (Array[String]) Top 10 tên nhóm khách hàng theo Số hóa đơn bán.
+- num_invoice_group_customer: (Array[Number]) Số hóa đơn bán tương ứng.
+# Phân loại RFM
+- grouping_customer_rfm: (Array[String]) Mã nhóm RFM (1: Trung thành, 2: Thân thiết, 3: Tiềm năng, 4: Cần quan tâm, 5: Sắp rời bỏ).
+- num_customer_rfm: (Array[Number]) Số lượng khách hàng tương ứng theo nhóm RFM.
+- customer_ratio_rfm: (Array[Number]) Tỷ lệ % khách hàng tương ứng theo nhóm RFM.
+- revenue_rfm: (Array[Number]) Doanh thu tương ứng theo nhóm RFM.
+- return_value_rfm: (Array[Number]) Giá trị trả hàng tương ứng theo nhóm RFM.
+- profit_rfm: (Array[Number]) Lợi nhuận gộp tương ứng theo nhóm RFM.
+# Nhân khẩu học
+- customer_gender: (Array[String]) Giới tính khách hàng (0: Nam, 1: Nữ, 2: Khác).
+- num_customer_gender: (Array[Number]) Số lượng khách theo giới tính.
+- customer_ratio_gender: (Array[Number]) Tỷ lệ % khách theo giới tính.
+- group_customer_age: (Array[String]) Nhóm tuổi khách hàng.
+- num_customer_age: (Array[Number]) Số lượng khách theo nhóm tuổi.
+- customer_ratio_age: (Array[Number]) Tỷ lệ % khách theo nhóm tuổi.
     ```
 
 2.	Phân tích Ngữ cảnh và Dữ liệu Đầu vào:
@@ -174,11 +266,11 @@ Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phâ
     
 
 Dữ liệu CSV:
-run_date,server_key,retailer_id,branch_id,timeframe_start,timeframe_end,num_types,total_quantity,avg_net_revenue,avg_profit,new_product_revenue,top_product_quantity,top_sale_by_quantity,top_return_by_quantity,top_rev_by_quantity,top_profit_by_quantity,top_product_rev,top_sale_by_rev,top_return_by_rev,top_rev_by_rev,top_profit_by_rev,top_product_profit,top_sale_by_profit,top_return_by_profit,top_rev_by_profit,top_profit_by_profit,last_product_quantity,last_sale_by_quantity,last_return_by_quantity,last_rev_by_quantity,last_profit_by_quantity,last_product_rev,last_sale_by_rev,last_return_by_rev,last_rev_by_rev,last_profit_by_rev,last_product_profit,last_sale_by_profit,last_return_by_profit,last_rev_by_profit,last_profit_by_profit,top_group_quantity,group_sale_by_quantity,group_return_by_quantity,group_rev_by_quantity,group_profit_by_quantity,top_group_rev,group_sale_by_rev,group_return_by_rev,group_rev_by_rev,group_profit_by_rev,top_group_profit,group_sale_by_profit,group_return_by_profit,group_rev_by_profit,group_profit_by_profit,last_group_quantity,last_group_sale_quantity,last_group_return_quantity,last_group_rev_quantity,last_group_profit_quantity,last_group_rev,last_group_sale_rev,last_group_return_rev,last_group_rev_rev,last_group_profit_rev,last_group_profit,last_group_sale_profit,last_group_return_profit,last_group_rev_profit,last_group_profit_profit,timeframe_type
-2025-04-10,111,285727,54778,2025-04-01,2025-04-10,249,1176.0,11866.67,3236.16,0.0,"['Găng tay VGlove XANH LÁ hộp 50 đôi - 100 chiếc (Đôi)', 'HTT - Yumagel dạ dày (HN) (Gói)', 'HTT - Mezapulgit dạ dày hộp 30 gói (HN) (Gói)', 'HTT - Kẹo dẻo Ích Nhi (Nam Dược) + Bipp Gummy Calci (Gói)', 'HTT - Tiffy hộp 25 vỉ (HN) (Vỉ)', 'HTT - Men vi sinh Enterogermina hộp 20 ống (HN) (DKSH) (Ống)', 'Say xe Thái vỉ 10 viên ( YB ) (Viên)', 'HTT - Gạc răng miệng Dr. Papie (TPC) (Miếng)', 'BCS Doku bạc + Doku màu hộp 10 chiếc (Chiếc)', 'Bơm 1 hộp 100 chiếc (TQ) (Cái)']","[106.0, 64.0, 40.0, 35.0, 30.0, 30.0, 30.0, 30.0, 30.0, 24.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[159000.0, 320000.0, 120000.0, 250000.0, 150000.0, 255000.0, 30000.0, 120000.0, 210000.0, 19200.0]","[42400.0, 32000.0, 64000.0, 22500.0, 49800.0, 30000.0, 18300.0, 30990.0, 126000.0, 3120.0]","['HTT - Neo Tergynan đặt phụ khoa (HN) (Việt Hà) (Hộp)', 'EVADAYS viên đặt âm đạo, phụ khoa hộp 10 viên (ĐNA) (Hộp)', 'HTT - Yumagel dạ dày (HN) (Gói)', 'Quick stick - Test thử thai (HN) (Chiếc)', 'HTT - Men vi sinh Enterogermina hộp 20 ống (HN) (DKSH) (Ống)', 'HTT - Kẹo dẻo Ích Nhi (Nam Dược) + Bipp Gummy Calci (Gói)', 'Viên nang giải rượu Nam Dược BYESAY hộp to - 5 hộp nhỏ (Hộp nhỏ)', 'HTT - Hapenxin 500mg xanh tím DHG (Vỉ)', 'BCS Doku bạc + Doku màu hộp 10 chiếc (Chiếc)', 'Cao An Thanh (Nam Dược) (Chai)']","[4.0, 5.0, 64.0, 13.0, 30.0, 35.0, 11.0, 12.0, 30.0, 3.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[680000.0, 350000.0, 320000.0, 260000.0, 255000.0, 250000.0, 242000.0, 216000.0, 210000.0, 195000.0]","[204000.0, 148750.0, 32000.0, 78000.0, 30000.0, 22500.0, 77000.0, 52704.0, 126000.0, 0.0]","['HTT - Neo Tergynan đặt phụ khoa (HN) (Việt Hà) (Hộp)', 'EVADAYS viên đặt âm đạo, phụ khoa hộp 10 viên (ĐNA) (Hộp)', 'BCS Doku bạc + Doku màu hộp 10 chiếc (Chiếc)', 'Quick stick - Test thử thai (HN) (Chiếc)', 'Viên nang giải rượu Nam Dược BYESAY hộp to - 5 hộp nhỏ (Hộp nhỏ)', 'BenoBoston - Betamethasone + Dexchlorpheniramin hộp 10 vỉ Boston (Vỉ)', 'SCABE SH CREAM kem bôi trị kí sinh trùng (S) (Tuýp)', 'SRM Skin GSV 300ml (S) (Chai)', 'EYE Omega Bổ mắt Hộp 50 viên (Việt Pháp) (Hộp)', 'HTT - Mezapulgit dạ dày hộp 30 gói (HN) (Gói)']","[4.0, 5.0, 30.0, 13.0, 11.0, 5.0, 1.0, 2.0, 1.0, 40.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[680000.0, 350000.0, 210000.0, 260000.0, 242000.0, 100000.0, 120000.0, 190000.0, 158000.0, 120000.0]","[204000.0, 148750.0, 126000.0, 78000.0, 77000.0, 75000.0, 75000.0, 70000.0, 66000.0, 64000.0]","['Bình rửa mũi xoang Ích Nhân (Bình)', 'Salonpas hộp 20m dán - HỘP TO có 10h nhỏ (Hộp)', 'Tẩy tế bào chết Lô hội + Thảo dược (Dabo) (Hộp)', 'Kem nẻ Valentine ( Thái Dương ) (Tuýp)', 'Ravonol - Para + Lora + Dextro cảm cúm, ho hộp 10 vỉ (Trường Thọ) (Vỉ)', 'Vitamin E kem bôi hũ trắng nắp xanh hàng Thái (Hũ)', 'Towder Spray - Pemethrin 5% dạng xịt (S) (Chai)', 'KĐR Bee trẻ em (NH) (tuýp)', 'An Trĩ Vương Gel (Tuýp)', 'FOBE Mouth Ulcer gel nhiệt miệng chai 15g (FOBELIFE) (Chai)']","[0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[25000.0, 13500.0, 145000.0, 30000.0, 12000.0, 28000.0, 150000.0, 40000.0, 92590.0, 70000.0]","[5000.0, 2000.0, 29000.0, 5000.0, 6500.0, 10000.0, 50000.0, 7000.0, 3490.0, 30000.0]","['Bơm 3 hộp 100 chiếc (TQ) (Cái)', 'Cedetamin (Viên) lọ 500 viên (Viên)', 'Metronidazol Hà Tây hộp 50 vỉ (HN) (Vỉ)', 'Bơm 5 hộp 100 chiếc (TQ) (Cái)', 'HTT - Gạc tiệt trùng 30 x 30cm vải xô ( CTD ) (Gói)', 'Napharangan - Paracetamol sủi hộp 16 viên (Nam Hà) (Vỉ)', 'Acetab + Hapacol 325 - Paracetamol 325mg vỉ 10 viên (AH) (Vỉ)', 'Cốm Canxi (Lọ)', 'HTT - Sedachor hộp 25 vỉ + PASEPAN hộp 50 vỉ (HT) (Vỉ)', 'HTT - Dep nước (TQ) (HN) (Lọ)']","[1.0, 6.0, 1.0, 5.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[1000.0, 3000.0, 3500.0, 4000.0, 4000.0, 5000.0, 5000.0, 6000.0, 6000.0, 6000.0]","[440.0, 2280.0, 830.0, 1100.0, 2000.0, 2286.0, 2920.0, 2500.0, 1000.0, 2300.0]","['Cao An Thanh (Nam Dược) (Chai)', 'Chất xơ Ích Nhi (Nam Dược) (Gói)', 'Bơm 3 hộp 100 chiếc (TQ) (Cái)', 'Metronidazol Hà Tây hộp 50 vỉ (HN) (Vỉ)', 'TraSleepy dưỡng tâm an thần hộp 2 vỉ (TPC) (Vỉ)', 'HTT - Hoạt Huyết Dưỡng Não hộp 5 vỉ (TPC) (Vỉ)', 'HTT - Sedachor hộp 25 vỉ + PASEPAN hộp 50 vỉ (HT) (Vỉ)', 'Bơm 5 hộp 100 chiếc (TQ) (Cái)', 'Chubby kids hộp 20 ống (D) (Ống)', 'HTT - Natri 0.9% Traphaco + Nam Hà (Hộp)']","[3.0, 14.0, 1.0, 1.0, 1.0, 1.0, 2.0, 5.0, 5.0, 7.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[195000.0, 77000.0, 1000.0, 3500.0, 23000.0, 19000.0, 6000.0, 4000.0, 32500.0, 28000.0]","[0.0, 0.0, 440.0, 830.0, 1000.0, 1000.0, 1000.0, 1100.0, 1250.0, 1400.0]","['HÀNG THÔNG THƯỜNG', 'Vật tư vật dụng y tế', 'THỰC PHẨM CHỨC NĂNG', 'Thuốc Giảm đau + Hạ sốt', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'Thuốc Đường Tiêu Hóa', 'Thuốc đường hô hấp - ho cảm', 'Thuốc Phụ Khoa', 'Thuốc chống viêm corticoid + alpha', 'Thuốc Mắt - Mũi - Tai']","[433.0, 350.0, 99.0, 47.0, 39.0, 36.0, 28.0, 25.0, 20.0, 17.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[5737000.0, 1206700.0, 1636500.0, 378000.0, 1166590.0, 432410.0, 353000.0, 777000.0, 202000.0, 299000.0]","[1207230.0, 462173.0, 398725.0, 188246.0, 363856.0, 101476.0, 124420.0, 281210.0, 77560.0, 52360.0]","['HÀNG THÔNG THƯỜNG', 'THỰC PHẨM CHỨC NĂNG', 'Vật tư vật dụng y tế', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'Thuốc Phụ Khoa', 'Thuốc Tuýp', 'Thuốc Đường Tiêu Hóa', 'Thuốc Giảm đau + Hạ sốt', 'Thuốc đường hô hấp - ho cảm', 'Thuốc Mắt - Mũi - Tai']","[433.0, 99.0, 350.0, 39.0, 25.0, 16.0, 36.0, 47.0, 28.0, 17.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[5737000.0, 1636500.0, 1206700.0, 1166590.0, 777000.0, 440000.0, 432410.0, 378000.0, 353000.0, 299000.0]","[1207230.0, 398725.0, 462173.0, 363856.0, 281210.0, 112218.0, 101476.0, 188246.0, 124420.0, 52360.0]","['HÀNG THÔNG THƯỜNG', 'Vật tư vật dụng y tế', 'THỰC PHẨM CHỨC NĂNG', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'Thuốc Phụ Khoa', 'Thuốc Giảm đau + Hạ sốt', 'Thuốc đường hô hấp - ho cảm', 'Thuốc Tuýp', 'Thuốc Đường Tiêu Hóa', 'TPCN Dung dịch vệ sinh']","[433.0, 350.0, 99.0, 39.0, 25.0, 47.0, 28.0, 16.0, 36.0, 2.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[5737000.0, 1206700.0, 1636500.0, 1166590.0, 777000.0, 378000.0, 353000.0, 440000.0, 432410.0, 150000.0]","[1207230.0, 462173.0, 398725.0, 363856.0, 281210.0, 188246.0, 124420.0, 112218.0, 101476.0, 79000.0]","['Thực phẩm chức năng cho bé', 'Thuốc Đông Dược', 'Sữa rửa mặt', 'Thuốc Huyết Áp - Tim Mạch - Đường huyết', 'TPCN Dung dịch vệ sinh', 'Thuốc Kháng Virus - Kháng Nấm', 'TPCN BỔ NÃO - TĂNG ĐỀ KHÁNG - MẮT', 'XỊT MŨI HỌNG, RĂNG MIỆNG, VIÊN NGẬM', 'Thuốc Khác (Gout, Giãn cơ, Tẩy giun...)', 'Vitamin và khoáng chất']","[1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 3.0, 5.0, 5.0, 6.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[100000.0, 9000.0, 145000.0, 17000.0, 150000.0, 55000.0, 191000.0, 50000.0, 75000.0, 35000.0]","[40000.0, 4400.0, 30000.0, 3200.0, 79000.0, 14250.0, 73800.0, 20400.0, 12669.0, 14580.0]","['Thuốc Đông Dược', 'Thuốc Huyết Áp - Tim Mạch - Đường huyết', 'Vitamin và khoáng chất', 'XỊT MŨI HỌNG, RĂNG MIỆNG, VIÊN NGẬM', 'Thuốc Kháng Virus - Kháng Nấm', 'Thuốc Khác (Gout, Giãn cơ, Tẩy giun...)', 'Thực phẩm chức năng cho bé', 'Thuốc Tuần Hoàn Não', 'Thuốc Nội tiết + Phụ Khoa', 'Thuốc kháng histamin']","[1.0, 1.0, 6.0, 5.0, 3.0, 5.0, 1.0, 7.0, 9.0, 14.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[9000.0, 17000.0, 35000.0, 50000.0, 55000.0, 75000.0, 100000.0, 105000.0, 111500.0, 137000.0]","[4400.0, 3200.0, 14580.0, 20400.0, 14250.0, 12669.0, 40000.0, 35000.0, 22920.0, 38600.0]","['Thuốc Huyết Áp - Tim Mạch - Đường huyết', 'Thuốc Đông Dược', 'Thuốc Khác (Gout, Giãn cơ, Tẩy giun...)', 'Thuốc Kháng Virus - Kháng Nấm', 'Vitamin và khoáng chất', 'XỊT MŨI HỌNG, RĂNG MIỆNG, VIÊN NGẬM', 'Thuốc Nội tiết + Phụ Khoa', 'Sữa rửa mặt', 'Thuốc Tuần Hoàn Não', 'Thuốc kháng histamin']","[1.0, 1.0, 5.0, 3.0, 6.0, 5.0, 9.0, 1.0, 7.0, 14.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[17000.0, 9000.0, 75000.0, 55000.0, 35000.0, 50000.0, 111500.0, 145000.0, 105000.0, 137000.0]","[3200.0, 4400.0, 12669.0, 14250.0, 14580.0, 20400.0, 22920.0, 30000.0, 35000.0, 38600.0]",tháng này
-2025-04-10,111,285727,54778,2025-03-01,2025-04-01,599,5030.0,11666.04,1507.05,0.0,,"[460.0, 262.0, 210.0, 208.0, 166.0, 143.0, 102.0, 100.0, 81.0, 79.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[184000.0, 209600.0, 147000.0, 208000.0, 110722.0, 1001000.0, 77000.0, 60000.0, 389800.0, 395000.0]","[100280.0, 52400.0, 58800.0, 55120.0, 38844.0, 600600.0, -137200.0, 24000.0, 43150.0, 131140.0]",,"[5.0, 143.0, 5.0, 44.0, 14.0, 8.0, 14.0, 1.0, 2.0, 7.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[1200000.0, 1001000.0, 925000.0, 879685.0, 840000.0, 800000.0, 697194.0, 630000.0, 604500.0, 595000.0]","[75000.0, 600600.0, 75000.0, 322337.0, 315000.0, 320000.0, 297354.0, 20000.0, 109500.0, 84000.0]",,"[143.0, 44.0, 8.0, 14.0, 14.0, 2.0, 4.0, 35.0, 1.0, 6.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[1001000.0, 879685.0, 800000.0, 840000.0, 697194.0, 291581.0, 360000.0, 525000.0, 190000.0, 420000.0]","[600600.0, 322337.0, 320000.0, 315000.0, 297354.0, 291581.0, 244000.0, 204155.0, 190000.0, 174000.0]",,"[0.166, 0.2, 0.35, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[49800.0, 37200.0, 64750.0, 12500.0, 0.0, 28000.0, 14000.0, 10000.0, 40000.0, 48000.0]","[33200.0, 2000.0, 0.0, 0.0, -130000.0, 9000.0, 1000.0, 3400.0, 9760.0, 3000.0]",,"[1.0, 50.0, 6.0, 1.0, 1.0, 2.0, 21.0, 1.0, 2.0, 1.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[-26500.0, -127000.0, -360000.0, -9000.0, -98000.0, -218000.0, -69300.0, -200000.0, -78000.0, -66500.0]",,"[2.0, 6.0, 3.0, 1.0, 6.0, 1.0, 1.0, 7.0, 2.0, 3.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[0.0, 145000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 166667.0]","[-540000.0, -527000.0, -480000.0, -477272.0, -360000.0, -285000.0, -260000.0, -223615.0, -218000.0, -208333.0]",,"[1295.4160000000002, 1256.0, 705.0, 369.55, 299.0, 183.53, 125.0, 118.0, 111.0, 96.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[6034452.0, 18523870.0, 2049381.0, 7948015.0, 2249865.0, 4550190.0, 975329.0, 1092000.0, 2609564.0, 837688.0]","[1943444.0, 1794283.0, -75206.0, -466645.8, 608587.0, -41373.0, 305589.0, 346635.0, 484676.0, 136288.0]",,"[1256.0, 369.55, 1295.4160000000002, 183.53, 111.0, 299.0, 705.0, 69.0, 10.0, 66.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[18523870.0, 7948015.0, 6034452.0, 4550190.0, 2609564.0, 2249865.0, 2049381.0, 1225563.0, 1201000.0, 1093180.0]","[1794283.0, -466645.8, 1943444.0, -41373.0, 484676.0, 608587.0, -75206.0, 429183.0, 102300.0, -38091.0]",,"[1295.4160000000002, 1256.0, 299.0, 111.0, 69.0, 118.0, 8.0, 125.0, 16.0, 50.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[6034452.0, 18523870.0, 2249865.0, 2609564.0, 1225563.0, 1092000.0, 557000.0, 975329.0, 718000.0, 1088000.0]","[1943444.0, 1794283.0, 608587.0, 484676.0, 429183.0, 346635.0, 339000.0, 305589.0, 294700.0, 262000.0]",,"[1.0, 2.0, 3.0, 4.0, 4.0, 4.0, 5.0, 7.0, 8.0, 9.5]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[350000.0, 24000.0, 300000.0, 60000.0, 240000.0, 290000.0, 60000.0, 67000.0, 557000.0, 66500.0]","[50000.0, 7500.0, 108000.0, 4000.0, 58100.0, -73000.0, 19482.0, 20747.0, 339000.0, 0.0]",,"[2.0, 4.0, 5.0, 9.5, 7.0, 4.0, 4.0, 3.0, 11.0, 1.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[24000.0, 60000.0, 60000.0, 66500.0, 67000.0, 240000.0, 290000.0, 300000.0, 344597.0, 350000.0]","[7500.0, 4000.0, 19482.0, 0.0, 20747.0, 58100.0, -73000.0, 108000.0, -23090.0, 50000.0]",,"[369.55, 705.0, 4.0, 183.53, 66.0, 11.0, 9.5, 4.0, 2.0, 5.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[7948015.0, 2049381.0, 290000.0, 4550190.0, 1093180.0, 344597.0, 66500.0, 60000.0, 24000.0, 60000.0]","[-466645.8, -75206.0, -73000.0, -41373.0, -38091.0, -23090.0, 0.0, 4000.0, 7500.0, 19482.0]",tháng trước
+run_date,retailer_id,branch_id,timeframe_start,timeframe_end,timeframe_type,num_day,num_day_sell,top_channel,net_revenue_top_channel,percentage_net_revenue_top_channel,num_invoice_sell,total_revenue,total_return_revenue,net_revenue,total_cost,gross_profit,num_invoice_sell_per_day,revenue_per_day,total_return_revenue_per_day,net_revenue_per_day,total_cost_per_day,gross_profit_per_day,num_types,actual_sold,avg_net_rev_per_product,avg_profit_per_product,new_product_net_revenue,pd_group_quan_name,pd_group_quan_by_quan,pd_group_re_quantity_by_quan,pd_group_net_rev_by_quan,pd_group_profit_by_quan,pd_group_net_rev_name,pd_group_quantity_by_net_rev,pd_group_re_quantity_by_net_rev,pd_group_net_revenue_by_net_rev,pd_group_profit_by_net_rev,pd_group_profit_name,pd_group_quantity_by_profit,pd_group_re_quantity_by_profit,pd_group_net_rev_by_profit,pd_group_profit_by_profit,pd_group_quan_name_lst,pd_group_quan_by_quan_lst,pd_group_re_quantity_by_quan_lst,pd_group_net_rev_by_quan_lst,pd_group_profit_by_quan_lst,pd_group_rev_name_lst,pd_group_quan_by_rev_lst,pd_group_re_quantity_by_rev_lst,pd_group_net_rev_by_rev_lst,pd_group_profit_by_rev_lst,pd_group_profit_name_lst,pd_group_quan_by_profit_lst,pd_group_re_quantity_by_profit_lst,pd_group_net_rev_by_profit_lst,pd_group_profit_by_profit_lst,pd_product_quan_name,pd_product_quan_by_quan,pd_product_re_quantity_by_quan,pd_product_net_rev_by_quan,pd_product_profit_by_quan,pd_product_net_rev_name,pd_product_quantity_by_net_rev,pd_product_re_quantity_by_net_rev,pd_product_net_revenue_by_net_rev,pd_product_profit_by_net_rev,pd_product_profit_name,pd_product_quantity_by_profit,pd_product_re_quantity_by_profit,pd_product_net_rev_by_profit,pd_product_profit_by_profit,pd_product_quan_name_lst,pd_product_quan_by_quan_lst,pd_product_re_quantity_by_quan_lst,pd_product_net_rev_by_quan_lst,pd_product_profit_by_quan_lst,pd_product_rev_name_lst,pd_product_quan_by_rev_lst,pd_product_re_quantity_by_rev_lst,pd_product_net_rev_by_rev_lst,pd_product_profit_by_rev_lst,pd_product_profit_name_lst,pd_product_quan_by_profit_lst,pd_product_re_quantity_by_profit_lst,pd_product_net_rev_by_profit_lst,pd_product_profit_by_profit_lst,avg_order_value,total_customer,repurchase_rate,group_customer_type,num_customer_type,customer_type_ratio,revenue_customer_type,revenue_customer_type_ratio,sale_channels,num_customer_new_array,num_customer_old_array,num_customer_unknown_array,grouping_customer_top10_revenue,revenue_group_customer,revenue_per_invoice_group_customer,grouping_customer_top10_num_return,num_return_group_customer,return_value_group_customer,return_rate_group_customer,grouping_customer_top10_net_revenue,net_revenue_group_customer,net_revenue_per_invoice_group_customer,grouping_customer_top10_profit,profit_group_customer,profit_per_invoice_group_customer,profit_margin_group_customer,grouping_customer_top10_num_invoice,num_invoice_group_customer,grouping_customer_rfm,num_customer_rfm,customer_ratio_rfm,revenue_rfm,return_value_rfm,profit_rfm,customer_gender,num_customer_gender,customer_ratio_gender,group_customer_age,num_customer_age,customer_ratio_age
+2025-04-21,285727,54778,2025-03-22,2025-04-21,30 ngày gần nhất,30,30,-1,49308519.0,100.0,156,49308519.0,0.0,49308519.0,41008890.00122823,8299628.998771768,5.2,1643617.3,0.0,1643617.3,1366963.000040941,276654.29995905893,543,4413.096999999999,11173,1880,0,"['Vật tư vật dụng y tế', 'HÀNG THÔNG THƯỜNG', 'THỰC PHẨM CHỨC NĂNG', 'Thuốc đường hô hấp - ho cảm', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'Thuốc Giảm đau + Hạ sốt', 'Thuốc Mắt - Mũi - Tai', 'Thuốc Đường Tiêu Hóa', 'Thuốc Tuýp', 'Thuốc Phụ Khoa']","[1597.247, 1277.0, 322.4, 202.0, 196.15, 118.0, 103.0, 93.0, 81.0, 64.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[5935200, 17248670, 6622745, 1623618, 3905145, 1218817, 976000, 835910, 1780000, 1563000]","[2147596, 1940031, 223477, 528866, 390430, 477010, -101141, 203599, 231757, 562494]","['HÀNG THÔNG THƯỜNG', 'THỰC PHẨM CHỨC NĂNG', 'Vật tư vật dụng y tế', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'Thuốc Tuýp', 'Thuốc đường hô hấp - ho cảm', 'Thuốc Phụ Khoa', 'Thuốc Giảm đau + Hạ sốt', 'Thuốc Mắt - Mũi - Tai', 'Thuốc Đường Tiêu Hóa']","[1277.0, 322.4, 1597.247, 196.15, 81.0, 202.0, 64.0, 118.0, 103.0, 93.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[17248670, 6622745, 5935200, 3905145, 1780000, 1623618, 1563000, 1218817, 976000, 835910]","[1940031, 223477, 2147596, 390430, 231757, 528866, 562494, 477010, -101141, 203599]","['Vật tư vật dụng y tế', 'HÀNG THÔNG THƯỜNG', 'Thuốc Phụ Khoa', 'Thuốc đường hô hấp - ho cảm', 'Thuốc Giảm đau + Hạ sốt', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'TPCN Dung dịch vệ sinh', 'Thuốc Kháng Sinh', 'Thuốc Tuýp', 'THỰC PHẨM CHỨC NĂNG']","[1597.2469999999998, 1277.0, 64.0, 202.0, 118.0, 196.15, 9.0, 64.0, 81.0, 322.4]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[5935200, 17248670, 1563000, 1623618, 1218817, 3905145, 640000, 715000, 1780000, 6622745]","[2147596, 1940031, 562494, 528866, 477010, 390430, 283999, 242808, 231757, 223477]","['Thuốc Tiêm Truyền', 'TPCN CANXI - KHỚP', 'TPCN LÀM ĐẸP + VITAMIN', 'Sữa rửa mặt', 'TPCN BỔ GAN - SẮT - BÀ BẦU', 'Thuốc Đông Dược', 'Thuốc Huyết Áp - Tim Mạch - Đường huyết', 'Thực phẩm chức năng cho bé', 'Thuốc Da Liễu', 'TPCN Dung dịch vệ sinh']","[1.0, 1.0, 3.0, 5.0, 6.0, 7.0, 7.0, 7.0, 8.0, 9.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[15000, 100000, 140000, 435000, 95286, 281000, 399000, 579000, 360000, 640000]","[999, 35999, 65599, -43001, 10289, 56299, 17024, 51599, -63460, 283999]","['Thuốc Tiêm Truyền', 'Thuốc đường huyết', 'TPCN BỔ GAN - SẮT - BÀ BẦU', 'TPCN CANXI - KHỚP', 'XỊT MŨI HỌNG, RĂNG MIỆNG, VIÊN NGẬM', 'TPCN LÀM ĐẸP + VITAMIN', 'Thuốc Kháng Virus - Kháng Nấm', 'Thuốc Đông Dược', 'Thuốc Tuần Hoàn Não', 'Thuốc Da Liễu']","[1.0, 9.299999999999999, 6.0, 1.0, 13.0, 3.0, 12.0, 7.0, 20.0, 8.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[15000, 61500, 95286, 100000, 129831, 140000, 248000, 281000, 300000, 360000]","[999, -1, 10289, 35999, 54630, 65599, 48409, 56299, 99999, -63460]","['Thuốc Tiêm Truyền', 'TPCN BỔ GAN - SẮT - BÀ BẦU', 'Thuốc Huyết Áp - Tim Mạch - Đường huyết', 'TPCN CANXI - KHỚP', 'Thuốc Kháng Virus - Kháng Nấm', 'Thực phẩm chức năng cho bé']","[1.0, 6.0, 7.0, 1.0, 12.0, 7.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[15000, 95286, 399000, 100000, 248000, 579000]","[999, 10289, 17024, 35999, 48409, 51599]","['Khẩu trang 3D PALMY Hộp 50 chiếc + Khẩu trang 5D MASK DUY KHÁNH hộp 100 chiếc (Ngần)', 'BCS Doku bạc + Doku màu hộp 10 chiếc', 'Bluego + Zilgo - Tấm nhỏ 3 chiếc hộp 34 tấm - băng dán cá nhân (Tín Phong)', 'Găng tay VGlove XANH LÁ hộp 50 đôi - 100 chiếc', 'Viên kẹo ngậm Smart life (Việt Đức)', 'HTT - Yumagel dạ dày (HN)', 'HTT - Tiffy hộp 25 vỉ (HN)', 'HTT - Men vi sinh Enterogermina hộp 20 ống (HN) (DKSH)', 'Say xe Thái vỉ 10 viên ( YB )', 'HTT - Kẹo dẻo Ích Nhi (Nam Dược) + Bipp Gummy Calci']","[640.0, 160.0, 144.0, 116.0, 107.0, 97.0, 88.0, 65.0, 64.0, 54.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[512000, 1050000, 144000, 174000, 71369, 480000, 440000, 552500, 64000, 402000]","[127999, 601999, 38159, 46399, 25037, 43499, 146079, 64999, 39039, 50999]","['BCS Doku bạc + Doku màu hộp 10 chiếc', 'HTT - Xịt họng nhất nhất', 'HTT - Say xe Hàn hộp 30 lọ (CL)', 'HTT - Neo Tergynan đặt phụ khoa (HN) (Việt Hà)', 'Sâm kỳ vương hộp 4 viên (A Việt)', 'HTT - Hoạt huyết nhất nhất', 'HTT - Men vi sinh Enterogermina hộp 20 ống (HN) (DKSH)', 'Quick stick - Test thử thai (HN)', 'Khẩu trang 3D PALMY Hộp 50 chiếc + Khẩu trang 5D MASK DUY KHÁNH hộp 100 chiếc (Ngần)', 'HTT - Hoạt Huyết Dưỡng Não hộp 5 vỉ (TPC)']","[1050000, 850000, 700000, 680000, 600000, 575000, 552500, 520000, 512000, 494000]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[1050000, 850000, 700000, 680000, 600000, 575000, 552500, 520000, 512000, 494000]","[601999, 119999, 256654, 203999, 224999, 74999, 64999, 155999, 127999, 25999]","['BCS Doku bạc + Doku màu hộp 10 chiếc', 'HTT - Say xe Hàn hộp 30 lọ (CL)', 'Sâm kỳ vương hộp 4 viên (A Việt)', 'Mãnh lực Cordycep Plus lọ 30 viên bổ thận', 'HTT - Neo Tergynan đặt phụ khoa (HN) (Việt Hà)', 'Franlucat 10 hộp 4 vỉ x 7 viên / Montelukast 10mg (Eloge)', 'CALI 600 - Calcium 600 + Vitamin D lọ 30 viên USA (Nam Hà)', 'DDVS CANIZASS chai 200 ml có VÒI (Santafa)', 'EVADAYS viên đặt âm đạo, phụ khoa hộp 10 viên (ĐNA)', 'Maxxskin 10g kem bôi 3 thành phần (ĐNA) + Genprozol (VCP)']","[160.0, 35.0, 10.0, 4.0, 4.0, 7.0, 1.0, 3.0, 6.0, 8.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[1050000, 700000, 600000, 440000, 680000, 490000, 190000, 270000, 420000, 400000]","[601999, 256654, 224999, 219999, 203999, 202999, 190000, 182999, 178499, 171519]","['Vương lão kiện (AA)', 'Cris Sharvin dùng cho u xơ (A Việt)', 'Kiện Cốt Vương hộp 2 vỉ (CVI)', 'Pymetphage 850 - Metfomin (Pymephaco)', 'Salonpas hộp 20m dán - HỘP TO có 10h nhỏ', 'Bình rửa mũi xoang Ích Nhân', 'CELL SKIN hỗ trợ lông tóc móng hộp 60 viên hộp 12 vỉ (S)', 'SALONSIP hộp 8 túi x 3 miếng (Salonpas)', 'HTT - Súc miệng TB fresh (TPC)', 'An Trĩ Vương Gel']","[0.1, 0.15, 0.2, 0.30000000000000004, 0.5, 0.5, 0.747, 1.0, 1.0, 1.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[18500, 11250, 37200, 7500, 13500, 25000, 224100, 32000, 28000, 92590]","[-1, 749, 1999, -1, 1999, 4999, 149400, 5099, 2999, 3489]",,,,,,,,,,,334750.0,155.0,0.0,"[0, 1, 2]","[2, 1, 152]","[1.29, 0.65, 98.06]","[909000.0, 430000.0, 47969519.0]","[1.84, 0.87, 97.28]",['Kênh trực tiếp'],[1],[2],[152],['undefined'],[49308519],[316080],0.0,0.0,0.0,0.0,['undefined'],[49308519],[316080],['undefined'],[8299628],[53202],[594.11],['undefined'],[156],"[1, 2, 3, 4, 5]","[2, 1, 2, 6, 2]","[15.38, 7.69, 15.38, 46.15, 15.38]","[4064000, 751000, 935000, 3604000, 833000]","[0, 0, 0, 0, 0]","[1152896, 231114, 406239, 922669, 124282]",[0],[3],[100.0],[0],[3],[100.0]
+2025-04-21,285727,54778,2025-02-20,2025-03-23,30 ngày trước đó,31,31,-1,60415869.0,100.0,166,60415869.0,0.0,60415869.0,48571541.8058814,11844327.194118587,5.354838709677419,1948899.0,0.0,1948899.0,1566823.9292219807,382075.07077801897,580,5287.936000000001,11425,2239,0,"['HÀNG THÔNG THƯỜNG', 'Vật tư vật dụng y tế', 'Thuốc Kháng Sinh', 'THỰC PHẨM CHỨC NĂNG', 'Thuốc đường hô hấp - ho cảm', 'Vitamin và khoáng chất', 'Thuốc Đường Tiêu Hóa', 'Thuốc Giảm đau + Hạ sốt', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'Thực phẩm chức năng cho bé']","[1307.99, 1130.6660000000002, 967.0, 378.34999999999997, 355.0, 144.0, 139.0, 136.0, 110.53, 89.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[19288254, 5041492, 2943350, 7883627, 1979853, 1348688, 1207103, 1523139, 4131190, 1466233]","[3179937, 1616145, 90986, 982817, 308341, 397827, 446164, 542085, 83727, 456232]","['HÀNG THÔNG THƯỜNG', 'THỰC PHẨM CHỨC NĂNG', 'Vật tư vật dụng y tế', 'Mỹ phẩm chăm sóc da, Dầu gội, KĐR....', 'Thuốc Kháng Sinh', 'Thuốc Tuýp', 'Thuốc đường hô hấp - ho cảm', 'Thuốc Giảm đau + Hạ sốt', 'Thực phẩm chức năng cho bé', 'Thuốc Đông Dược']","[1307.99, 378.34999999999997, 1130.6660000000002, 110.53000000000002, 967.0, 78.0, 355.0, 136.0, 89.0, 13.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[19288254, 7883627, 5041492, 4131190, 2943350, 2542564, 1979853, 1523139, 1466233, 1444657]","[3179937, 982817, 1616145, 83727, 90986, 816485, 308341, 542085, 456232, 101786]","['HÀNG THÔNG THƯỜNG', 'Vật tư vật dụng y tế', 'THỰC PHẨM CHỨC NĂNG', 'Thuốc Tuýp', 'Thuốc Giảm đau + Hạ sốt', 'Thuốc Phụ Khoa', 'Thực phẩm chức năng cho bé', 'Thuốc Đường Tiêu Hóa', 'Vitamin và khoáng chất', 'TPCN BỔ NÃO - TĂNG ĐỀ KHÁNG - MẮT']","[1307.99, 1130.666, 378.34999999999997, 78.0, 136.0, 70.0, 89.0, 139.0, 144.0, 15.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[19288254, 5041492, 7883627, 2542564, 1523139, 1361563, 1466233, 1207103, 1348688, 844650]","[3179937, 1616145, 982817, 816485, 542085, 490077, 456232, 446164, 397827, 342349]","['Sữa rửa mặt', 'TPCN BỔ THẬN - TIỀN LIỆT - U XƠ ', 'TPCN CANXI - KHỚP', 'Thuốc đường huyết', 'Thuốc Tiêm Truyền', 'TPCN LÀM ĐẸP + VITAMIN', 'TPCN Dung dịch vệ sinh', 'Thuốc Da Liễu', 'TPCN BỔ GAN - SẮT - BÀ BẦU', 'TPCN DẠ DÀY - ĐẠI TRÀNG']","[1.0, 1.0, 2.0, 2.4000000000000004, 4.0, 5.0, 7.0, 7.0, 7.0, 7.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[145000, 350000, 200000, 22000, 60000, 262549, 491000, 249597, 104000, 67000]","[29999, 49999, 71999, -1, 3999, 59248, 289999, 76271, 16669, 20746]","['Thuốc đường huyết', 'Thuốc Tiêm Truyền', 'TPCN DẠ DÀY - ĐẠI TRÀNG', 'TPCN BỔ GAN - SẮT - BÀ BẦU', 'Sữa rửa mặt', 'Thuốc Tuần Hoàn Não', 'TPCN CANXI - KHỚP', 'Thuốc Da Liễu', 'TPCN LÀM ĐẸP + VITAMIN', 'Thuốc Huyết Áp - Tim Mạch - Đường huyết']","[2.4000000000000004, 4.0, 7.0, 7.0, 1.0, 14.0, 2.0, 7.0, 5.0, 19.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[22000, 60000, 67000, 104000, 145000, 178640, 200000, 249597, 262549, 277000]","[-1, 3999, 20746, 16669, 29999, 49403, 71999, 76271, 59248, 49049]","['Thuốc Tiêm Truyền', 'TPCN BỔ GAN - SẮT - BÀ BẦU', 'TPCN DẠ DÀY - ĐẠI TRÀNG', 'Sữa rửa mặt', 'Thuốc Huyết Áp - Tim Mạch - Đường huyết', 'Thuốc Tuần Hoàn Não', 'TPCN BỔ THẬN - TIỀN LIỆT - U XƠ ', 'TPCN LÀM ĐẸP + VITAMIN', 'Thuốc Kháng Virus - Kháng Nấm']","[4.0, 7.0, 7.0, 1.0, 19.0, 14.0, 1.0, 5.0, 28.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[60000, 104000, 67000, 145000, 277000, 178640, 350000, 262549, 390000]","[3999, 16669, 20746, 29999, 49049, 49403, 49999, 59248, 62749]","['Tetracyclin 250mg', 'Khẩu trang NGƯỜI LỚN SKY - AMI hộp 50 chiếc', 'Viên kẹo ngậm Smart life (Việt Đức)', 'Khẩu trang 3D PALMY Hộp 50 chiếc + Khẩu trang 5D MASK DUY KHÁNH hộp 100 chiếc (Ngần)', 'Bluego + Zilgo - Tấm nhỏ 3 chiếc hộp 34 tấm - băng dán cá nhân (Tín Phong)', 'HTT - Yumagel dạ dày (HN)', 'Khẩu trang IMASK 3D hộp 50 chiếc DUY KHÁNH mỏng (Ngần)', 'Bidiclor 125 - Cefaclor 125mg (Bidiphar)', 'HTT - Tiffy hộp 25 vỉ (HN)', 'Găng tay VGlove XANH LÁ hộp 50 đôi - 100 chiếc']","[710.0, 220.0, 157.0, 142.0, 118.0, 105.0, 100.0, 96.0, 91.0, 87.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[284000, 154000, 104719, 113600, 118000, 504000, 60000, 55807, 440691, 130500]","[154779, 61599, 36737, 28399, 31269, 68249, 23999, -145794, 136750, 34799]","['HTT - Coveram 5/5 (HN)', 'Bảo Khí Khang Hộp dạng vỉ 20 viên (Fobic)', 'HTT - Say xe Hàn hộp 30 lọ (CL)', 'HTT - Men vi sinh Enterogermina hộp 20 ống (HN) (DKSH)', 'Jex dưỡng khớp hộp 60 viên (Ecogreen)', 'Kem dưỡng DABO ngày + đêm WHITEING EX', 'Itraconazole 100mg (Itraxcop + Raxnazole + Toduc + Nibean + Taleva)', 'HTT - Xịt họng nhất nhất', 'BCS Doku bạc + Doku màu hộp 10 chiếc', 'HTT - Prospan siro ho TE (Sohaco)']","[1200000, 925000, 639685, 634782, 630000, 604500, 600000, 595000, 581000, 572689]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[1200000, 925000, 639685, 634782, 630000, 604500, 600000, 595000, 581000, 572689]","[74999, 74999, 234340, 72281, 19999, 109499, 239999, 83999, 348599, 65538]","['BCS Doku bạc + Doku màu hộp 10 chiếc', 'Ataxavi Vision New - Mediplantex', 'Itraconazole 100mg (Itraxcop + Raxnazole + Toduc + Nibean + Taleva)', 'HTT - Say xe Hàn hộp 30 lọ (CL)', 'Tamiflu thuốc trị cúm hộp 10 vỉ (CL)', 'Maxxskin 10g kem bôi 3 thành phần (ĐNA) + Genprozol (VCP)', 'Sâm kỳ vương hộp 4 viên (A Việt)', 'Leader Win giải độc gan hộp 12 vỉ (D)', 'Alphachymotrypsin Eloge', 'DDVS CANIZASS chai 200 ml có VÒI (Santafa)']","[83.0, 2.0, 6.0, 32.0, 7.0, 10.0, 9.0, 34.0, 22.0, 3.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[581000, 291581, 600000, 639685, 490000, 497194, 540000, 510000, 440000, 270000]","[348599, 291581, 239999, 234340, 230999, 211593, 202499, 198321, 189199, 182999]","['CELL SKIN hỗ trợ lông tóc móng hộp 60 viên hộp 12 vỉ (S)', 'Ích huyết khang (Tín Phong)', 'Pymetphage 850 - Metfomin (Pymephaco)', 'Vương lão kiện (AA)', 'HTT - Thuốc xoang nhất nhất', 'Tinfocold lọ 90ml (Tín Phong)', 'Tẩy tế bào chết Lô hội + Thảo dược (Dabo)', 'HTT - Trapha bột rắc chân (TPC)', 'HTT - Hadocort - D xịt tai mũi họng (HT)', 'HTT - Tomax tuýp bôi (HN) (TQ)']","[0.166, 0.4, 0.4, 0.45, 0.99, 1.0, 1.0, 1.0, 1.0, 1.0]","[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]","[49800, 8000, 10000, 83250, 158400, 35000, 145000, 13000, 20000, 10000]","[33200, 3333, -1, -1, 22769, 4999, 28999, 1999, 1999, 4499]",,,,,,,,,,,390250.0,166.0,0.0,"[0, 1, 2]","[1, 3, 162]","[0.6, 1.81, 97.59]","[331000.0, 1230000.0, 58854869.0]","[0.55, 2.04, 97.42]",['Kênh trực tiếp'],[3],[1],[162],['undefined'],[60415869],[363951],0.0,0.0,0.0,0.0,['undefined'],[60415869],[363951],['undefined'],[11844327],[71351],[510.08],['undefined'],[166],"[1, 2, 3, 4, 5]","[2, 1, 1, 6, 2]","[16.67, 8.33, 8.33, 50.0, 16.67]","[3366000, 540000, 505000, 3604000, 833000]","[0, 0, 0, 0, 0]","[1042096, 137499, 241239, 922669, 124282]",[0],[4],[100.0],[0],[4],[100.0]
 
 
 
 
-User Input: Hãy phân tích cho tôi tình hình kinh doanh trong Tháng này của cửa hàng, chú ý các chỉ số tăng giảm so với kỳ trước nếu có.
+User Input: Hãy phân tích cho tôi tình hình kinh doanh trong 30 ngày gần nhất của cửa hàng, chú ý các chỉ số tăng giảm so với kỳ trước nếu có.

@@ -18,7 +18,6 @@ from scriptss.utils import (
     preprocess_csv_data,
     process_csv_for_screen,
     read_csv_content,
-    set_null_values_for_previous_periods,
 )
 
 # Tạo router
@@ -80,9 +79,9 @@ async def response(
 
             # Lọc dữ liệu theo thời gian
             filtered_by_time_df = filter_by_timeframe(df, time_period_value)
-            filtered_by_time_df = set_null_values_for_previous_periods(
-                filtered_by_time_df
-            )
+            # filtered_by_time_df = set_null_values_for_previous_periods(
+            #     filtered_by_time_df
+            # )
             processed_data = preprocess_csv_data(filtered_by_time_df)
 
             # Lấy cột theo screen
