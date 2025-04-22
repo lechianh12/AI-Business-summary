@@ -14,11 +14,11 @@ def test_split_csv_by_retailer_id_basic():
     File được chia theo retailer_id và lưu trong thư mục con có tên giống tên file đầu vào.
     """
     # Chỉ định rõ đường dẫn file đầu vào và thư mục đầu ra
-    input_path = "assets/Agg_data/full_data_for_bs_v3_p2.csv"
+    input_path = "assets/Agg_data/full_data_for_bs_v3_p3.csv"
     output_dir = "assets/retailer_data"
 
     # Xác định thư mục con dự kiến
-    expected_subfolder = os.path.join(output_dir, "full_data_for_bs_v3_p2")
+    expected_subfolder = os.path.join(output_dir, "full_data_for_bs_v3_p3")
 
     # Xóa thư mục con nếu đã tồn tại từ các lần chạy trước đó
     if os.path.exists(expected_subfolder):
