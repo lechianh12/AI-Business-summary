@@ -59,7 +59,7 @@ if st.button("🚀 Get Summary"):
                         response_placeholder = response_container.empty()
                         start_time = time.time()
                         buffer = ""
-                        chunk_size = 5  # Process chunks in batches
+                        chunk_size = 1  # Process smaller chunks for smoother updates
                         chunk_count = 0
 
                         # Stream the response
@@ -67,20 +67,13 @@ if st.button("🚀 Get Summary"):
                             chunk_size=chunk_size, decode_unicode=True
                         ):
                             if chunk:
-                                buffer += chunk
-                                chunk_count += 1
+                                full_response += chunk
+                                # Update display with every received chunk
+                                response_placeholder.markdown(full_response)
 
-                                # Update UI every few chunks to improve performance
-                                if chunk_count % 5 == 0:
-                                    full_response += buffer
-                                    buffer = ""
-                                    # Update display
-                                    response_placeholder.markdown(full_response)
+                        # Final update (optional, as it's updated in the loop)
+                        # response_placeholder.markdown(full_response)
 
-                        # Make sure to add any remaining buffer content
-                        if buffer:
-                            full_response += buffer
-                            response_placeholder.markdown(full_response)
                     else:
                         status.error(f"Error: {response.text}")
             except requests.exceptions.RequestException as e:

@@ -13,7 +13,6 @@
 
 
 # ---- Phân loại Khách hàng theo Loại (Cũ/Mới/Lẻ) ----
-# Dùng cho biểu đồ tròn và phân tích tỷ trọng.
 - group_customer_type: (Array[String]) Mã nhóm khách (0: Cũ, 1: Mới, 2: Lẻ/Vãng lai). Cần map mã sang tên để báo cáo.
 - num_customer_type: (Array[Number]) Số lượng khách hàng tương ứng theo từng nhóm (Cũ/Mới/Lẻ).
 - customer_type_ratio: (Array[Number]) Tỷ lệ % khách hàng tương ứng theo từng nhóm.
@@ -22,19 +21,14 @@
 
 
 # ---- Phân loại Khách hàng theo Kênh Bán ----
-# Dùng cho biểu đồ cột Kênh bán.
 - sale_channels: (Array[String]) Tên các kênh bán hàng có phát sinh khách mua.
 - num_customer_new_array: (Array[Number]) Số lượng khách mới tương ứng theo từng kênh trong `sale_channels`.
 - num_customer_old_array: (Array[Number]) Số lượng khách cũ tương ứng theo từng kênh trong `sale_channels`.
 - num_customer_unknown_array: (Array[Number]) Số lượng khách lẻ/vãng lai tương ứng theo từng kênh trong `sale_channels`.
 
 
-# ---- Phân tích theo Chi nhánh (Dữ liệu Cũ/Mới/Lẻ) ----
-# Dùng cho bảng Chi nhánh. Chỉ phân tích được cho chi nhánh có trong dữ liệu.
-# Lưu ý: Cần kết hợp các cột `num_customer_type` và `revenue_customer_type` để lấy số liệu theo từng loại khách cho chi nhánh hiện tại.
 
-
-# ---- Chân dung Khách hàng (Nhân khẩu học) ----
+# ---- Chân dung Khách hàng ----
 - group_customer_age: (Array[String]) Các nhóm tuổi của khách hàng.
 - num_customer_age: (Array[Number]) Số lượng khách hàng tương ứng theo nhóm tuổi.
 - customer_ratio_age: (Array[Number]) Tỷ lệ % khách hàng tương ứng theo nhóm tuổi.
