@@ -45,6 +45,9 @@ if st.button("🚀 Get Summary"):
                 "time_period": time_period,
             }
 
+            # Create status placeholder
+            status = st.empty()
+
             try:
                 # Set a timeout to ensure we don't wait forever
                 with requests.get(
@@ -58,7 +61,6 @@ if st.button("🚀 Get Summary"):
                         buffer = ""
                         chunk_size = 5  # Process chunks in batches
                         chunk_count = 0
-
 
                         # Stream the response
                         for chunk in response.iter_content(

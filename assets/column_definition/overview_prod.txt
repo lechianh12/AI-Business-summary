@@ -1,4 +1,3 @@
-[column_definitions]
 # ---- Định danh & Thời gian ----
 # Xác định bối cảnh của dữ liệu.
 - timeframe_type: (String) Phân loại chu kỳ thời gian ('7 ngày gần nhất', 'tháng này', v.v.). Dùng để xác định kỳ phân tích và kỳ so sánh.

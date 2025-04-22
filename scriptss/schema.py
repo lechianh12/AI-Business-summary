@@ -3,6 +3,7 @@ RETAILER_OPTIONS = {
     "285727": "retailer_285727.csv",
     "541173": "retailer_541173.csv",
     "500577674": "retailer_500577674.csv",
+    "500603355": "retailer_500603355.csv",
 }
 
 # Định nghĩa các lựa chọn thời gian

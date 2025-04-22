@@ -1,7 +1,6 @@
 import asyncio
 import os
 import sys
-import time
 
 import google.generativeai as genai
 from fastapi import APIRouter, HTTPException, Query
@@ -133,7 +132,7 @@ async def response(
             response_generator = model.generate_content(
                 full_prompt,
                 generation_config=genai.GenerationConfig(
-                    temperature=0.7,
+                    temperature=0.75,
                     top_p=0.95,
                 ),
                 stream=True,

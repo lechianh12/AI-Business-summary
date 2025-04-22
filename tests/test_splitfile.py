@@ -5,7 +5,7 @@ import sys
 # Thêm thư mục gốc vào sys.path để import module -> fix lỗi import
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from scripts.utils import split_csv_by_retailer_id
+from scriptss.utils import split_csv_by_retailer_id
 
 
 def test_split_csv_by_retailer_id_basic():
@@ -14,11 +14,11 @@ def test_split_csv_by_retailer_id_basic():
     File được chia theo retailer_id và lưu trong thư mục con có tên giống tên file đầu vào.
     """
     # Chỉ định rõ đường dẫn file đầu vào và thư mục đầu ra
-    input_path = "assets/Agg_data/product_for_bs_v2.csv"
+    input_path = "assets/Agg_data/full_data_for_bs_v3.csv"
     output_dir = "assets/retailer_data"
 
     # Xác định thư mục con dự kiến
-    expected_subfolder = os.path.join(output_dir, "product_for_bs_v2")
+    expected_subfolder = os.path.join(output_dir, "product_for_bs_v3")
 
     # Xóa thư mục con nếu đã tồn tại từ các lần chạy trước đó
     if os.path.exists(expected_subfolder):
