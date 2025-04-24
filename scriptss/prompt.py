@@ -50,7 +50,7 @@ QUY TRÌNH PHÂN TÍCH:
         **Giải pháp đề xuất**: [Như trên]
         **Lí do**: [Như trên]
         ...
-        
+
 </Rủi ro & bất thường>
 
 4.	Yêu cầu về Nội dung và Ngôn ngữ:
@@ -96,7 +96,7 @@ Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phâ
         # Đọc TOÀN BỘ nội dung file .txt
         column_content = read_column_data(column_file_path)
 
-        # Thay thế phần [column_definitions] bằng TOÀN BỘ nội dung file
+        # Thay thế phần [column_definitions] bằng TOÀN BỘ nội dung file .txt
         final_prompt = base_prompt.replace("[column_definitions]", column_content)
     else:
         error_message = (

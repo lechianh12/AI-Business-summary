@@ -8,10 +8,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from scriptss.utils import split_csv_by_retailer_id
 
 
-def test_split_csv_by_retailer_id_basic():
+def split_csv_by_retailer_id_basic():
     """
-    Test cơ bản cho hàm split_csv_by_retailer_id với một file đầu vào cụ thể.
-    File được chia theo retailer_id và lưu trong thư mục con có tên giống tên file đầu vào.
+    Chia file theo retailer_id và lưu trong thư mục con có tên giống tên file đầu vào.
     """
     # Chỉ định rõ đường dẫn file đầu vào và thư mục đầu ra
     input_path = "assets/Agg_data/full_data_for_bs_v3_p3.csv"
@@ -33,18 +32,18 @@ def test_split_csv_by_retailer_id_basic():
 
     # Kiểm tra xem thư mục con có được tạo không
     if os.path.exists(expected_subfolder) and os.path.isdir(expected_subfolder):
-        print(f"✓ Đã tạo thành công thư mục con: {expected_subfolder}")
+        print(f"Đã tạo thành công thư mục con: {expected_subfolder}")
 
         # Kiểm tra số lượng file đã tạo ra
         split_files = [f for f in os.listdir(expected_subfolder) if f.endswith(".csv")]
-        print(f"✓ Đã tạo {len(split_files)} file CSV trong thư mục con: {split_files}")
+        print(f"Đã tạo {len(split_files)} file CSV trong thư mục con: {split_files}")
     else:
-        print(f"✗ Không tìm thấy thư mục con dự kiến: {expected_subfolder}")
+        print(f"Không tìm thấy thư mục con dự kiến: {expected_subfolder}")
 
 
 
 if __name__ == "__main__":
-    test_split_csv_by_retailer_id_basic()
+    split_csv_by_retailer_id_basic()
 
 
 

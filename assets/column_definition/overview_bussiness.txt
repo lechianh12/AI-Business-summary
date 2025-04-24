@@ -27,6 +27,7 @@
 # Phần này chứa dữ liệu dạng Array, tổng hợp Top 10 theo các đối tượng (Nhóm hàng, Hàng hóa, Nhóm KH, Kênh bán) và theo các tiêu chí (Doanh thu, Trả hàng, Doanh thu thuần, Lợi nhuận gộp, Số hóa đơn).
 # !! Quan trọng: Các cột trong cùng một nhóm (ví dụ: Top 10 Nhóm hàng theo Doanh thu) thường tương ứng theo thứ tự index. Cần phân tích chéo các chỉ số liên quan của CÙNG MỘT đối tượng để xác định điểm mạnh/yếu toàn diện.
 
+
 # --- Tab: Phân tích Doanh thu ---
 # Nhóm hàng
 - bs_category_rev_name_rev: (Array[String]) Top 10 tên nhóm hàng theo doanh thu.
@@ -44,6 +45,7 @@
 - bs_channel_rev_name: (Array[String]) Top 10 tên kênh bán theo doanh thu.
 - bs_channel_revenue: (Array[Number]) Giá trị doanh thu tương ứng.
 - bs_channel_revenue_per_inv: (Array[Number]) Doanh thu trung bình/đơn tương ứng.
+
 
 # --- Tab: Phân tích Trả hàng ---
 # Nhóm hàng
@@ -67,6 +69,7 @@
 - bs_channel_re_revenue: (Array[Number]) Giá trị trả hàng tương ứng.
 - bs_channel_return_percent: (Array[Float]) Tỷ lệ trả hàng (%) tương ứng.
 
+
 # --- Tab: Phân tích Doanh thu thuần ---
 # Nhóm hàng
 - bs_group_net_rev_name: (Array[String]) Top 10 tên nhóm hàng theo doanh thu thuần.
@@ -84,6 +87,7 @@
 - bs_channel_net_rev_name: (Array[String]) Top 10 tên kênh bán theo doanh thu thuần.
 - bs_channel_net_revenue: (Array[Number]) Giá trị doanh thu thuần tương ứng.
 - bs_channel_net_revenue_per_invoice: (Array[Number]) Doanh thu thuần trung bình/đơn tương ứng.
+
 
 # --- Tab: Phân tích Lợi nhuận gộp ---
 # Nhóm hàng
@@ -106,6 +110,7 @@
 - bs_channel_profit: (Array[Number]) Giá trị lợi nhuận gộp tương ứng.
 - bs_channel_profit_per_invoice: (Array[Number]) Lợi nhuận gộp trung bình/đơn tương ứng.
 - bs_channel_profit_margin: (Array[Float]) Tỷ suất lợi nhuận gộp (%) tương ứng.
+
 
 # --- Tab: Phân tích Số hóa đơn ---
 # Nhóm hàng

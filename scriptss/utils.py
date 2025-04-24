@@ -155,7 +155,7 @@ def preprocess_csv_data(df):
             for date_col in date_columns:
                 try:
                     # Chỉ định định dạng cụ thể nếu biết
-                    df.loc[:, date_col] = pd.to_datetime(df[date_col], errors="coerce")
+                    df.loc[:, date_col] = pd.to_datetime(df[date_col], errors="coerce", format="%m-%d-%Y")
 
                     # Kiểm tra xem chuyển đổi có thành công không trước khi lấy min, max
                     if not df[date_col].isna().all():

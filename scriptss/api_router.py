@@ -18,6 +18,7 @@ from scriptss.utils import (
     preprocess_csv_data,
     process_csv_for_screen,
     read_csv_content,
+    validate_data
 )
 
 # Tạo router
@@ -69,10 +70,10 @@ async def response(
             df = read_csv_content(file_content)
 
             # Kiểm tra dữ liệu
-            # bool_check = validate_data(df)
-            # if not bool_check:
-            #     raise HTTPException(status_code=400, detail="Dữ liệu tính sai")
-            # print("[DEBUG] Dữ liệu hợp lệ.")
+            bool_check = validate_data(df)
+            if not bool_check:
+                raise HTTPException(status_code=400, detail="Dữ liệu tính sai")
+            print("[DEBUG] Dữ liệu hợp lệ.")
 
             time_period_value = TIME_PERIOD_OPTIONS[time_period]
             screen_value = SCREEN_OPTIONS[screen]
@@ -104,7 +105,7 @@ async def response(
 
             # print("[DEBUG] CSV sau xử lý:")
             # print(csv_text[:500])  # Chỉ in 500 ký tự đầu tiên cho gọn
-
+            
         except Exception as e:
             print(f"[DEBUG] Lỗi xử lý CSV: {str(e)}")
             raise HTTPException(
