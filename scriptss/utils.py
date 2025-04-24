@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 
 from scriptss.config import COLUMNS_TO_SET_NULL
+import re
+import warnings
 
 
 # Chia file tổng hợp thành nhiều file theo retailer_id và lưu vào thư mục con với tên file gốc
@@ -690,3 +692,136 @@ def df_to_clean_json(df: pd.DataFrame, array_detection_threshold: float = 0.5):
     )
 
     return df_no_array, array_json
+
+
+import ast
+import copy
+import datetime
+def check_data(df):
+    """Kiểm tra dữ liệu trong DataFrame và in ra danh sách các lỗi."""
+
+    warnings.simplefilter(action='ignore', category=FutureWarning)
+    warnings.filterwarnings("ignore", message="Could not infer format.*")
+
+    errors = {}
+
+    # --- 1. Kiểm tra định dạng ngày tháng ---
+    def check_date_format(date_str):
+        pattern = r'^\d{4}-\d{2}-\d{2}$'
+        if not re.match(pattern, date_str):
+            return False
+        return True
+
+    for col in ['timeframe_start', 'timeframe_end']:
+        df[col] = pd.to_datetime(df[col], errors='coerce')
+        for i, date_val in enumerate(df[col]):
+            if pd.isnull(date_val) or not check_date_format(str(date_val.date())):
+                errors.setdefault(f"Lỗi định dạng ngày tháng ở cột '{col}'", []).append(f"Dòng {i}: {date_val}")
+
+    # --- 2. Kiểm tra dữ liệu số ---
+    for col in ['net_revenue', 'total_cost']:
+        for i, value in enumerate(df[col]):
+            try:
+                float(value)
+            except (ValueError, TypeError):
+                errors.setdefault(f"Lỗi: Cột '{col}' chứa giá trị không phải số", []).append(f"Dòng {i}: {value}")
+
+    # --- 3. Kiểm tra giá trị phân loại ---
+    valid_timeframe_types = ['7 ngày gần nhất', '7 ngày trước đó', '30 ngày gần nhất', '30 ngày trước đó', 'tháng trước', 'tháng này']
+    for i, value in enumerate(df['timeframe_type']):
+        if value not in valid_timeframe_types:
+            errors.setdefault("Lỗi: Cột 'timeframe_type' chứa giá trị không hợp lệ", []).append(f"Dòng {i}: {value}")
+
+    # --- 4. Chuyển đổi chuỗi list thành list thật ---
+    cols_to_convert = ['pd_group_quantity_by_net_rev', 'pd_group_re_quantity_by_net_rev']
+    for col in cols_to_convert:
+        df[col] = df[col].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) and x.startswith('[') else x)
+
+
+    for col in cols_to_convert:
+        failed_indices = []
+        converted_values = []
+
+        for i, val in enumerate(df[col]):
+            if isinstance(val, str) and val.strip().startswith('['):
+                try:
+                    converted_val = ast.literal_eval(val)
+                    if isinstance(converted_val, list):
+                        converted_values.append(converted_val)
+                    else:
+                        converted_values.append(val)
+                        failed_indices.append(i)
+                except Exception:
+                    converted_values.append(val)
+                    failed_indices.append(i)
+            else:
+                converted_values.append(val)
+
+        df[col] = converted_values
+        if failed_indices:
+            errors.setdefault(f"Lỗi: Không thể chuyển đổi chuỗi thành list trong cột '{col}'", []).extend(failed_indices)
+
+    # --- 5. Kiểm tra mâu thuẫn giữa các cột list ---
+    cols_to_check = ['pd_group_quantity_by_net_rev']
+    cols_to_compare = {
+        'pd_group_quantity_by_net_rev': ['pd_group_re_quantity_by_net_rev']
+    }
+
+    for col1 in cols_to_check:
+        for col2 in cols_to_compare.get(col1, []):
+            for i in range(len(df)):
+                try:
+                    val1, val2 = df.loc[i, col1], df.loc[i, col2]
+                    if isinstance(val1, list) and isinstance(val2, list):
+                        if len(val1) != len(val2):
+                            errors.setdefault(f"Lỗi: Số phần tử trong '{col1}' và '{col2}' không khớp", []).append(f"Dòng {i}: ({col1}, {col2})")
+                    else:
+                        # Nếu không phải list, cảnh báo cũng được
+                        errors.setdefault(f"Lỗi: Không phải list trong so sánh '{col1}' với '{col2}'", []).append(f"Dòng {i}")
+                except Exception as e:
+                    errors.setdefault("Lỗi khi so sánh list", []).append(f"Dòng {i}: {e}")
+
+    # --- 5. Kiểm tra mâu thuẫn giữa các cột list ---
+    for i in range(len(df)):
+        for col1 in cols_to_convert:
+            for col2 in cols_to_convert:
+                if col1 != col2 and isinstance(df.loc[i, col1], list) and isinstance(df.loc[i, col2], list):
+                    if len(df.loc[i, col1]) != len(df.loc[i, col2]):
+                        errors.setdefault(f"Lỗi: Số phần tử trong '{col1}' và '{col2}' không khớp", []).append(f"Dòng {i}")
+
+    # --- 6. Kiểm tra mâu thuẫn thời gian ---
+    for i in range(len(df)):
+        row = df.loc[i]
+        if pd.notnull(row['timeframe_start']) and pd.notnull(row['timeframe_end']):
+            start_date = pd.to_datetime(row['timeframe_start'])
+            end_date = pd.to_datetime(row['timeframe_end'])
+
+            if start_date >= end_date:
+                errors.setdefault("Lỗi: 'timeframe_start' xảy ra sau hoặc bằng 'timeframe_end'", []).append(f"Dòng {i}")
+
+            # Kiểm tra độ dài ngày
+            time_diff = (end_date - start_date).days 
+            timeframe_type = row.get('timeframe_type', '')
+            num_day = row.get('num_day', None)
+
+            if timeframe_type in ['7 ngày gần nhất', '7 ngày trước đó', '30 ngày gần nhất', '30 ngày trước đó']:
+                if not pd.isnull(num_day) and time_diff != num_day:
+                    errors.setdefault("Lỗi: Khoảng thời gian không khớp với 'timeframe' và 'num_day'", []).append(f"Dòng {i}: diff={time_diff}, num_day={num_day}")
+
+    # --- 7. Kiểm tra giá trị âm ---
+    for col in ['net_revenue', 'total_cost']:
+        for i, value in enumerate(df[col]):
+            try:
+                if float(value) < 0:
+                    errors.setdefault(f"Lỗi: Cột '{col}' chứa giá trị âm", []).append(f"Dòng {i}: {value}")
+            except (ValueError, TypeError):
+                pass  # đã kiểm ở bước số 2
+
+    # --- In ra lỗi ---
+    if not errors:
+        print("✅ Không có lỗi nào được phát hiện.")
+    else:
+        for error_type, error_values in errors.items():
+            print(f"\n❌ {error_type}:")
+            for val in error_values:
+                print(f"   - {val}")

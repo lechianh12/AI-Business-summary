@@ -18,6 +18,8 @@ from scriptss.utils import (
     preprocess_csv_data,
     process_csv_for_screen,
     read_csv_content,
+    check_data
+    
 )
 
 # Tạo router
@@ -65,8 +67,19 @@ async def response(
         with open(csv_path, "r", encoding="utf-8-sig") as f:
             file_content = f.read()
 
+            
+            
+
         try:
+
+            import pandas as pd
+
+            df_check = pd.read_csv(csv_path)
+            check_data(df_check)
+
             df = read_csv_content(file_content)
+
+            
 
             # Kiểm tra dữ liệu
             # bool_check = validate_data(df)
@@ -84,11 +97,15 @@ async def response(
             # )
             processed_data = preprocess_csv_data(filtered_by_time_df)
 
+
+
             # Lấy cột theo screen
             columns_data = get_columns_for_screen(screen_value)
             filtered_data, filter_df = process_csv_for_screen(
                 processed_data, columns_data
             )
+
+            
 
             # print(
             #     "======================================================================================"
