@@ -6,7 +6,7 @@ import streamlit as st
 
 sys.path.append("D:/Work/KV/project/AI-Business-summary")
 
-from src.models.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
+from schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 
 API_URL = "http://127.0.0.1:8000/api/response"
 
@@ -23,8 +23,11 @@ with st.sidebar:
         "Select Retailer ID", options=list(RETAILER_OPTIONS.keys())
     )
     screen = st.selectbox("Select Screen", options=list(SCREEN_OPTIONS.keys()))
+    
+    # Chỉ hiển thị "Tháng này" nếu screen là "Phân loại khách hàng"
+    time_period_options = ["Tháng này"] if screen == "Phân loại khách hàng" else list(TIME_PERIOD_OPTIONS.keys())
     time_period = st.selectbox(
-        "Select Time Period", options=list(TIME_PERIOD_OPTIONS.keys())
+        "Select Time Period", options=time_period_options
     )
 
 # Main Content
