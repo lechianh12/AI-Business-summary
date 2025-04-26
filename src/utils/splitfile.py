@@ -3,10 +3,10 @@ import shutil
 import sys
 import glob
 import pandas as pd
+
 # Thêm thư mục gốc vào sys.path để import module -> fix lỗi import
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.utils import split_csv_by_retailer_id
 
 
 def split_csv_by_retailer_id_basic():
@@ -42,6 +42,7 @@ def split_csv_by_retailer_id_basic():
         print(f"Không tìm thấy thư mục con dự kiến: {expected_subfolder}")
 
 
+# Chia file tổng hợp thành nhiều file theo retailer_id và lưu vào thư mục con với tên file gốc
 def split_csv_by_retailer_id(input_path=None, output_dir=None):
     """
     Chia file tổng hợp thành nhiều file theo retailer_id và lưu vào thư mục con với tên file gốc
@@ -112,6 +113,7 @@ def split_csv_by_retailer_id(input_path=None, output_dir=None):
             print(f"Created: {output_filename} with {len(retailer_data)} rows")
 
     print("CSV splitting completed.")
+
 
 
 

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 
-from src.router.api_summary import router
+from src.router.api_router import router
 
 app = FastAPI(
     title="Business Summary API",

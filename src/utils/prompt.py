@@ -1,6 +1,6 @@
 import os
 
-from src.utils.prompt_utils import read_column_data
+from src.utils.preprocessing import read_column_data
 
 
 def generate_retail_system_prompt(screen_type=None):

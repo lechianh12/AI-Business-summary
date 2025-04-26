@@ -1,0 +1,51 @@
+import asyncio
+import os
+import sys
+
+from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import PlainTextResponse, StreamingResponse
+
+from src.services.bs_logic import get_llm_response, prepare_llm_prompt
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+
+# Import nội bộ
+from src.models.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
+
+# Tạo router
+router = APIRouter()
+
+
+async def stream_response(generator):
+    """Async generator wrapper for streaming response"""
+    try:
+        for chunk in generator:
+            if hasattr(chunk, "text"):
+                yield chunk.text
+                await asyncio.sleep(0.05)  # Small delay for smoother streaming
+    except Exception as e:
+        print(f"Error in streaming: {e}")
+        yield f"\nError occurred during streaming: {str(e)}"
+
+
+@router.get("/response", response_class=PlainTextResponse)
+async def response(
+    retailer_id: str = Query(..., enum=list(RETAILER_OPTIONS.keys())),
+    screen: str = Query(..., enum=list(SCREEN_OPTIONS.keys())),
+    time_period: str = Query(..., enum=list(TIME_PERIOD_OPTIONS.keys())),
+):
+    try:
+        full_prompt = prepare_llm_prompt(retailer_id, screen, time_period)
+        response_generator = get_llm_response(full_prompt)
+
+        # Return streaming response
+        return StreamingResponse(
+            stream_response(response_generator),
+            media_type="text/plain",
+        )
+
+    except Exception as model_error:
+        print(f"[DEBUG] Lỗi từ Gemini API: {str(model_error)}")
+        raise HTTPException(
+            status_code=500, detail=f"Lỗi từ mô hình AI: {str(model_error)}"
+        )
