@@ -6,7 +6,7 @@ import streamlit as st
 
 sys.path.append("D:/Work/KV/project/AI-Business-summary")
 
-from scriptss.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
+from src.models.schema import RETAILER_OPTIONS, SCREEN_OPTIONS, TIME_PERIOD_OPTIONS
 
 API_URL = "http://127.0.0.1:8000/api/response"
 

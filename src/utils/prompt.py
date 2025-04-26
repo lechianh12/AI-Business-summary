@@ -1,7 +1,7 @@
 import os
 
-from scriptss.utils import read_column_data
-
+from src.utils.preprocessing import read_column_data
+from fastapi import HTTPException
 
 def generate_retail_system_prompt(screen_type=None):
 
@@ -67,15 +67,17 @@ Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phâ
 
     """
 
-    # Nếu không có loại màn hình cụ thể, trả về prompt cơ bản
+    # Nếu không có loại màn hình cụ thể
     if screen_type is None:
-        return base_prompt.replace(
-            "[column_definitions]", "[Lỗi: Không có loại màn hình được chỉ định]"
+        return HTTPException(
+            status_code=400, detail="Lỗi: Không có loại màn hình được chỉ định"
         )
-
+    
     # Xác định file chứa thông tin cột dựa trên loại màn hình
     column_file_path = None
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    base_dir = os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    )
     column_dir = os.path.join(base_dir, "assets", "column_definition")
 
     if screen_type == "product_overview":
@@ -87,9 +89,13 @@ Bây giờ, hãy chờ người dùng cung cấp dữ liệu và yêu cầu phâ
     elif screen_type == "customer_segmentation":
         column_file_path = os.path.join(column_dir, "segment_cus.txt")
     else:
-        return base_prompt.replace(
-            "[column_definitions]",
-            f"[Lỗi: Loại màn hình '{screen_type}' không được hỗ trợ]",
+        # return base_prompt.replace(
+        #     "[column_definitions]",
+        #     f"[Lỗi: Loại màn hình '{screen_type}' không được hỗ trợ]",
+        # )
+        return HTTPException(
+            status_code=400,
+            detail=f"Lỗi: Loại màn hình '{screen_type}' không được hỗ trợ",
         )
 
     if column_file_path and os.path.exists(column_file_path):
