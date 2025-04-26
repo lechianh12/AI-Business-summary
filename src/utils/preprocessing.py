@@ -3,7 +3,7 @@ import os
 import re
 
 import pandas as pd
-
+from fastapi import HTTPException
 
 # Đọc file csv và encoding UTF-8 BOM
 def read_csv_content(file_content, encoding="utf-8-sig"):
@@ -229,6 +229,7 @@ def validate_data(raw_csv_content, expected_columns=None, log_func=print):
     3. Cấu trúc Array không hợp lệ: thiếu [], dấu phẩy, dấu nháy không đúng
     Nếu có lỗi sẽ log bug qua log_func.
     """
+
     bugs = []
     # 1. Kiểm tra dấu phân cách
     lines = raw_csv_content.splitlines()
@@ -240,8 +241,8 @@ def validate_data(raw_csv_content, expected_columns=None, log_func=print):
     main_sep = max(sep_count, key=sep_count.get)
     for line in lines[:10]:
         if "," in line and ";" in line:
-            bugs.append("Không đồng nhất về dấu phân cách trên dòng: " + line)
-            break
+            raise Exception("Không đồng nhất về dấu phân cách trên dòng: " + line)
+
     # 2. Kiểm tra header
     import csv
     import io
@@ -252,7 +253,7 @@ def validate_data(raw_csv_content, expected_columns=None, log_func=print):
         reader = csv.reader(io.StringIO(raw_csv_content), dialect)
         header = next(reader)
     except Exception as e:
-        bugs.append(f"Lỗi đọc header: {e}")
+        raise HTTPException(status_code=400, detail=f"Lỗi đọc header: {e}")
         header = []
     if expected_columns:
         if len(header) != len(expected_columns):
@@ -265,6 +266,7 @@ def validate_data(raw_csv_content, expected_columns=None, log_func=print):
         for h in header:
             if re.search(r"[^\w\d_ ]", h):
                 bugs.append(f"Header có ký tự không mong muốn: {h}")
+
     # 3. Kiểm tra array
     array_pattern = re.compile(r"\[.*?\]")
     for i, line in enumerate(lines[1:]):
