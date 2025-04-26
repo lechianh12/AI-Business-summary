@@ -17,7 +17,6 @@ router = APIRouter()
 
 
 async def stream_response(generator):
-    """Async generator wrapper for streaming response"""
     try:
         for chunk in generator:
             if hasattr(chunk, "text"):
