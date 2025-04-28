@@ -1,6 +1,3 @@
-from pydantic import BaseModel
-
-
 # Định nghĩa các retailer ID và tên file tương ứng
 RETAILER_OPTIONS = {
     "285727": "retailer_285727.csv",

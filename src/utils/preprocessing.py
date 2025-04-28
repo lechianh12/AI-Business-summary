@@ -3,7 +3,7 @@ import os
 import re
 
 import pandas as pd
-from fastapi import HTTPException
+
 
 # Đọc file csv và encoding UTF-8 BOM
 def read_csv_content(file_content, encoding="utf-8-sig"):
@@ -16,7 +16,7 @@ def read_csv_content(file_content, encoding="utf-8-sig"):
 
         return df
     except Exception as e:
-        raise Exception(f"Lỗi khi đọc nội dung CSV: {str(e)}")
+        raise Exception(f"Lỗi khi đọc nội dung CSV thành dataframe: {str(e)}")
 
 
 # Xử lý dữ liệu CSV
@@ -99,6 +99,7 @@ def preprocess_csv_data(df):
     except Exception as e:
         raise Exception(f"Lỗi khi xử lý dữ liệu CSV: {str(e)}")
 
+
 # Lấy danh sách các cột cần thiết dựa trên loại màn hình
 def get_columns_for_screen(screen_type):
     """
@@ -141,7 +142,7 @@ def get_columns_for_screen(screen_type):
     return columns
 
 
-# Lọc DataFrame theo các cột được chỉ định (hàng dọc)
+# Lọc DataFrame theo các cột được chỉ định (columns)
 def process_csv_for_screen(processed_data, column_list):
     """
     Lọc DataFrame để chỉ giữ các cột được chỉ định.
@@ -184,7 +185,7 @@ def process_csv_for_screen(processed_data, column_list):
         return processed_data, df
 
 
-#Lọc DataFrame theo thời gian được chọn (hàng ngang)
+# Lọc DataFrame theo thời gian được chọn (rows)
 def filter_by_timeframe(df, time_period):
     """
     Lọc dữ liệu dựa vào timeframe_type
@@ -209,7 +210,6 @@ def filter_by_timeframe(df, time_period):
         raise Exception(f"Loại thời gian không được hỗ trợ: {time_period}")
 
     # Lọc dữ liệu chỉ giữ các hàng có timeframe_type chứa từ khóa phù hợp, và tạo bản sao
-    # fix lỗi SettingWithCopyWarning
     filtered_df = df[
         df["timeframe_type"].str.contains(filter_keyword, case=False)
     ].copy()
@@ -220,71 +220,61 @@ def filter_by_timeframe(df, time_period):
     return filtered_df
 
 
-#Kiểm tra dữ liệu đầu vào:
-def validate_data(raw_csv_content, expected_columns=None, log_func=print):
+# Kiểm tra dữ liệu đầu vào:
+def validate_data(df):
     """
-    Kiểm tra dữ liệu đầu vào:
-    1. Không đồng nhất về dấu phân cách: Chỉ cho phép , hoặc ;
-    2. Dòng Header bị lỗi: thiếu, thừa, sai tên cột, ký tự lạ
-    3. Cấu trúc Array không hợp lệ: thiếu [], dấu phẩy, dấu nháy không đúng
-    Nếu có lỗi sẽ log bug qua log_func.
+    Kiểm tra dữ liệu DataFrame:
+    1. Dòng Header: thiếu, thừa, sai tên cột, ký tự lạ
+    2. Cấu trúc Array không hợp lệ: thiếu [], dấu phẩy, dấu nháy không đúng
     """
+    # Kiểm tra DataFrame có rỗng không
+    if df is None or df.empty:
+        raise Exception("DataFrame trống, vui lòng kiểm tra lại dữ liệu đầu vào.")
 
-    bugs = []
-    # 1. Kiểm tra dấu phân cách
-    lines = raw_csv_content.splitlines()
-    sep_candidates = [",", ";"]
-    sep_count = {sep: 0 for sep in sep_candidates}
-    for line in lines[:10]:
-        for sep in sep_candidates:
-            sep_count[sep] += line.count(sep)
-    main_sep = max(sep_count, key=sep_count.get)
-    for line in lines[:10]:
-        if "," in line and ";" in line:
-            raise Exception("Không đồng nhất về dấu phân cách trên dòng: " + line)
+    # Kiểm tra header
+    if len(df.columns) < 2:
+        raise Exception("DataFrame không hợp lệ, cần có ít nhất 2 cột.")
 
-    # 2. Kiểm tra header
-    import csv
-    import io
+    # Kiểm tra các ký tự đặc biệt trong tên cột
+    invalid_chars_pattern = r"[^\w\s\-_]"  # Không cho phép ký tự đặc biệt ngoài chữ, số, khoảng trắng, gạch ngang, gạch dưới
+    for col in df.columns:
+        col_name = str(col)
+        if re.search(invalid_chars_pattern, col_name) and not (
+            col_name.startswith('"') and col_name.endswith('"')
+        ):
+            raise Exception(f"Tên cột '{col_name}' chứa ký tự không hợp lệ.")
 
-    sniffer = csv.Sniffer()
-    try:
-        dialect = sniffer.sniff(raw_csv_content, delimiters=",;")
-        reader = csv.reader(io.StringIO(raw_csv_content), dialect)
-        header = next(reader)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Lỗi đọc header: {e}")
-        header = []
-    if expected_columns:
-        if len(header) != len(expected_columns):
-            bugs.append(
-                f"Header bị thiếu/thừa cột. Header: {header}, Định nghĩa: {expected_columns}"
-            )
-        for h, e in zip(header, expected_columns):
-            if h.strip() != e.strip():
-                bugs.append(f"Sai tên cột: {h} (mong đợi: {e})")
-        for h in header:
-            if re.search(r"[^\w\d_ ]", h):
-                bugs.append(f"Header có ký tự không mong muốn: {h}")
+    # Kiểm tra header có trùng nhau không
+    if len(df.columns) != len(set(df.columns)):
+        raise Exception("Có tên cột bị trùng lặp trong DataFrame.")
 
-    # 3. Kiểm tra array
-    array_pattern = re.compile(r"\[.*?\]")
-    for i, line in enumerate(lines[1:]):
-        arrays = re.findall(array_pattern, line)
-        for arr in arrays:
-            if not arr.startswith("[") or not arr.endswith("]"):
-                bugs.append(f"Array không có ngoặc vuông đúng ở dòng {i+2}: {arr}")
-            if "," not in arr and ";" not in arr:
-                bugs.append(f"Array thiếu dấu phân cách phần tử ở dòng {i+2}: {arr}")
-            if (
-                re.search(r'"[^"]*"', arr) is None
-                and re.search(r"'[^']*'", arr) is None
-            ):
-                bugs.append(f"Array thiếu dấu nháy bao quanh chuỗi ở dòng {i+2}: {arr}")
-    # Log bug
-    for bug in bugs:
-        log_func("[BUG] " + bug)
-    return bugs
+    # Kiểm tra cấu trúc Array trong các giá trị
+    for col in df.columns:
+        for idx, val in df[col].items():
+            if pd.isna(val):
+                continue
+            val_str = str(val).strip()
+            # Nếu là array (bắt đầu bằng [ và kết thúc bằng ])
+            if val_str.startswith("[") and val_str.endswith("]"):
+                # Kiểm tra JSON hợp lệ
+                try:
+                    json.loads(val_str)
+                except json.JSONDecodeError as e:
+                    raise Exception(
+                        f"Lỗi cấu trúc array tại dòng {idx+1}, cột '{col}': {str(e)}"
+                    )
+                continue
+            # Nếu là số đơn giản (int, float), bỏ qua
+            try:
+                float_val = float(val_str)
+                continue
+            except Exception:
+                pass
+            if "," in val_str or ";" in val_str:
+                raise Exception(
+                    f"Lỗi: Ô dữ liệu tại dòng {idx+1}, cột '{col}' có nhiều giá trị nhưng không phải dạng array (phải nằm trong [ ]). Giá trị: {val_str}"
+                )
+    return {"valid": True}
 
 
 # utils cho systemprompt

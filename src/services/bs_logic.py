@@ -1,6 +1,7 @@
 import os
-from fastapi import HTTPException
+
 import google.generativeai as genai
+from fastapi import HTTPException
 
 from src.config import (
     API_KEY,
@@ -15,9 +16,9 @@ from src.models.schema import (
 from src.utils.preprocessing import (
     filter_by_timeframe,
     get_columns_for_screen,
-    preprocess_csv_data,
     process_csv_for_screen,
     read_csv_content,
+    validate_data,
 )
 from src.utils.prompt import generate_retail_system_prompt
 
@@ -34,7 +35,7 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
 
     if not os.path.exists(csv_path):
         raise HTTPException(
-            status_code=400, detail=f"File CSV không tồn tại: {csv_path}"
+            status_code=400, detail=f"Đường dẫn CSV không tồn tại: {csv_path}"
         )
 
     with open(csv_path, "r", encoding="utf-8-sig") as f:
@@ -43,20 +44,26 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
     try:
         # Đọc file csv
         df = read_csv_content(file_content)
-        
+
+        # Kiểm tra dữ liệu DataFrame
+        validate_data(df)
+
         # Lọc dữ liệu theo thời gian
         time_period_value = TIME_PERIOD_OPTIONS[time_period]
-        filtered_by_time_df = filter_by_timeframe(df, time_period_value)
+        filtered_df = filter_by_timeframe(df, time_period_value)
 
-        # Xử lý dữ liệu
-        processed_data = preprocess_csv_data(filtered_by_time_df)
+        # Đóng gói DataFrame(rows) thành dict
+        rows_data = {
+            "dataframe": filtered_df,
+            "csv_text": filtered_df.to_csv(index=False),
+        }
 
         # Lấy cột theo screen
         screen_value = SCREEN_OPTIONS[screen]
         columns_data = get_columns_for_screen(screen_value)
-        filtered_data, filter_df = process_csv_for_screen(
-            processed_data, columns_data
-        )
+
+        # Xử lý dữ liệu
+        filtered_data, filter_df = process_csv_for_screen(rows_data, columns_data)
         csv_text = filtered_data["csv_text"]
 
     except Exception as e:
@@ -77,7 +84,7 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
         raise HTTPException(
             status_code=400, detail=f"Lỗi khi tạo full prompt: {str(e)}"
         )
-    
+
     # Lưu prompt cuối cùng vào file test -> dùng để debug
     with open("tests/test_output.txt", "w", encoding="utf-8-sig") as f:
         f.write(full_prompt)
@@ -102,7 +109,5 @@ def get_llm_response(full_prompt):
         return response_generator
     except Exception as model_error:
         raise HTTPException(
-            status_code=500, detail=f"Lỗi từ mô hình AI: {str(model_error)}"
+            status_code=400, detail=f"Lỗi từ mô hình AI: {str(model_error)}"
         )
-    
-
