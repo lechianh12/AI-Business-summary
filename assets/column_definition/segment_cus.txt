@@ -1,23 +1,21 @@
 # ---- Định danh & Thời gian ----
 # Xác định bối cảnh của dữ liệu.
-- timeframe_type: (String) Phân loại chu kỳ thời gian ('7 ngày gần nhất', 'tháng này', v.v.). Dùng để xác định kỳ phân tích và kỳ so sánh.
-- timeframe_start: (Date) Ngày bắt đầu chu kỳ.
-- timeframe_end: (Date) Ngày kết thúc chu kỳ.
-- retailer_id: (Number) ID của nhà bán lẻ.
-- branch_id: (Number) ID của chi nhánh.
+- run_date: Ngày chạy dữ liệu
+- retailer_id: Id gian hàng
+- branch_id: Tên chi nhánh của gian hàng
+- timeframe_start: Ngày bắt đầu chu kỳ
+- timeframe_end: Ngày kết thúc chu kỳ
 
 
 # ---- Phân loại Khách hàng theo RFM ----
 # Dữ liệu dùng cho biểu đồ Treemap và các biểu đồ thanh Doanh thu, Trả hàng, Lợi nhuận gộp theo nhóm RFM.
-- grouping_customer_rfm: (Array[String]) Mã nhóm RFM (1: Trung thành, 2: Thân thiết, 3: Tiềm năng, 4: Cần quan tâm, 5: Sắp rời bỏ). Cần map mã sang tên tương ứng để báo cáo (Loyal, Promising, Explore, Risk, Sleep).
-- num_customer_rfm: (Array[Number]) Số lượng khách hàng tương ứng theo từng nhóm RFM.
-- customer_ratio_rfm: (Array[Number]) Tỷ lệ % khách hàng tương ứng theo từng nhóm RFM (dùng cho Treemap).
-- revenue_rfm: (Array[Number]) Tổng Doanh thu (Gross Revenue) tương ứng theo từng nhóm RFM.
-- return_value_rfm: (Array[Number]) Tổng giá trị trả hàng tương ứng theo từng nhóm RFM.
-- profit_rfm: (Array[Number]) Tổng lợi nhuận gộp tương ứng theo từng nhóm RFM.
+- grouping_customer_rfm: Phân nhóm khách hàng RFM bằng cách: B1: Lấy danh sách khách hàng có mua hàng trong 1 năm qua và tính 3 chỉ tiêu: Recency (thời gian từ lần mua hàng gần nhất đến hiện tại), Frequency (số hóa đơn trong 1 năm), Monetary (tổng chi tiêu trong 1 năm); B2: Ở mỗi chỉ tiêu, đánh điểm từng khách hàng theo thang điểm 1 (Kém), 2 (Trung bình), 3 (Tốt); B3: Ghép 3 điểm thành rfm_score (tổng cộng có 27 tổ hợp); B4: Gom nhóm rfm_score thành 5 nhóm: 1- Khách hàng Trung thành (333, 332, 233, 323), 2- Khách hàng Thân thiết (232, 322, 223, 331, 133, 222), 3- Khách hàng Tiềm năng (313, 231, 132, 321, 123, 312, 213), 4- Khách hàng Cần quan tâm (221, 122, 212, 131, 311, 113), 5- Khách hàng Sắp rời bỏ (các tổ hợp còn lại).
+- num_customer_rfm: 1 array chứa số lượng khách hàng tương ứng với nhóm khách
+- customer_ratio_rfm: 1 array chứa tỷ lệ khách hàng tương ứng với nhóm khách
+- revenue_rfm: 1 array chứa doanh thu tương ứng với nhóm khách
+- return_value_rfm: 1 array chứa giá trị trả hàng tương ứng với nhóm khách
+- profit_rfm: 1 array chứa lợi nhuận gộp tương ứng với nhóm khách
 
 
-# ---- Phân tích Kênh bán (Tổng quan) ----
-# Dữ liệu này có thể cung cấp bối cảnh về hiệu quả kênh bán chung, nhưng không có sự phân tách trực tiếp theo nhóm RFM từ dữ liệu hiện có để tái tạo hoàn toàn biểu đồ Kênh bán trên màn hình này nếu nó thể hiện sự đóng góp của từng kênh cho từng nhóm RFM.
-- bs_channel_profit_name: (Array[String]) Top 10 tên kênh theo Lợi nhuận gộp.
-- bs_channel_profit: (Array[Number]) Lợi nhuận gộp tương ứng của các kênh đó.
+
+

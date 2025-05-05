@@ -1,0 +1,20 @@
+# ---- Định danh & Thời gian ----
+# Xác định bối cảnh của dữ liệu.
+- run_date: Ngày chạy dữ liệu
+- retailer_id: Ngày chạy dữ liệu
+- branch_id: ID chi nhánh của gian hàng
+- timeframe_start: Ngày bắt đầu chu kỳ
+- timeframe_end: Ngày kết thúc chu kỳ
+- timeframe_type: Phân loại chu kỳ, gồm các giá trị 'Tháng này', 'Tháng trước', 'Quý này', 'Quý trước', 'Năm này', 'Năm trước'
+
+# ---- Phân tích chi tiết chi phí lợi nhuận ----
+- net_revenue: Doanh thu thuần
+- margin: Lợi nhuận gộp = Doanh thu - giá vốn hàng bán
+- total_cost: Tổng chi phí (không bao gồm giá vốn hàng bán)
+- other_income_total: Thu nhập khác
+- net_profit: Lợi nhuận thuần
+- cost_per_day: Chi phí TB/ngày
+- cost_per_revenue: Chi phí/doanh thu
+- cost_group_name: 1 array chứa tên các danh mục chi phí (lấy max 10 danh mục có chi phí cao nhất)
+- cost_group_value: 1 array chứa giá trị chi phí tương ứng với tên các danh mục chi phí
+- cost_group_percent: 1 array chứa tỷ lệ chi phí tương ứng với tên các danh mục chi phí

@@ -1,0 +1,40 @@
+# ---- Định danh & Thời gian ----
+# Xác định bối cảnh của dữ liệu.
+- run_date: Ngày chạy dữ liệu
+- retailer_id: Ngày chạy dữ liệu
+- branch_id: ID chi nhánh của gian hàng
+- timeframe_start: Ngày bắt đầu chu kỳ
+- timeframe_end: Ngày kết thúc chu kỳ
+
+
+
+# ---- Chỉ số và giá trị của hàng tồn kho
+- num_product_type: Số lượng loại mặt hàng còn lại trong kho
+- stock_unit: Tổng số lượng sản phẩm còn lại trong kho
+- stock_value: Tổng giá trị tồn kho của sản phẩm
+- out_stock_now: Số lượng loại mặt hàng hóa sẽ hết hàng trong hôm nay
+- out_stock_7: Số lượng loại mặt hàng hóa sẽ hết hàng trong 7 ngày tới  
+- out_stock_30: Số lượng loại mặt hàng hóa sẽ hết hàng trong 30 ngày tới
+- total_no_sales: Số lượng hàng hóa không bán được
+- stock_value_no_sales: Giá trị lưu kho của hàng hóa không bán được
+- total_slow_sales: Số lượng hàng hóa bán chậm
+- stock_value_slow_sales: Giá trị lưu kho của hàng hóa bán chậm
+- stock_group_name_quan: Tên nhóm sản phẩm có số lượng tồn kho cao
+
+
+
+# ---- Phân tích Top 10 theo Tiêu Chí ----
+# Phần này chứa dữ liệu dạng Array, tổng hợp Top 10 theo các đối tượng (Nhóm hàng, Hàng hóa, Nhóm KH, Kênh bán) và theo các tiêu chí (Doanh thu, Trả hàng, Doanh thu thuần, Lợi nhuận gộp, Số hóa đơn).
+# !! Quan trọng: Các cột trong cùng một nhóm (ví dụ: Top 10 Nhóm hàng theo Doanh thu) thường tương ứng theo thứ tự index. Cần phân tích chéo các chỉ số liên quan của CÙNG MỘT đối tượng để xác định điểm mạnh/yếu toàn diện.
+
+- stock_group_quan_by_quan: Số lượng tồn kho của top 10 nhóm hàng có số lượng tồn kho cao
+- stock_group_value_by_quan: Giá trị tồn kho của top 10 nhóm hàng có số lượng tồn kho cao
+- stock_group_name_val: Tên nhóm sản phẩm có giá trị  tồn kho cao
+- stock_group_quan_by_val: Số lượng tồn kho của top 10 nhóm hàng có giá trị tồn kho cao
+- stock_group_value_by_val: Giá trị tồn kho của top 10 nhóm hàng có giá trị  tồn kho cao
+- stock_product_name_quan: Tên sản phẩm có số lượng tồn kho cao
+- stock_product_quan_by_quan: Số lượng tồn kho của top 10 sản phẩm theo số lượng tồn kho cao
+- stock_product_value_by_quan: Giá trị tồn kho của top 10 sản phẩm theo số lượng tồn kho cao
+- stock_product_name_val: Tên sản phẩm có số lượng tồn kho cao
+- stock_product_quan_by_val: Số lượng tồn kho của top 10 sản phẩm theo giá trị tồn kho cao
+- stock_product_value_by_val: Giá trị tồn kho của top 10 sản phẩm theo giá trị tồn kho cao
