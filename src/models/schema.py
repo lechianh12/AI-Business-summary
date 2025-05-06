@@ -8,9 +8,11 @@ RETAILER_OPTIONS = {
 
 # Định nghĩa các lựa chọn thời gian
 TIME_PERIOD_OPTIONS = {
-    "Tháng này": "month_current",
+    "tháng này": "month_current",
     "7 ngày gần nhất": "days_7",
     "30 ngày gần nhất": "days_30",
+    "năm này": "year_current",
+    "quý này": "quarter_current",
 }
 
 # Định nghĩa các lựa chọn màn hình

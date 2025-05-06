@@ -206,6 +206,10 @@ def filter_by_timeframe(df, time_period):
         filter_keyword = "7 ngày"
     elif time_period == "days_30":
         filter_keyword = "30 ngày"
+    elif time_period == "year_current":
+        filter_keyword = "năm"
+    elif time_period == "quarter_current":
+        filter_keyword = "quý"
     else:
         raise Exception(f"Loại thời gian không được hỗ trợ: {time_period}")
 

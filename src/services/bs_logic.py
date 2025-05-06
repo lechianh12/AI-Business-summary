@@ -50,7 +50,7 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
 
         # Lọc dữ liệu theo thời gian
         time_period_value = TIME_PERIOD_OPTIONS[time_period]
-        filtered_df = filter_by_timeframe(df, time_period_value)
+        filtered_df = filter_by_timeframe(df, time_period_value.lower())
 
         # Đóng gói DataFrame(rows) thành dict
         rows_data = {
