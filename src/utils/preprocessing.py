@@ -19,8 +19,8 @@ def read_csv_content(file_content, encoding="utf-8-sig"):
         raise Exception(f"Lỗi khi đọc nội dung CSV thành dataframe: {str(e)}")
 
 
-# Xử lý dữ liệu CSV
-def preprocess_csv_data(df):
+# # Xử lý dữ liệu CSV
+# def preprocess_csv_data(df):
     """
     Args:df
     Returns: dict chứa df
@@ -114,9 +114,13 @@ def get_columns_for_screen(screen_type):
 
     # Xác định file để đọc dựa trên loại màn hình
     if screen_type == "product_overview":
-        file_path = "assets/column_data/overview_prod.txt"
+        file_path = "assets/column_definition/overview_prod.txt"
     elif screen_type == "customer_overview":
-        file_path = "assets/column_data/overview_cus.txt"
+        file_path = "assets/column_definition/overview_cus.txt"
+    elif screen_type == "business_overview":
+        file_path = "assets/column_definition/overview_bussiness.txt"
+    elif screen_type == "customer_segmentation":
+        file_path = "assets/column_definition/segment_cus.txt"
 
     if file_path and os.path.exists(file_path):
         try:

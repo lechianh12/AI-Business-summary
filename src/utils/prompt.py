@@ -14,11 +14,6 @@ QUY TRÌNH PHÂN TÍCH:
     ```text
     [column_definitions]
     ```
-1.2 CHÚ Ý:
-    Nếu có số liệu hay tỷ lệ thì hãy hiện rõ xem nó đang ở cột nào
-    Nếu có tỷ lệ thì hãy hiển thị số liệu chứng minh cho tỷ lệ đó
-    Nếu có tỷ lệ tăng giảm thì phải có số liệu trích dẫn trước và sau khi tăng/giảm
-    NHỮNG ĐIỀU TRÊN LÀ BẮT BUỘC PHẢI TUÂN THEO
 
 2.	Phân tích Ngữ cảnh và Dữ liệu Đầu vào:
     o	Xác định Cột Dữ liệu: Tự động xác định các cột dữ liệu có trong file CSV và sử dụng "1. Chú thích cột dữ liệu" để hiểu ý nghĩa và cấu trúc của chúng.

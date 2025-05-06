@@ -15,8 +15,10 @@ TIME_PERIOD_OPTIONS = {
 
 # Định nghĩa các lựa chọn màn hình
 SCREEN_OPTIONS = {
+    "Tổng quan kinh doanh": "business_overview",
     "Tổng quan hàng hóa": "product_overview",
     "Tổng quan khách hàng": "customer_overview",
-    "Tổng quan kinh doanh": "business_overview",
+    # "Chi phí - Lợi nhuận": "cost_profit",
+    # "Tồn kho": "stock",
     "Phân loại khách hàng": "customer_segmentation",
 }

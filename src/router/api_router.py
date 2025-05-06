@@ -33,7 +33,7 @@ async def stream_response(generator):
 #     time_period: str = Query(..., enum=list(TIME_PERIOD_OPTIONS.keys()))
 
  
-@router.get("/response", response_class=PlainTextResponse)
+@router.get("/response")
 async def response(
     retailer_id: str = Query(..., enum=list(RETAILER_OPTIONS.keys())),
     screen: str = Query(..., enum=list(SCREEN_OPTIONS.keys())),
@@ -56,7 +56,7 @@ async def response(
         response_generator = get_llm_response(full_prompt)
 
         end_time = time.time()
-        print(f"Thời gian thực hiện: {end_time - start_time} giây")
+        print(f"Thời gian phản hồi: {end_time - start_time} giây")
 
         # In ra thông tin về việc sử dụng token
         print("\nThông tin về việc sử dụng token:")

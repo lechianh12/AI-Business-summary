@@ -77,7 +77,7 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
 
         # Tạo system_prompt
         system_instructions = generate_retail_system_prompt(screen_value)
-
+        
         # Tạo prompt cuối cùng
         full_prompt = f"{system_instructions}\n\nDữ liệu CSV:\n{csv_text}\n\n\n\nUser Input: {user_input}"
     except Exception as e:
@@ -103,6 +103,8 @@ def get_llm_response(full_prompt):
             generation_config=genai.GenerationConfig(
                 temperature=0.75,
                 top_p=0.95,
+                response_mime_type="text/plain",
+                # response_schema = list[Recipe],
             ),
             stream=True,
         )
