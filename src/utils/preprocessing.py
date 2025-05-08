@@ -121,7 +121,11 @@ def get_columns_for_screen(screen_type):
         file_path = "assets/column_definition/overview_bussiness.txt"
     elif screen_type == "customer_segmentation":
         file_path = "assets/column_definition/segment_cus.txt"
-
+    elif screen_type == "cost_profit":
+        file_path = "assets/column_definition/cost_profit.txt"
+    elif screen_type == "stock":
+        file_path = "assets/column_definition/stock.txt"
+        
     if file_path and os.path.exists(file_path):
         try:
             with open(file_path, "r", encoding="utf-8") as file:
@@ -210,6 +214,10 @@ def filter_by_timeframe(df, time_period):
         filter_keyword = "7 ngày"
     elif time_period == "days_30":
         filter_keyword = "30 ngày"
+    elif time_period == "year_current":
+        filter_keyword = "năm"
+    elif time_period == "quarter_current":
+        filter_keyword = "quý"
     else:
         raise Exception(f"Loại thời gian không được hỗ trợ: {time_period}")
 
@@ -219,7 +227,7 @@ def filter_by_timeframe(df, time_period):
     ].copy()
 
     if filtered_df.empty:
-        raise Exception(f"Không tìm thấy dữ liệu phù hợp với từ khóa: {filter_keyword}")
+        raise Exception(f"Không tìm thấy data phù hợp với time_period: {filter_keyword}")
 
     return filtered_df
 
@@ -228,7 +236,7 @@ def filter_by_timeframe(df, time_period):
 def validate_data(df):
     """
     Kiểm tra dữ liệu DataFrame:
-    1. Dòng Header: thiếu, thừa, sai tên cột, ký tự lạ
+    1. Dòng Header(tên cột): thiếu, thừa, sai tên cột, ký tự lạ
     2. Cấu trúc Array không hợp lệ: thiếu [], dấu phẩy, dấu nháy không đúng
     """
     # Kiểm tra DataFrame có rỗng không

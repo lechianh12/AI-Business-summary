@@ -4,7 +4,7 @@ import sys
 import time
 
 from fastapi import APIRouter, HTTPException, Query
-from fastapi.responses import PlainTextResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 
 from src.services.bs_logic import get_llm_response, prepare_llm_prompt
 
@@ -32,7 +32,7 @@ async def stream_response(generator):
 #     screen: str = Query(..., enum=list(SCREEN_OPTIONS.keys()))
 #     time_period: str = Query(..., enum=list(TIME_PERIOD_OPTIONS.keys()))
 
- 
+
 @router.get("/response")
 async def response(
     retailer_id: str = Query(..., enum=list(RETAILER_OPTIONS.keys())),
@@ -47,7 +47,7 @@ async def response(
             time_period = "Tháng này"
         else:
             time_period = time_period
-
+            
         full_prompt = prepare_llm_prompt(retailer_id, screen, time_period)
 
         middle_time = time.time()

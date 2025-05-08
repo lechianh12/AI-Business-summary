@@ -1,0 +1,2 @@
+﻿run_date,retailer_id,branch_id,timeframe_start,timeframe_end,grouping_customer_rfm,num_customer_rfm,customer_ratio_rfm,revenue_rfm,return_value_rfm,profit_rfm
+2025-05-05,285727,54778,2024-04-01,2025-04-29,"[1,2,3,4,5]","[2,2,1,5,3]","[15.38,15.38,7.69,38.46,23.08]","[4064000,1256000,430000,3133000,1304000]","[0,0,0,0,0]","[1152896,472354,164999,871619,175332]"

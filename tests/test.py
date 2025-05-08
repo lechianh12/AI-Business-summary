@@ -1,79 +1,134 @@
-import csv
-import ast
+import glob
+import os
+import sys
 
-def validate_business_csv(file_path):
-    def is_number(val):
+import pandas as pd
+
+# Thêm thư mục gốc vào sys.path để import module -> fix lỗi import
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+
+def check_retailer_data_exists():
+    """
+    Kiểm tra xem dữ liệu retailer đã tồn tại hay chưa.
+    Returns:
+        bool: True nếu dữ liệu đã tồn tại, False nếu chưa
+    """
+    output_dir = "assets/retailer_data"
+
+    # Kiểm tra nếu thư mục retailer_data không tồn tại
+    if not os.path.exists(output_dir):
+        return False
+
+    # Kiểm tra xem có thư mục retailer_* nào không
+    retailer_folders = [
+        d
+        for d in os.listdir(output_dir)
+        if os.path.isdir(os.path.join(output_dir, d)) and d.startswith("retailer_")
+    ]
+
+    # Nếu có ít nhất một thư mục retailer_ và mỗi thư mục có ít nhất một file CSV
+    if retailer_folders:
+        for folder in retailer_folders:
+            folder_path = os.path.join(output_dir, folder)
+            csv_files = [f for f in os.listdir(folder_path) if f.endswith(".csv")]
+            if not csv_files:
+                return False  # Nếu tìm thấy một thư mục không có file CSV nào, coi như dữ liệu chưa đầy đủ
+        return True  # Tất cả các thư mục đều có ít nhất một file CSV
+
+    return False  # Không có thư mục retailer_ nào
+
+
+# Chia file tổng hợp thành nhiều file theo retailer_id và lưu vào thư mục retailer_<retailer_id>
+def split_csv_by_retailer_id(input_path=None, output_dir=None):
+    """
+    Chia file tổng hợp (Agg_data) thành nhiều file theo retailer_id 
+    và lưu vào thư mục (retailer_data)
+    """
+
+    # Tạo thư mục retailer_data nếu chưa tồn tại
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Lấy danh sách file CSV dựa trên input_path
+    if "*" in input_path:
+        # Nếu input_path chứa ký tự đại diện, sử dụng glob
+        csv_files = glob.glob(input_path)
+    else:
+        # Nếu input_path là một file cụ thể
+        csv_files = [input_path]
+
+    # Tạo từ điển để lưu dữ liệu tạm thời cho mỗi retailer_id
+    retailer_data_dict = {}
+    file_count = 0
+
+    for file_path in csv_files:
+        print(f"Processing: {file_path}")
+        file_count += 1
+
+        # Lấy tên file gốc không có phần mở rộng
+        original_filename = os.path.splitext(os.path.basename(file_path))[0]
+
+        # Đọc file CSV với encoding được chỉ định
         try:
-            float(val)
-            return True
-        except:
-            return False
+            # Thử với utf-8 trước
+            df = pd.read_csv(file_path, encoding="utf-8")
+        except UnicodeDecodeError:
+            # Nếu thất bại, thử với các encoding phổ biến khác
+            try:
+                df = pd.read_csv(file_path, encoding="latin1")
+            except Exception as e:
+                print(
+                    f"Error: Unable to read {file_path} with common encodings. {str(e)}. Skipping."
+                )
+                continue
 
-    def is_date(val):
-        # Đơn giản, bạn có thể dùng datetime.strptime để kiểm tra kỹ hơn
-        return '-' in val or '/' in val
+        # Kiểm tra xem cột retailer_id có tồn tại không
+        if "retailer_id" not in df.columns:
+            print(f"Warning: 'retailer_id' column not found in {file_path}. Skipping.")
+            continue
 
-    with open(file_path, encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row_idx, row in enumerate(reader, 2):
-            # Kiểm tra các trường bắt buộc
-            for col in ['timeframe_type', 'timeframe_start', 'timeframe_end', 'retailer_id', 'branch_id']:
-                if not row.get(col):
-                    print(f"[Bug] Row {row_idx}: Thiếu dữ liệu ở cột {col}")
-            if row.get('timeframe_start') and not is_date(row['timeframe_start']):
-                print(f"[Bug] Row {row_idx}: Sai định dạng ngày ở timeframe_start")
-            if row.get('timeframe_end') and not is_date(row['timeframe_end']):
-                print(f"[Bug] Row {row_idx}: Sai định dạng ngày ở timeframe_end")
-            for col in ['retailer_id', 'branch_id']:
-                if row.get(col) and not is_number(row[col]):
-                    print(f"[Bug] Row {row_idx}: Sai kiểu số ở {col}")
+        # Lấy các retailer_id duy nhất
+        retailer_ids = df["retailer_id"].unique()
 
-            # Kiểm tra các chỉ số số học không âm
-            num_cols = [
-                'num_invoice_sell', 'num_invoice_sell_per_day', 'total_revenue', 'revenue_per_day',
-                'total_return_revenue', 'total_return_revenue_per_day', 'net_revenue', 'net_revenue_per_day',
-                'total_cost', 'total_cost_per_day', 'gross_profit', 'gross_profit_per_day'
-            ]
-            for col in num_cols:
-                if col in row and row[col]:
-                    try:
-                        val = float(row[col])
-                        if val < 0:
-                            print(f"[Bug] Row {row_idx}: Giá trị âm không hợp lệ ở {col}")
-                    except:
-                        print(f"[Bug] Row {row_idx}: Sai kiểu số ở {col}")
+        # Với mỗi retailer_id, thêm dữ liệu vào từ điển tạm thời
+        for retailer_id in retailer_ids:
+            # Lọc dữ liệu cho retailer_id hiện tại
+            current_retailer_data = df[df["retailer_id"] == retailer_id]
 
-            # Kiểm tra các trường dạng array
-            array_cols = [
-                'bs_category_rev_name_rev', 'bs_group_revenue', 'bs_group_revenue_per_inv',
-                'bs_product_rev_name', 'bs_product_revenue', 'bs_product_revenue_per_inv',
-                # ... thêm các trường array khác theo định nghĩa ...
-            ]
-            for col in array_cols:
-                if col in row and row[col]:
-                    try:
-                        arr = ast.literal_eval(row[col])
-                        if not isinstance(arr, list):
-                            print(f"[Bug] Row {row_idx}: {col} không phải dạng array")
-                    except:
-                        print(f"[Bug] Row {row_idx}: {col} không parse được thành array")
+            retailer_folder = f"retailer_{retailer_id}"
+            retailer_folder_path = os.path.join(output_dir, retailer_folder)
 
-            # Kiểm tra độ dài các array liên quan (ví dụ: tên và giá trị phải cùng số phần tử)
-            group_cols = [
-                ('bs_category_rev_name_rev', 'bs_group_revenue', 'bs_group_revenue_per_inv'),
-                # ... thêm các nhóm khác ...
-            ]
-            for group in group_cols:
-                lengths = []
-                for col in group:
-                    if col in row and row[col]:
-                        try:
-                            arr = ast.literal_eval(row[col])
-                            lengths.append(len(arr))
-                        except:
-                            pass
-                if lengths and len(set(lengths)) > 1:
-                    print(f"[Bug] Row {row_idx}: Độ dài các array trong nhóm {group} không đồng bộ: {lengths}")
+            # Tạo thư mục retailer nếu chưa tồn tại
+            os.makedirs(retailer_folder_path, exist_ok=True)
 
-# Ví dụ sử dụng:
-# validate_business_csv('assets/Agg_data/full_data_for_bs_v3.csv')
+            # Tạo khóa duy nhất cho mỗi cặp retailer_id và tên file gốc
+            key = (retailer_id, original_filename)
+
+            # Nếu khóa này chưa tồn tại trong từ điển, khởi tạo với dataframe hiện tại
+            if key not in retailer_data_dict:
+                retailer_data_dict[key] = current_retailer_data
+            # Nếu đã tồn tại, nối dữ liệu mới vào
+            else:
+                retailer_data_dict[key] = pd.concat(
+                    [retailer_data_dict[key], current_retailer_data], ignore_index=True
+                )
+
+    # Sau khi xử lý tất cả các file, lưu dữ liệu từ từ điển vào các file
+    for (retailer_id, original_filename), data in retailer_data_dict.items():
+        retailer_folder = f"retailer_{retailer_id}"
+        retailer_folder_path = os.path.join(output_dir, retailer_folder)
+
+        # Tạo tên file đầu ra
+        output_filename = f"{retailer_folder_path}/{original_filename}.csv"
+
+        # Lưu vào CSV với UTF-8 BOM encoding
+        data.to_csv(output_filename, index=False, encoding="utf-8-sig")
+        print(f"Created: {output_filename} with {len(data)} rows")
+
+    print(f"Processed {file_count} files. CSV splitting completed.")
+
+
+if __name__ == "__main__":
+    check_retailer_data_exists()
+    split_csv_by_retailer_id()
+
