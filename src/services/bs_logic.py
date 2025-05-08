@@ -25,7 +25,6 @@ from src.utils.preprocessing import (
 from src.utils.prompt import generate_retail_system_prompt
 from src.utils.splitfile import check_retailer_data_exists, split_csv_by_retailer_id
 
-# Định nghĩa mapping giữa màn hình và file CSV tương ứng
 
 
 # Chuẩn bị data để gửi cho model
@@ -74,7 +73,6 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
         # Kiểm tra dữ liệu DataFrame
         validate_data(df)
 
-
         # Lọc dữ liệu theo thời gian nếu có cột timeframe_type
         if "timeframe_type" in df.columns:
             time_period_value = TIME_PERIOD_OPTIONS[time_period]
@@ -103,7 +101,7 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
     try:
         # Tạo user_prompt, điều chỉnh theo trường hợp có hoặc không có lọc thời gian
         if "timeframe_type" in df.columns:
-            user_input = f"Hãy phân tích cho tôi tình hình kinh doanh trong {time_period} của cửa hàng, chú ý các chỉ số tăng giảm so với kỳ trước nếu có."
+            user_input = f"Hãy phân tích cho tôi tình hình kinh doanh trong {time_period} của cửa hàng, "
         else:
             if screen_value == "stock":
                 user_input = "Hãy phân tích cho tôi tình hình tồn kho hiện tại của cửa hàng, chú ý các sản phẩm tồn kho lâu ngày và giá trị tồn kho."
@@ -114,14 +112,14 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
         # Tạo system_prompt
         system_instructions = generate_retail_system_prompt(screen_value)
 
-        # Tạo prompt cuối cùng
+        # Tạo prompt đầy đủ
         full_prompt = f"{system_instructions}\n\nDữ liệu CSV:\n{csv_text}\n\n\n\nUser Input: {user_input}"
     except Exception as e:
         raise HTTPException(
-            status_code=400, detail=f"Lỗi khi tạo full prompt: {str(e)}"
+            status_code=400, detail=f"Lỗi khi tạo prompt: {str(e)}"
         )
 
-    # Lưu prompt cuối cùng vào file test -> dùng để debug
+    # Lưu prompt đầy đủ vào file test -> dùng để debug
     with open("tests/test_output.txt", "w", encoding="utf-8-sig") as f:
         f.write(full_prompt)
 

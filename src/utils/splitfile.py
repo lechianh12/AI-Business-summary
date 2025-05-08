@@ -11,8 +11,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 def check_retailer_data_exists():
     """
     Kiểm tra xem dữ liệu retailer đã tồn tại hay chưa.
-    Returns:
-        bool: True nếu dữ liệu đã tồn tại, False nếu chưa
     """
     output_dir = "assets/retailer_data"
 

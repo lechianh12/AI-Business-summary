@@ -13,6 +13,7 @@ TIME_PERIOD_OPTIONS = {
     "30 ngày gần nhất": "days_30",
     "năm này": "year_current",
     "quý này": "quarter_current",
+    "None":"",
 }
 
 # Định nghĩa các lựa chọn màn hình
