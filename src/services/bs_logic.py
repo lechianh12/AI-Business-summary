@@ -22,7 +22,7 @@ from src.utils.preprocessing import (
     read_csv_content,
     validate_data,
 )
-from src.utils.prompt import generate_retail_system_prompt
+from src.utils.prompt import generate_retail_system_prompt_mb
 from src.utils.splitfile import check_retailer_data_exists, split_csv_by_retailer_id
 
 
@@ -110,7 +110,7 @@ def prepare_llm_prompt(retailer_id, screen, time_period):
 
 
         # Tạo system_prompt
-        system_instructions = generate_retail_system_prompt(screen_value)
+        system_instructions = generate_retail_system_prompt_mb(screen_value)
 
         # Tạo prompt đầy đủ
         full_prompt = f"{system_instructions}\n\nDữ liệu CSV:\n{csv_text}\n\n\n\nUser Input: {user_input}"
